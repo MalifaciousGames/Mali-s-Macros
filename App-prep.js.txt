@@ -1,0 +1,49 @@
+Macro.add(['app', 'prep'], {
+	tags  : null,
+
+	handler() {
+			
+		let target, output;
+			
+// Prints to passage if target isn't specified
+
+		if (this.args[0]) {
+			target = jQuery(this.args[0]);
+		}
+		else {
+			target = $('.passage');
+		}
+
+		if (this.payload[0].contents !== '') {
+
+// Creates a span with class specified in second argument, if provided
+
+			if (this.args[1]) {
+				output = $(document.createElement('span'));
+				output.addClass( this.args[1] );
+			}
+			else {
+				output = jQuery(document.createDocumentFragment());
+			}
+					
+			output.wiki( this.payload[0].contents );
+
+			switch (this.name) {
+			case 'app':
+				target.append(output);
+			break;
+
+			case 'prep':
+				target.prepend(output);
+			break;
+			}
+		}
+
+// The debug object, always there for Sjoerd
+
+		if (Config.debug) {
+			this.debugView.modes({ hidden : true });
+		}
+			
+	}
+});
