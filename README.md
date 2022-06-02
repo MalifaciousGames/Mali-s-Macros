@@ -1,4 +1,4 @@
-<h2>The `<<a>>` macro </h2>
+<h2>The A-link macro </h2>
 
 The `<<a>>` macro creates a link which takes html attributes as arguments, similar to the default <a> element.
 
