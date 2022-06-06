@@ -2,17 +2,17 @@
 
 The `<<a>>` macro creates a link which takes html attribute/value pairs as arguments.
 
-<code>
+```
 <<a "Link text" attribute value...>>
 <</a>>
-</code>
+```
 
 Note that arguments do not need quotation marks, as such naked variables can be used as is:
 
-<code>
+```
 <<a "Link text" id $var class someClass style color:red;>>
 <</a>>
-</code>
+```
 
 Notes:
 Does not support Twine's default notation: [[passage]]/[img[URL]]. 
@@ -27,21 +27,21 @@ The `<<rep>>` macro is a version of the default `<<repeat>>`, altered to take tw
 
 If supplied with a valid html selector `<<rep>>` will append its content to it:
 
-<code>
+```
 <<rep 0.2s #target>>
 Contents
 <</rep>>
-</code>
+```
 
 <b>Max iterations </b>
 
 `<<rep>>` also takes a max iterations number after which the repeat will stop:
 
-<code>
+```
 <<rep 0.2s 20>>
 This will be printed 20 times.
 <</rep>>
-</code>
+```
 
 This reduces the need for the `<<st>>` macro (which is supplied nonetheless), equivalent of the the default `<<stop>>`.
 
