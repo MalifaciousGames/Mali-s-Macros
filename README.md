@@ -3,6 +3,7 @@
 The 'a' macro adds four new interactive elements, two links and two buttons, all of which take html attribute/value pairs as arguments.
 
 | Use | Links | Buttons |
+|------------|------------|------------|
 | Standard | `<<a>>` | `<<but>>` |
 | Single use | `<<adel>>` | `<<butdel>>` |
 
