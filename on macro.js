@@ -32,4 +32,4 @@ Macro.add('trigger', {
 		let trig = this.args[0];
 		$(document).trigger(trig);
 	}
-});dding:0}
+});
