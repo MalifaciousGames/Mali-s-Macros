@@ -58,7 +58,7 @@ Contents
 
 `<<rep>>` also takes a max iterations number after which the repeat will stop:
 
-```
+```html
 <<rep 0.2s 20>>
 This will be printed 20 times.
 <</rep>>
@@ -94,3 +94,23 @@ If no target selector is given, they default to the `'.passage'` element instead
 If you wish to add attributes but no target selector, the first field should be left blank like in the example.
 
 ***
+
+## The 'input' macro ##
+
+The `<<input>>` macro creates a HTML input element which takes HTML attribute/value pairs as arguments (see the 'a' macro above). It is meant as a replacement for Sugarcube's `<<textbox>>` and `<<numberbox>>`.
+
+It uses the following syntax:
+`<<input type '$variableName' (attribute value)>>`
+
+Supported types can be found here: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
+
+Examples:
+
+```html
+<<input text '$name' placeholder 'Your name here'>>
+
+<<input color '$customTheme'>>
+```
+
+***
+
