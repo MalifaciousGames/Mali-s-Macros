@@ -1,5 +1,5 @@
 // Updates code block on custom event
-
+	
 Macro.add('on', {
 	tags  : null,
 
@@ -10,26 +10,48 @@ Macro.add('on', {
 		} else if (typeof this.args[0] !== 'string'){
 			return this.error('event name must be a string');
 		}
-
-		let content = this.payload[0].contents, output;
 		
-// Custom event name
+		let trig = this.args[0].split(','), content = this.payload[0].contents, output;
 		
-		let trig = this.args[0];
-			
-		output = $(document.createElement('span')).wiki(content).appendTo(this.output);
+		trig = trig.map(event => event.trim());
 		
-		$(document).on(trig, function(e) {
-			output.empty().wiki(content);
-		});
+		// Passage load:
+		output = $(document.createElement('span')).wiki(content);
+		output.addClass(`macro-${this.name}`).appendTo(this.output);
+		
+		// On custom event:
+		
+		for (let i=0;i < trig.length;i++) {
+			$(document).on(trig[i], function() {
+				output.empty().wiki(content);
+				customEvents.pushUnique(trig[i]);
+				console.log(trig[1]);
+			});
+		}
 	}
 });
 
 // Triggers custom event
 
 Macro.add('trigger', {
-		handler() {
-		let trig = this.args[0];
-		$(document).trigger(trig);
+	handler() {
+			
+		let trig = this.args[0].split(',');
+		
+		trig = trig.map(event => event.trim());
+		
+		for (let i=0;i < trig.length;i++) {
+			$(document).trigger(trig[i]);
+			console.log('Triggered custom event: ' + trig[i]);
+		}	
 	}
 });
+
+// Cleans custom events on passage transition (stops them from stacking endlessly)
+
+	window.customEvents = [];
+		
+	$(document).on(':passageinit', function () {
+		customEvents.forEach(event => $(document).off(event));
+		customEvents = [];
+	});
