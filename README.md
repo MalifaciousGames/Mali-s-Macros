@@ -1,42 +1,4 @@
-## The 'a' macro ##
-
-The 'a' macro adds four new interactive elements, two links and two buttons, all of which take html attribute/value pairs as arguments.
-
-| Use | Links | Buttons |
-|------------|------------|------------|
-| Standard | `<<a>>` | `<<but>>` |
-| Single use | `<<adel>>` | `<<butdel>>` |
-
-### HTML attributes ###
-
-```html
-<<a "Link text" attribute value...>>
-Contents
-<</a>>
-```
-
-Note that arguments do not need quotation marks, as such naked variables can be used as is:
-
-```html
-<<a "Link text" id $var class someClass style color:red;>>
-	<<append '.passage'>>You clicked a red link!<</append>>
-<</a>>
-```
-
-### Variations ###
-
-Both `<<adel>>` and `<<butdel>>` are single use interactive elements. Once clicked they remove themselves.
-Unlike `<<linkreplace>>` they do not append their content to the page.
-
-```html
-<<butdel "Click me!>>"
-	<<append '.passage'>>Won't click me again!<</append>>
-<</butdel>>
-```
-
-
-###### Notes ######
-These macros de not support Twine's bracket notation ([[passage]]/[img[URL]]). For clickable images, using the `<img src=URL>` syntax as link text is the preferred method.
+##[The 'a' macro](a macro.md)##
 
 ***
 
