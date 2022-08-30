@@ -49,6 +49,36 @@ This macro set does not support Twine's bracket notation ([[passage]]/[img[URL]]
 
 ***
 
+## The 'on' and 'trigger' macros ##
+
+The `on` macro generated a customizable element which will update its contents when a given event happens. The `trigger` macro is used to trigger such events.
+
+### Syntax ###
+
+Both `on` and `trigger` require at least one event name to function.
+```html
+<<on 'event1[,event2,...]' [elementType] [attribute + value]>> ...content... <</on>>
+<<trigger 'event1[,envent2,...]'>>
+```
+
+Example:
+
+```html
+<<on 'HPLoss'>>
+	You have $health health left.
+<</on>>
+
+<<button 'Lose 5 HP'>>
+	<<set $health -= 5>>
+	<<trigger 'HPLoss'>>
+<</button>>
+```
+
+###### Notes ######
+
+On update, the inner contents of the `on` element are wikified from the code supplied in the passage. Any styling or modification of this content will be erased, however the `on` element itself will not change.
+Event names are case-sensitives but blank spaces on ever side will be trimmed out.
+
 ## The 'app' and 'prep' macros ##
 
 The `<<app>>` and `<<prep>>` macros are altered versions of the default `<<append/prepend>>` to take HTML attribute/value pairs as arguments (see the 'a' macro above).
