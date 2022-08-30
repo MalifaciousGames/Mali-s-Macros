@@ -18,13 +18,15 @@ Macro.add(['a','adel','but','butdel'], {
 
 	let link = (this.name === 'but' || this.name === 'butdel') ? $(document.createElement('button')) : $(document.createElement('a')); let passage;
 		
-// Assigns properties and values (2 args at a time)
+// Matches values with attributes
 	
 	for (let i = 1; i < this.args.length;i+=2) {
 		if (this.args[i] === 'goto') { 
 			link.attr( 'data-passage' , this.args[i+1] );
 			passage = this.args[i+1];
-
+			
+// Same processing as the default <<link>> macro
+			
 			if (Story.has(passage)) {
 				link.addClass('link-internal');
 
@@ -46,12 +48,13 @@ Macro.add(['a','adel','but','butdel'], {
 		}, 
 				
 		this.createShadowWrapper(
-// 'del' variations remove themselves
-			(this.name === 'adel' || this.name === 'butdel') ? () => link.remove() : null,
-// Wikifier call if any content has been supplied
-			this.payload[0].contents !== '' ? () => Wikifier.wikifyEval(this.payload[0].contents.trim()) : null,
-// Passage navigation if any passage
-			passage != null ? () => Engine.play(passage) : null
+			this.payload[0].contents !== '' ?
+			() => Wikifier.wikifyEval(this.payload[0].contents.trim())
+			: null,
+			passage != null ?
+			() => Engine.play(passage) : 
+			(this.name === 'adel' || this.name === 'butdel') ?
+			() => link.remove() : null
 		))
 	.appendTo(this.output);
 	}
