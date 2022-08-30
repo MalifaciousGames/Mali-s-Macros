@@ -1,4 +1,4 @@
-// Updates code block on custom event
+// Customizable elements that update themselves on events
 	
 Macro.add('on', {
 	tags  : null,
@@ -6,20 +6,30 @@ Macro.add('on', {
 	handler() {
 		
 		if (this.args.length == 0) {
-			return this.error('missing event name');
+			return this.error('Missing event name');
 		} else if (typeof this.args[0] !== 'string'){
-			return this.error('event name must be a string');
+			return this.error('Event name must be a string');
+		} else if (this.args.length !== 1 && this.args.length % 2 !== 0) {
+			return this.error('Number of arguments must be 1 or even: "eventName" + [type] + [attribute + value]');
 		}
 		
-		let trig = this.args[0].split(','), content = this.payload[0].contents, output;
+// Split and sort event names
+			
+		let trig = this.args[0].split(','), content = this.payload[0].contents;
 		
 		trig = trig.map(event => event.trim());
+			
+// Create element, apply attributes
 		
-		// Passage load:
-		output = $(document.createElement('span')).wiki(content);
+		let output = $(document.createElement(this.args[1]?this.args[1]:'span')).wiki(content);
+			
+		for (let i = 2; i < this.args.length;i+=2) {
+			output.attr( this.args[i] , this.args[i+1] );
+		}
+			
 		output.addClass(`macro-${this.name}`).appendTo(this.output);
 		
-		// On custom event:
+// Apply listeners for each event name
 		
 		for (let i=0;i < trig.length;i++) {
 			$(document).on(trig[i], function() {
@@ -39,6 +49,8 @@ Macro.add('trigger', {
 		let trig = this.args[0].split(',');
 		
 		trig = trig.map(event => event.trim());
+		
+// Triggers each event supplied
 		
 		for (let i=0;i < trig.length;i++) {
 			$(document).trigger(trig[i]);
