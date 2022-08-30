@@ -51,7 +51,7 @@ This macro set does not support Twine's bracket notation ([[passage]]/[img[URL]]
 
 ## The 'on' and 'trigger' macros ##
 
-The `on` macro generated a customizable element which will update its contents when a given event happens. The `trigger` macro is used to trigger such events.
+The `on` macro generates a customizable element which will update its contents when a given event happens. The `trigger` macro is used to trigger such events.
 
 ### Syntax ###
 
