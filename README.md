@@ -45,7 +45,7 @@ Unlike `<<linkreplace>>` they do not append their content to the page.
 
 ###### Notes ######
 
-This macro set does not support Twine's bracket notation ([[passage]]/[img[URL]]). For clickable images, using `<img src=URL>` is the preferred method.
+This macro set does not support Twine's bracket notation (`[[passage]]/[img[URL]]`). For clickable images, using `<img src=URL>` is the preferred method.
 
 ***
 
