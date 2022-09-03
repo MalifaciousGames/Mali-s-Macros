@@ -77,7 +77,9 @@ Example:
 ###### Notes ######
 
 On update, the inner contents of the `on` element are wikified from the code supplied in the passage. Any styling or modification of this content will be erased, however the `on` element itself will not change.
+
 Event names are case-sensitives but blank spaces on ever side will be trimmed out.
+
 The `on` block is a `<span>` by default. This can be changed by supplying the element type as a second argument.
 
 ## The 'app' and 'prep' macros ##
