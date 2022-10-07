@@ -1,0 +1,44 @@
+#sc-command-container {
+  display: grid;
+  justify-items: center;
+  background-color: #222;
+  border: 1px solid #444;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: .5em;
+  border-bottom: none;
+  border-right: none;
+  grid-template-columns: repeat(2,1fr);
+}
+
+#sc-command-input {
+  min-width: 20em;
+  resize: both;
+  min-height: 3em;
+  background-color: #111;
+  grid-column: span 2;
+}
+
+#sc-command-button, #sc-command-toggle {
+  width: 100%;
+}
+
+.sc-command-success {
+  border:1px solid lime;
+  background-color:green;
+  color:lime;}
+
+.sc-command-success:hover, .sc-command-error:hover {
+  border-color:unset;
+}
+.sc-command-success:hover {
+  background-color:green;
+}
+.sc-command-error:hover {
+  background-color:#590000;
+}
+.sc-command-error {
+  border:1px solid red;
+  background-color:#590000;
+  color:red;}
