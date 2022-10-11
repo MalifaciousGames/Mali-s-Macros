@@ -20,16 +20,11 @@ function scCommandWrapper() { /* Outer function for scope */
 		} else { //first time, get from story
 			Tags = Story.get(passage).tags.join(' ');
 		}
-		console.log(Tags)
 	}
 	
 	function codeboxFetch() {
 		
 		fetchTags(activeEdit);
-		/*if (localMemory[activeEdit] === undefined && (tagList.includes(activeEdit) || activeEdit === Passage)){
-			Tags = Story.get(activeEdit).tags.join(' ');
-			console.log('From codeboxFetch:'+Tags);
-		}*/
 		
 		if (activeEdit === Passage){ //Is the active passage
 			
@@ -69,16 +64,17 @@ function scCommandWrapper() { /* Outer function for scope */
 				wikiLoad = wikiLoad.splice(0,wikiLoad.indexOf(']')+1) + '\n';
 			}
 
-	//Apply nobr to passages that can have tags
-	if (Tags.includes('nobr')) {
-		wikiLoad = wikiLoad.replace(/^\n+|\n+$/g,'').replace(/\n+/g,' ')
-	}
-		//Target is supplied and exists as an element on page
-		if (target != null && $(target).length){
-			$(target).empty().wiki(wikiLoad);
-		} else {
-			$.wiki(wikiLoad);
-		}
+			//Apply nobr to passages that can have tags
+			if (Tags.includes('nobr')) {
+				wikiLoad = wikiLoad.replace(/^\n+|\n+$/g,'').replace(/\n+/g,' ')
+			}
+			
+			//Target is supplied and exists as an element on page
+			if (target != null && $(target).length){
+				$(target).empty().wiki(wikiLoad);
+			} else {
+				$.wiki(wikiLoad);
+			}
 		}
 	}
 	
@@ -98,7 +94,9 @@ function scCommandWrapper() { /* Outer function for scope */
 		//Assign tags based on localMemory
 		$('html').attr('data-tags', Tags);
 		
-		if (activeEdit === Old){activeEdit = Passage}
+		if (activeEdit === Old){
+			activeEdit = Passage
+		}
 	});
 
 	// Simulate PassageDone
@@ -246,7 +244,7 @@ function CommandPrompt() {
 	const container = jQuery(document.createElement('div'))
 	.attr({'class' : 'sc-command-container', 'id' : 'sc-command-container'});
 	
-//Code box
+	//Code box
 	const codebox = jQuery(document.createElement('textarea'))
 	.attr({'type' : 'text',
 								'class' : 'sc-command-input',
@@ -311,10 +309,10 @@ function CommandPrompt() {
 	$('#passages').append(container);
 }	
 	
-//Opens CommandPrompt on each passage
-$(document).on(':passagedisplay', function() {
-	CommandPrompt()
-});
+	//Opens CommandPrompt on each passage
+	$(document).on(':passagedisplay', function() {
+		CommandPrompt()
+	});
 	
 //Lets you download localMemory as a file
 
