@@ -3,13 +3,22 @@
   justify-items: center;
   background-color: #222;
   border: 1px solid #444;
-  position: absolute;
+  position: fixed;
   bottom: 0;
   right: 0;
   padding: .5em;
   border-bottom: none;
   border-right: none;
-  grid-template-columns: repeat(2,1fr);
+  grid-template-columns: 1fr 1.5fr 1.5fr;
+}
+
+#sc-command-container * {
+  padding: inherit;
+}
+
+.scstowed{
+  -webkit-transform: translateY(100%);
+transform: translateY(100%);
 }
 
 #sc-command-input {
@@ -18,9 +27,12 @@
   min-height: 3em;
   background-color: #111;
   grid-column: span 2;
+  padding: inherit;
+  width:100%;
+  line-height: 1.75em;
 }
 
-#sc-command-button, #sc-command-toggle {
+#sc-command-runbutton, #sc-command-toggle,#sc-command-tofilebutton {
   width: 100%;
 }
 
@@ -42,3 +54,15 @@
   border:1px solid red;
   background-color:#590000;
   color:red;}
+
+#sc-command-stowbutton {
+  position: absolute;
+  right: 0;
+  top: -2.5em;
+}
+
+#sc-command-toggleBox {
+  display: grid;
+  overflow-y: scroll;
+  width:15em;
+}
