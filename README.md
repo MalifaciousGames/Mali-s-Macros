@@ -23,7 +23,7 @@ Note that arguments do not need quotation marks, as such naked variables can be 
 <</a>>
 ```
 
-### Custom attributes ###
+### Goto attribute ###
 
 The `goto` attribute lets you specify a passage to forward the player to. It works in the exact same fashion as the default `<<link>>` syntax.
 
@@ -31,6 +31,8 @@ The `goto` attribute lets you specify a passage to forward the player to. It wor
 <<a "Take me to some passage" goto 'somePassage'>>
 <</a>>
 ```
+
+### Output attributes ###
 
 Three output options are also available:
 
