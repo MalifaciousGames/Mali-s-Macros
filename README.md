@@ -32,15 +32,32 @@ The `goto` attribute lets you specify a passage to forward the player to. It wor
 <</a>>
 ```
 
-### Variations ###
+Three output options are also available:
 
-Both `<<adel>>` and `<<butdel>>` are single use interactive elements. Once clicked they remove themselves.
-Unlike `<<linkreplace>>` they do not append their content to the page.
+| Effect | Syntax |
+|------------|------------|
+| Replace | `replace/rep` |
+| Prepend | `prepend/prep`|
+| Append | `append/app` |
+
+These need to be supplied with a valid selector.
 
 ```html
-<<butdel "Click me!>>"
-        <<append '.passage'>>Won't click me again!<</append>>
-<</butdel>>
+<div id='box'>Contents</div>
+
+<<a "Change box contents" rep '#box'>>
+	Something different!
+<</a>>
+
+<<a "Add content to the box" app '#box'>>
+	and some extra!
+<</a>>
+```
+
+`<<a>>` macro elements can have any number or combination of the `replace/prepend/append` attributes, together with any number of selectors. These always run in the order described above, `replace` being first.
+
+```
+<<but 'Button' app '#id, .className' prep '#id, #someOtherId' rep '.someOtherClass'>>
 ```
 
 ###### Notes ######
