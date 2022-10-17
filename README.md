@@ -62,6 +62,8 @@ These need to be supplied with a valid selector.
 <<but 'Button' app '#id, .className' prep '#id, #someOtherId' rep '.someOtherClass'>>
 ```
 
+Warning: The macro's payload will run once for each instance of `replace/prepend/append`.
+
 ###### Notes ######
 
 This macro set does not support Twine's bracket notation (`[[passage]]/[img[URL]]`). For clickable images, using `<img src=URL>` is the preferred method.
