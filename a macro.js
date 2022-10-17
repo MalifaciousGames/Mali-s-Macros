@@ -71,19 +71,21 @@ Macro.add(['a','adel','but','butdel'], {
 		
 				() => {
 					if (payload !== ''){
-						//Order: replace, prepend, append
-						toRep.length ? toRep.forEach((target) => {
-							$(target).empty().wiki(payload)
-						}) : '';
-						toPrep.length ? toPrep.forEach((target) => {
-							$(document.createDocumentFragment()).wiki(payload).prependTo(target);
-						}) : '';
-						toApp.length ? toApp.forEach((target) => {
-							$(target).wiki(payload)
-						}) : '';
-						
-						//Default case
-						$.wiki(payload);
+						if (toRep.length + toPrep.length + toApp.length){
+						  //Order: replace, prepend, append
+						  toRep.length ? toRep.forEach((target) => {
+							  $(target).empty().wiki(payload)
+						  }) : '';
+						  toPrep.length ? toPrep.forEach((target) => {
+							  $(document.createDocumentFragment()).wiki(payload).prependTo(target);
+						  }) : '';
+						  toApp.length ? toApp.forEach((target) => {
+							  $(target).wiki(payload)
+						  }) : '';
+						} else {
+						  //Default case
+						  $.wiki(payload);
+						}
 					}
 				},
 			
