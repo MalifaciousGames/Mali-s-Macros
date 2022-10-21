@@ -1,9 +1,8 @@
 ## Settings in Sugarcube language ##
 
-These three macros let you use Sugarcube's Settings API without requiring Javascript knowledge. They cover the three built-in input types: toggle, list and range. 
-This macro should only be used in `StoryInit` otherwise the attached settings won't load properly on startup!
+These three macros let you use Sugarcube's Settings API without requiring Javascript knowledge. They cover the three built-in input types: toggle, list and range.
 
-Read the documentation here: https://www.motoslave.net/sugarcube/2/docs/#setting-api .
+This macro should only be used in `StoryInit` otherwise the attached settings won't load properly on startup!
 
 ### Syntax ###
 
@@ -65,4 +64,6 @@ Here, _this replaces settings.NewToggle ...
 
 ```
 
-Note: `_this` is not a true temporary variable as the State isn't loaded when Storyinit runs. 
+Note: 
+`_this` is not a true temporary variable as the State isn't loaded when Storyinit runs. 
+More on the settings API: https://www.motoslave.net/sugarcube/2/docs/#setting-api 
