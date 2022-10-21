@@ -1,3 +1,6 @@
+[The 'a' macro](a-macro.md)
+
+
 ## The 'a' macro ##
 
 The 'a' macro adds four interactive elements, two links and two buttons, all of which take html attribute/value pairs as arguments.
