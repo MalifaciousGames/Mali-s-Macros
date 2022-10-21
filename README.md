@@ -1,5 +1,5 @@
-[The 'a' macro](a-macro.md)
-
+[The 'a' macro](/a-macro/a-macro.md)
+[The 'a' macro](a-macro/a-macro.md)
 
 ## The 'a' macro ##
 
