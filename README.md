@@ -1,6 +1,6 @@
 # Overview #
 
-## The '<<a>>' Macro##
+## The 'a' Macro ##
 
 Links and buttons that take HTML attributes and a few custom ones: 
 
