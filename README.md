@@ -2,9 +2,7 @@
 
 ## The 'a' Macro ##
 
-Links and buttons that take HTML attributes and a few custom ones: 
-
-[The 'a' macro](a-macro/a-macro.md)
+Links and buttons that take any HTML attributes: [The 'a' macro](a-macro/a-macro.md)
 
 ## The 'on' and 'trigger' macros ##
 
