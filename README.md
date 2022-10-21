@@ -4,6 +4,10 @@
 
 Links and buttons that take any HTML attributes: [The 'a' macro](a-macro/a-macro.md)
 
+## JS-free settings API ##
+
+Lets you use the built-in Settings API without JavaScript knowledge: [The settings macros](sc-settings/sc-settings.md)
+
 ## The 'on' and 'trigger' macros ##
 
 The `on` macro generates a customizable element which will update its contents when a given event happens. The `trigger` macro is used to trigger such events.
