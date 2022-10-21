@@ -6,7 +6,7 @@ This macro should only be used in `StoryInit` otherwise the attached settings wo
 
 ### Syntax ###
 
-The three available types only difer slightly in their syntax:
+The three available types only differ slightly in their syntax:
 
 Toggle:
 
