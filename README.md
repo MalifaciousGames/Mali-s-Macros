@@ -4,9 +4,27 @@
 
 Links and buttons that take any HTML attributes: [The 'a' macro](a-macro/a-macro.md)
 
+***
+
 ## JS-free settings API ##
 
 Lets you use the built-in Settings API without JavaScript knowledge: [The settings macros](sc-settings/sc-settings.md)
+
+***
+
+## The 'checkvars' macro ##
+
+This macro brings up a dialog window which displays State variables, settings objects and setup objects.
+
+```html
+<<button 'Check the variables!'>>
+	<<checkvars>>
+<</button>>
+```
+
+This in an expansion on TME's original code (available here: https://www.motoslave.net/sugarcube/2/). All credit goes to him.
+
+***
 
 ## The 'on' and 'trigger' macros ##
 
