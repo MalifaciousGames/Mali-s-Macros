@@ -17,6 +17,7 @@ Macro.add(['addtoggle','addlist','addrange'], {
 			return this.error(`New setting ${name} needs a code payload.`);
 		}
 		
+		console.log(typeof value)
 		
 		// If description is available, set it
 		if (desc !== undefined){ desc = desc.args[0]};
@@ -91,17 +92,21 @@ Macro.add(['addtoggle','addlist','addrange'], {
 			break;
 		};
 		
-		// Generate custom init payload with default value
-		if (value != null) {
-			if (typeof value === 'string') {
-				value = `'${value}'`;
-			}
-			const initPayload = payload.contents.replaceAll('_this', value);
+		// Corresponding settings object already exists, run that
+		if (settings[name] !== undefined) {
+			value = settings[name];
+		} 
 			
-			//Runs once on startup, once 'late' html is generated
-			$(document).one(':passagerender', function() {
-				$.wiki(initPayload);
-			});
+		// Since paylaod's already a string, string syntax needs to be enforced 
+		if (typeof value === 'string') {
+			value = `'${value}'`;
 		}
+		
+		const initPayload = payload.contents.replaceAll('_this', value);
+			
+		//Runs once on startup, once 'late' html is generated
+		$(document).one(':passagerender', function() {
+			$.wiki(initPayload);
+		});
 	}
 });
