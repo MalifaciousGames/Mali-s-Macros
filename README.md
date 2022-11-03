@@ -64,20 +64,3 @@ On update, the inner contents of the `on` element are wikified from the code sup
 Event names are case-sensitives but blank spaces on ever side will be trimmed out.
 
 The `on` block is a `<span>` by default. This can be changed by supplying the element type as a second argument.
-
-## The 'app' and 'prep' macros ##
-
-The `<<app>>` and `<<prep>>` macros are altered versions of the default `<<append/prepend>>` to take HTML attribute/value pairs as arguments (see the 'a' macro above).
-
-If no target selector is given, they default to the `'.passage'` element instead.
-
-```html
-<<a "Append">>
-	<<app '' style background-color:red;>>
-		Contents, appended to '.passage' in a red-colored span.
-	<</app>>
-<</a>>
-```
-
-###### Notes ######
-If you wish to add attributes but no target selector, the first field should be left blank like in the example.
