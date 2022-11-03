@@ -60,8 +60,16 @@ The temporary variable `_this` can be used in the payload section to refer to th
 		<</if>>
 <</addtoggle>>
 
-Here, _this replaces settings.NewToggle ...
+_this replaces settings.NewToggle, acts as a boolean.
 
+<<addrange 'FontSize'>>
+	<<label 'A new range!'>>
+	<<range 1 2 .1>>
+	<<payload>>
+		<<run $('body').css('font-size',_this + 'em')>>
+<</addrange>>
+
+_this replaces settings.FontSize, acts as a number.
 ```
 
 Note: 
