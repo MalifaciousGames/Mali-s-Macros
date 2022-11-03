@@ -8,8 +8,7 @@ Links and buttons that take any HTML attributes: [The 'a' macro](a-macro/a-macro
 
 ## The 'input' and 'inputbox' macros ##
 
-Two flavours of macros to generate highly customizable input elements.
-	[Input macros](input-macros/sc-input.md)
+Two flavours of macros to generate highly customizable input elements: [Input macros](input-macros/sc-input.md)
 
 ***
 
