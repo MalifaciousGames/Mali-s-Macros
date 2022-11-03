@@ -40,7 +40,7 @@ Range:
 	<<payload>>
 	...code in Sugarcube syntax...
 	[<<desc 'Verbose description of the setting.(optional)'>>]
-<</addlist>>
+<</addrange>>
 ```
 
 ### _this ###
