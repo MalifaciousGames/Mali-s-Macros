@@ -95,6 +95,6 @@ Macro.add(['a','adel','but','butdel'], {
 				} else if (this.name.length > 3){ //Remove link
 					link.remove()
 				}
-			})).appendTo(this.output);
+		})).appendTo(this.output);
 	}
 });
