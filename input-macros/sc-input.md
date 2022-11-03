@@ -34,3 +34,34 @@ Object syntax:
 
 The goto attribute forwards the player to the given passage when them press enter on the input element.
 This works on any focused element but feels most natural on typing inputs.
+
+## The 'inputbox' macro ##
+
+`<<inputbox>>` acts like `<<input>>` except it is a container macro that runs its code on certain triggers.
+
+```html
+<<inputbox type '$var' attribute value...>>
+  ...code that runs when the player presses enter...
+<<onchange>>
+  ...code that runs whenever '$var' is modified...
+<</inputbox>>
+```
+
+This can be use to conduct input checks or display informations responsively.
+
+```html
+Code:
+<<inputbox number '$code' maxlength 4 size 4>>
+<<onchange>>
+  <<if $code === 5542>> /* Code is right*/
+    <<goto 'NextPassage'>>
+  <</if>>
+<</inputbox>>
+```
+
+####### Notes #######
+
+Automatic setting: Sugarcube's `<<textbox/numberbox>>` require a default value and set their variable accordingly. These do not. Receiver variables are not defined nor modified without player input.
+
+Type coercion: By default input elements produce string values, these macros convert values to numbers when possible, expect for when type is 'text'.
+
