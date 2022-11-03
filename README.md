@@ -6,6 +6,12 @@ Links and buttons that take any HTML attributes: [The 'a' macro](a-macro/a-macro
 
 ***
 
+## 'input' and 'inputbox' ##
+
+Two highly customizable input macros: [Input macros](input-macros/sc-input.md)
+
+***
+
 ## JS-free settings API ##
 
 Lets you use the built-in Settings API without JavaScript knowledge: [The settings macros](sc-settings/sc-settings.md)
@@ -75,25 +81,3 @@ If no target selector is given, they default to the `'.passage'` element instead
 
 ###### Notes ######
 If you wish to add attributes but no target selector, the first field should be left blank like in the example.
-
-***
-
-## The 'input' macro ##
-
-The `<<input>>` macro creates a HTML input element which takes HTML attribute/value pairs as arguments (see the 'a' macro above). It is meant as a replacement for Sugarcube's `<<textbox>>` and `<<numberbox>>`.
-
-It uses the following syntax:
-`<<input type '$variableName' (attribute value)>>`
-
-Supported types can be found here: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
-
-Examples:
-
-```html
-<<input text '$name' placeholder 'Your name here'>>
-
-<<input color '$customTheme'>>
-```
-
-***
-
