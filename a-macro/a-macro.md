@@ -1,6 +1,6 @@
 ## The 'a' macro ##
 
-The 'a' macro adds four interactive elements, two links and two buttons, all of which take html attribute/value pairs as arguments.
+The 'a' macro adds four interactive elements, two links and two buttons, all of which take html attributes as arguments.
 
 | Use | Links | Buttons |
 |------------|------------|------------|
@@ -10,7 +10,13 @@ The 'a' macro adds four interactive elements, two links and two buttons, all of 
 ### HTML attributes ###
 
 ```html
+Pair syntax:
 <<a "Link text" attribute value...>>
+Contents
+<</a>>
+
+Object syntax:
+<<a "Link text" `{attribute : value,...}`>>
 Contents
 <</a>>
 ```
@@ -18,9 +24,18 @@ Contents
 Note that arguments do not need quotation marks, as such naked variables can be used as is:
 
 ```html
+Pair syntax:
 <<a "Link text" id $id class $someClassName style color:red;>>
         <<append '.passage'>>You clicked a red link!<</append>>
 <</a>>
+
+Object syntax:
+<<set setup.goBack = { class : 'backButton' ,
+			id : 'back' ,
+			goto : 'MainHub'
+}>>
+<<but "Back to main hub" setup.goBack>>
+<</but>>
 ```
 
 ### Goto attribute ###
@@ -32,37 +47,37 @@ The `goto` attribute lets you specify a passage to forward the player to. It wor
 <</a>>
 ```
 
-### Output attributes ###
+### Output options ###
 
-Three output options are also available:
+The 'a' macro comes with three built-in output options:
 
 | Effect | Syntax |
 |------------|------------|
-| Replace | `replace/rep` |
-| Prepend | `prepend/prep`|
-| Append | `append/app` |
+| Replace | `<<rep>>` |
+| Prepend | `<<prep>>`|
+| Append | `<<app>>` |
 
-These need to be supplied with a valid selector.
+These need to be supplied with one or multiple comma-separated selectors.
 
 ```html
 <div id='box'>Contents</div>
 
-<<a "Change box contents" rep '#box'>>
+<<a "Change box contents">>
+	...silent code...
+<<rep '#box'>>
 	Something different!
 <</a>>
-
-<<a "Add content to the box" app '#box'>>
-	and some extra!
-<</a>>
 ```
 
-`<<a>>` macro elements can have any number or combination of the `replace/prepend/append` attributes, together with any number of selectors. These always run in the order described above, `replace` being first.
+A single `<<a>>` element can support all of the output options, these always run in the order described above, `<<rep>>` being first.
 
 ```
-<<but 'Button' app '#id, .className' prep '#id, #someOtherId' rep '.someOtherClass'>>
+<<but 'Button'>>
+	<<rep '#id1, #id2'>> ...new content!...
+	<<prep '.someClass'>> ...something to prepend...
+	<<app '#someID'>> ...something to append...
+<</but>>
 ```
-
-Warning: The macro's payload will run once for each instance of `replace/prepend/append`.
 
 ###### Notes ######
 
