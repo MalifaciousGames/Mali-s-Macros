@@ -6,6 +6,8 @@ The `<<input>>` macro lets you create highly customizable input elements.
 <<input type 'variable' attribute value...>>
 ```
 
+Check out possible types and attributes: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
+
 ### Variable syntax ###
 
 Input elements edit the value of the supplied variable which can be `State`, `setup` or `settings`.
