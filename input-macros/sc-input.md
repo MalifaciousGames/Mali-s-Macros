@@ -59,7 +59,7 @@ Code:
 <</inputbox>>
 ```
 
-####### Notes #######
+###### Notes ######
 
 Automatic setting: Sugarcube's `<<textbox/numberbox>>` require a default value and set their variable accordingly. These do not. Receiver variables are not defined nor modified without player input.
 
