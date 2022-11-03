@@ -26,7 +26,7 @@ Note that arguments do not need quotation marks, as such naked variables can be 
 ```html
 Pair syntax:
 <<a "Link text" id $id class $someClassName style color:red;>>
-        <<append '.passage'>>You clicked a red link!<</append>>
+        <<app '.passage'>>You clicked a red link!
 <</a>>
 
 Object syntax:
