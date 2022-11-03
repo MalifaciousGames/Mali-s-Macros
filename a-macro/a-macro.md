@@ -34,6 +34,7 @@ Object syntax:
 			id : 'back' ,
 			goto : 'MainHub'
 }>>
+
 <<but "Back to main hub" setup.goBack>>
 <</but>>
 ```
@@ -71,7 +72,7 @@ These need to be supplied with one or multiple comma-separated selectors.
 
 A single `<<a>>` element can support all of the output options, these always run in the order described above, `<<rep>>` being first.
 
-```
+```html
 <<but 'Button'>>
 	<<rep '#id1, #id2'>> ...new content!...
 	<<prep '.someClass'>> ...something to prepend...
