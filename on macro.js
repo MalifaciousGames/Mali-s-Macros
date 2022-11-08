@@ -35,7 +35,9 @@ Macro.add('on', {
 			$(document).on(trig[i], function() {
 				output.empty().wiki(content);
 				customEvents.pushUnique(trig[i]);
-				console.log(trig[1]);
+				if (Config.debug) {
+					console.log(trig[1]);
+				}
 			});
 		}
 	}
@@ -54,7 +56,9 @@ Macro.add('trigger', {
 		
 		for (let i=0;i < trig.length;i++) {
 			$(document).trigger(trig[i]);
-			console.log('Triggered custom event: ' + trig[i]);
+			if (Config.debug) {
+				console.log('Triggered custom event: ' + trig[i]);
+			}
 		}	
 	}
 });
