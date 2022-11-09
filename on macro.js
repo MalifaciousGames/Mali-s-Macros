@@ -1,73 +1,94 @@
-// Customizable elements that update themselves on events
+/* Maliface's <<on>> macro, customizable element which updates on event.
+
+Syntax:
+<<on 'eventName' 'elementType' [attribute + value] [`{ attribute : value }`]>>
+...contents...
+<</on>>
+
+To run the contents again (update it):
+<<trigger 'eventName'>>
+*/
 	
 Macro.add('on', {
 	tags  : null,
 
 	handler() {
 		
-		if (this.args.length == 0) {
-			return this.error('Missing event name');
-		} else if (typeof this.args[0] !== 'string'){
-			return this.error('Event name must be a string');
-		} else if (this.args.length !== 1 && this.args.length % 2 !== 0) {
-			return this.error('Number of arguments must be 1 or even: "eventName" + [type] + [attribute + value]');
+		if (typeof this.args[0] !== 'string'){
+			return this.error(`Event name must be a string, reading: ${typeof this.args[0]}.`);
+		} else if (this.args[0].length === 0) {
+			return this.error(`Missing event name.`);
 		}
 		
-// Split and sort event names
-			
-		let trig = this.args[0].split(','), content = this.payload[0].contents;
-		
+		// Event names to array + trim white spaces
+
+		let trig = this.args[0].split(',');
 		trig = trig.map(event => event.trim());
-			
-// Create element, apply attributes
 		
-		let output = $(document.createElement(this.args[1]?this.args[1]:'span')).wiki(content);
+		const content = this.payload[0].contents, attributes = this.args.slice(2);
 			
-		for (let i = 2; i < this.args.length;i+=2) {
-			output.attr( this.args[i] , this.args[i+1] );
+		// Create element, apply attributes
+		
+		let container = $(document.createElement(this.args[1] ? this.args[1] : 'span')).addClass(`macro-${this.name}`);
+			
+		for (let i = 0; i < attributes.length;i+=2) {
+			if (typeof attributes[i] === 'object'){
+				//JQuery style object
+				container.attr(attributes[i]);
+				i--;
+			} else { // Simple pairs
+				container.attr(attributes[i], attributes[i+1]);
+			}
 		}
 			
-		output.addClass(`macro-${this.name}`).appendTo(this.output);
+		// Append to passage 
+		container.wiki(content).appendTo(this.output);
 		
-// Apply listeners for each event name
+		// Apply listeners for each event name
 		
-		for (let i=0;i < trig.length;i++) {
-			$(document).on(trig[i], function() {
-				output.empty().wiki(content);
-				customEvents.pushUnique(trig[i]);
-				if (Config.debug) {
-					console.log(trig[1]);
-				}
+		trig.forEach(event => {
+			if (Config.debug) {
+				console.log(`Listener added for ${event}.`);
+			}
+			$(document).on(event, function() {
+				container.empty().wiki(content);
+				customEvents.pushUnique(event);
 			});
-		}
+		})
 	}
 });
 
-// Triggers custom event
+// Triggers custom events
 
 Macro.add('trigger', {
 	handler() {
-			
-		let trig = this.args[0].split(',');
 		
+		if (typeof this.args[0] !== 'string'){
+			return this.error(`Event name must be a string, reading: ${typeof this.args[0]}.`);
+		} else if (this.args[0].length === 0) {
+			return this.error(`Missing event name.`);
+		}
+		
+		// Same processing
+		let trig = this.args[0].split(',');
 		trig = trig.map(event => event.trim());
 		
-// Triggers each event supplied
+		// Triggers each supplied event
 		
-		for (let i=0;i < trig.length;i++) {
-			$(document).trigger(trig[i]);
+		trig.forEach(event => {
+			$(document).trigger(event);
 			if (Config.debug) {
-				console.log('Triggered custom event: ' + trig[i]);
+				console.log(`Triggered custom event: ${event}.`);
 			}
-		}	
+		})
 	}
 });
 
-// Cleans custom events on passage transition (stops them from stacking endlessly)
+// Cleans custom events on passage transition (stops them from stacking)
 
-	window.customEvents = [];
+window.customEvents = [];
 		
-	$(document).on(':passageinit', function () {
-		customEvents.forEach(event => $(document).off(event));
-		customEvents = [];
-	});
+$(document).on(':passageinit', function () {
+	customEvents.forEach(event => $(document).off(event));
+	customEvents = [];
+});
