@@ -48,6 +48,36 @@ The `goto` attribute lets you specify a passage to forward the player to. It wor
 <</a>>
 ```
 
+### Key attribute ###
+
+The `key` attribute is used to bind one or multiple keys to an element. When one of the given keys is pressed, the element behaves as if it had been clicked.
+The `key` attribute accepts both keyCode numbers (see: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode) and key values (see: https://developer.mozilla.org/en-US/docs/web/api/ui_events/keyboard_event_key_values).
+
+```html
+/* Supports both QWERTY and AZERTY keyboards */
+<<a "Push forward." key 'w,z' goto 'NextPassage'>>
+<</a>>
+
+<<a "Go back." key 's' goto 'NextPassage'>>
+<</a>>
+```
+
+Generating buttons bound to number keys:
+
+```html
+<<set $inventory = ['Potion','Knife','Flint','Bandage']>>
+
+<<for _i, _item range $inventory>>
+	<<capture _item>>
+		<<but `'Use _item (press '+(_i+1)+')'` key `49+_i`>>
+			<<rep '#id'>>...used _item...
+		<</but>>
+	<</capture>>
+<</for>>
+
+<span id='id'></span>
+```
+
 ### Output options ###
 
 The 'a' macro comes with three built-in output options:
