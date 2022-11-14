@@ -77,15 +77,20 @@ Macro.add(['a','adel','but','butdel'], {
 		
 		// Key attribute
 		if (link.attr('key')){
-			const key = link.attr('key').toUpperFirst(),
-				keyType = (isNaN(Number(key))) ? 'key' : 'keyCode';
+			let keyArray = link.attr('key').split(',');
+			keyArray = keyArray.map(key => key.trim());
 			
+			// Event handler
 			$(document).on('keyup', function(e) {
-				if (e[keyType] == key){
-					e.preventDefault();
-					link.click();
-					return false;
-				}
+				keyArray.every(key => {
+					if (e[isNaN(Number(key)) ? 'key' : 'keyCode'] == key){
+						e.preventDefault();
+						link.click();
+						return false; //Stops the every()
+						//Makes sure it runs only once even if redundant keys are given
+					}
+					return true;
+				})
 			})
 		}
 		
