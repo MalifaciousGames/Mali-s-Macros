@@ -59,7 +59,7 @@ The `key` attribute accepts both keyCode numbers (see: https://developer.mozilla
 <<a "Push forward." key 'w,z' goto 'NextPassage'>>
 <</a>>
 
-<<a "Go back." key 's' goto 'NextPassage'>>
+<<a "Go back." key 's' goto 'PreviousPassage'>>
 <</a>>
 ```
 
