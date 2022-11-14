@@ -50,7 +50,8 @@ The `goto` attribute lets you specify a passage to forward the player to. It wor
 
 ### Key attribute ###
 
-The `key` attribute is used to bind one or multiple keys to an element. When one of the given keys is pressed, the element behaves as if it had been clicked.
+The `key` attribute is used to bind one or more keys to an element. When one of the given keys is pressed, the element behaves as if it had been clicked.
+
 The `key` attribute accepts both keyCode numbers (see: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode) and key values (see: https://developer.mozilla.org/en-US/docs/web/api/ui_events/keyboard_event_key_values).
 
 ```html
