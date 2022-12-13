@@ -74,7 +74,7 @@ Sometimes you just want to run code x times without using the full loop syntax..
 ### Syntax ###
 
 ```html
-<<times x ['_var']>> ...code to run x times... <</times>>
+<<times number ['iterationVariable']>> ...code to run x times... <</times>>
 ```
 
 By default, the iteration value is `_i`, this can be changed by supplying a quoted variable as second argument.
