@@ -64,3 +64,25 @@ On update, the inner contents of the `on` element are wikified from the code sup
 Event names are case-sensitives but blank spaces on ever side will be trimmed out.
 
 The `on` block is a `<span>` by default. This can be changed by supplying the element type as a second argument.
+
+***
+
+## The 'times' macro ##
+
+Sometimes you just want to run code x times without using the full loop syntax... this macro does exactly that.
+
+### Syntax ###
+
+```html
+<<times x ['_var']>> ...code to run x times... <</times>>
+```
+
+By default, the iteration value is `_i`, this can be changed by supplying a quoted variable as second argument.
+
+```html
+<<set $amount = 5>>
+
+<<times $amount>>
+	<<set $inventory.push(setup.item)>>
+<</times>>
+```
