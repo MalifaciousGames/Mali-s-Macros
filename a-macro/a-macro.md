@@ -89,7 +89,7 @@ The 'a' macro comes with three built-in output options:
 | Prepend | `<<prep>>`|
 | Append | `<<app>>` |
 
-These need to be supplied with one or multiple comma-separated selectors.
+These can be supplied with one or multiple comma-separated selectors. If none is given, the link's immediate parent will serve as a target.
 
 ```html
 <div id='box'>Contents</div>
