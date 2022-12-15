@@ -57,3 +57,14 @@ By default, the iteration value is `_i`, this can be changed by supplying a quot
 	<<set $inventory.push(setup.item)>>
 <</times>>
 ```
+
+***
+
+Liked the macro and have a few bucks to spare?
+
+You should consider donating to Sugarcube's dev, Thomas Michael Edwards, or to Chris, Klembot, Klimas who manages the Twine application. Both of them have done more for the community that I ever will.
+TME: https://www.motoslave.net/sugarcube/2/ .
+Klembot: https://www.patreon.com/klembot .
+
+That said, I do have a ko-fi account, any contribution is highly appreciated <3
+https://ko-fi.com/malifaciousgames
