@@ -20,8 +20,7 @@ Lets you use the built-in Settings API without JavaScript knowledge: [The settin
 
 ## The 'on' and 'trigger' macros ##
 
-This pair of macros make up an event-based refresh system. They are useful as a way to update displays but also for running asynchronous code.
-[On macro](on-macro/on-macro.md)
+This pair of macros make up an event-based refresh system. They are useful as a way to update displays but also for running asynchronous code: [On macro](on-macro/on-macro.md)
 
 ***
 
