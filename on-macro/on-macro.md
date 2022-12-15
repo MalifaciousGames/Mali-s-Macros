@@ -27,7 +27,7 @@ Example:
 
 ### 'onInit' special attribute ###
 
-By default, the contents of the `on` macro load with their passage, setting the `onInit` property to `false` make it so it only run when triggered.
+By default, the `on` macro runs once as the current passage is loaded, setting the `onInit` property to `false` make it so it only runs when triggered.
 
 ```html
 <<on 'cannotEquip' p onInit false>>
