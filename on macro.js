@@ -13,32 +13,34 @@ Macro.add('on', {
 
 	handler() {
 		
-		if (this.args[0] === undefined || this.args[0] === '') {
+		if (!this.args[0]) {
 			return this.error(`Missing event name.`);
 		} else if (typeof this.args[0] !== 'string'){
 			return this.error(`Event name must be a string, reading: ${typeof this.args[0]}.`);
 		}
 		
-		let trig = this.args[0].split(',');
+		let trig = this.args[0].split(','), onInit = true;
 		const content = this.payload[0].contents, attributes = this.args.slice(2);
 		trig = trig.map(event => event.trim());
 			
 		// Create element, apply attributes
-		let container = $(document.createElement(this.args[1] ? this.args[1] : 'span')).addClass(`macro-${this.name}`);
+		let container = $(document.createElement(this.args[1] ?? 'span')).addClass(`macro-${this.name}`);
 			
-		for (let i = 0; i < attributes.length;i+=2) {
-			if (typeof attributes[i] === 'object'){ //JQuery style object
+		for (let i = 0; i < attributes.length;i++) {
+			if (typeof attributes[i] === 'object'){//JQuery style object
 				container.attr(attributes[i]);
-				i--;
 			} else { // Simple pairs
 				container.attr(attributes[i], attributes[i+1]);
+				i++;
 			}
 		}
-
-		// Append to passage 
-		container.wiki(content).appendTo(this.output);
 		
-		// Apply listeners for each event name
+		if (container.attr('onInit') !== undefined){
+			onInit = eval(container.attr('onInit'));
+			container.removeAttr('onInit').attr('data-onInit', onInit);
+		}
+
+		// Apply listener for each event name
 		trig.forEach(event => {
 			if (Config.debug) {
 				console.log(`Listener added for ${event}.`);
@@ -48,6 +50,9 @@ Macro.add('on', {
 				container.empty().wiki(content);
 			});
 		})
+		// Wikify on passage load, unless onInit is false
+		onInit ? container.wiki(content) : null;
+		container.appendTo(this.output);
 	}
 });
 
