@@ -64,7 +64,7 @@ By default, the iteration value is `_i`, this can be changed by supplying a quot
 
 You should consider donating to Sugarcube's dev, Thomas Michael Edwards, or to Chris, Klembot, Klimas who manages the Twine application. Both of them have done more for the community that I ever will.
 
-TME: https://www.motoslave.net/sugarcube/2/ .
+TME: https://www.motoslave.net/sugarcube/2/ (top right).
 
 Klembot: https://www.patreon.com/klembot .
 
