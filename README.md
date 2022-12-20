@@ -27,8 +27,8 @@ This pair of macros make up an event-based refresh system. They are useful as a 
 ## The 'toggle' Macro ##
 
 A more customizable version of Sugarcube's `<<cycle>>` macro. Each option can run its own code payload and/or execute common code. 
-Comes in link and button format.
-[The 'toggle' macro](toggle-macro/toggle-macro.md)
+
+Comes in link and button format:[The 'toggle' macro](toggle-macro/toggle-macro.md)
 
 ***
 
