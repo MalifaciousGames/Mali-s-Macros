@@ -25,7 +25,7 @@ Syntax:
 <<toggle 'settings.elementStowed'>>
 
 <<case true 'Stow element.'>>
-  <<addclass '#element' 'stowed'>>
+	<<addclass '#element' 'stowed'>>
 <<case false 'Unstow element.'>>
 	<<removeclass '#element' 'stowed'>>
 <<all>>
