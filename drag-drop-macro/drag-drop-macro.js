@@ -1,14 +1,3 @@
-Macro.add('dropOverride', {
-  isAsync : true,
-
-	handler() {
-		State.temporary.DropOverride = true;
-		setTimeout(()=> {
-			State.temporary.DropOverride = false;
-		},40)
-	}
-})
-
 Macro.add('drop', {
   isAsync : true,
 	tags : ['onEnter','onLeave','onDrop','onRemove'],
@@ -30,7 +19,7 @@ Macro.add('drop', {
 		})
 		
 		//Invalid dropMode
-		if (dropMode && !['append', 'prepend', 'replace', 'swap','none','anywhere','remove','fillswap'].includes(dropMode)) return this.error(`Drop mode (<<onDrop mode>>) is not valid, reading '${dropMode}'`);
+		if (dropMode && !['append', 'prepend', 'replace','replaceall', 'swap','none','anywhere','remove','fillswap'].includes(dropMode)) return this.error(`Drop mode (<<onDrop mode>>) is not valid, reading '${dropMode}'`);
 		
 		const dropElem = $(`<${type ? type : 'div'}/>`);
 	
@@ -108,10 +97,10 @@ Macro.add('drop', {
 				$(document).off(':predrop');
 				$(document).one(':predrop', (e) => {
 						onRemove ? $.wiki(onRemove.contents): null;
-					if (e.origin !== 'swap' && slots !== undefined) {
-						slots += dragElem.size;
-						dropElem.removeAttr('slots').attr('data-slots', slots);
-					}
+						if (e.origin !== 'swap' && slots !== undefined) {
+							slots += dragElem.size;
+							dropElem.removeAttr('slots').attr('data-slots', slots);
+						}
 				});
 			}
 		));
@@ -121,26 +110,20 @@ Macro.add('drop', {
 				(e) => {
 					const dragElem = State.temporary.drag;
 					
-					/*$(e.target).trigger(
-						{type : ':predrop', slots : slots, origin : e.origin}
-					);*/
-					
 						if (fillswap){
 							dropMode = slots > 0 ? null : 'swap';
 						}
 					
 					e.preventDefault();
 					
-					if (ID && dragElem.type !== ID){
+					if (ID && dragElem.type && dragElem.type !== ID){
 						//Wrond id match!
-						$(e.target).trigger(':idmissmatch');
+						$(e.target).trigger(':typemismatch');
 					} else if (slots - dragElem.size < 0 && dropMode !== 'swap'){
 						$(e.target).trigger(':noslots');
-					} else if (State.temporary.DropOverride){
-						//No slots left (and no fillswap)
-						$(e.target).trigger(':dropoverride');
 					} else {
 						
+						//Confirm target removal
 						$(e.target).trigger(
 							{type : ':predrop', slots : slots, origin : e.origin}
 						);
@@ -179,9 +162,15 @@ Macro.add('drop', {
 							break;
 							case 'none':break;
 							case 'replace':
-								if (target !== null) {
-									$(target[0]).trigger('dragstart');//Trigger removal
+								dropElem.append(dragElem.self);
+								if (target !== null && !$(target).is(dragElem.self)) {
+									//Run removal code on target
+									$(target[0]).trigger('dragstart');
+										$(dropElem).trigger(':predrop');
+										$(target[0]).remove();
 								}
+							break;
+							case 'replaceall':
 								dropElem.empty().append(dragElem.self);
 							break;
 							default:
@@ -295,11 +284,7 @@ Macro.add('drag', {
 						State.temporary.drag = oldData;
 
 					//Remove special class
-					$(e.target).show();
-
-					//Trigger corresponding event
-					$(e.target).trigger('DragEnd');
-			
+						$(e.target).show();
 			}));
 			dragElem.wiki(innerContent);
 			dragElem.appendTo(this.output);
