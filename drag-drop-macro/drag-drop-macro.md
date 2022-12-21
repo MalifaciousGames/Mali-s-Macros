@@ -4,8 +4,8 @@ This macro set lets you create configurable draggable elements and assorted drop
 
 ### Syntax ###
 
-````html
-/* Draggable element */
+```html
+Draggable element
 
 <<drag ['itemType'] [elementType] [property value...]>>
 
@@ -15,7 +15,7 @@ This macro set lets you create configurable draggable elements and assorted drop
   [<<onStart>> ...code to run when the dragging operation starts...]
 <</drag>>
 
-/* Drop container */
+Drop container
 
 <<drop ['itemType'] [elementType] [property value...]>>
 
