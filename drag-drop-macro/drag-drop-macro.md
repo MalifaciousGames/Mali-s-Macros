@@ -34,7 +34,7 @@ Drop container:
 
 The `drop` container comes with multiple presets that affect the way elements are added to it. The drop mode is supplied to the `<<onDrop [dropMode]>>` tag.
 
-| Preset | Effect | Runs 'onRemove' code |
+| Preset | Effect | Removes target element |
 |---|:---:|---|
 | 'anywhere'(default) | Place element anywhere in the container. | False |
 | 'append' | Append to the container. |  False |
