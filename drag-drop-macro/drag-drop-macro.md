@@ -70,7 +70,7 @@ Crafting ingredients:
 The `data` tag lets you pass data through draggable objects. As soon as dragging begins, the `_drag` temporary variable is set to represent the currently dragged object.
 
 Structure:
-```js
+```
 { type : Item type (string),
 	self : Reference to the draggable element (jQuery object),
 	size : Item size (1 by default),
