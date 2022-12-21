@@ -67,10 +67,10 @@ Crafting ingredients:
 
 The `data` tag lets you pass data through draggable objects. As soon as dragging begins, the `_drag` temporary variable is set to represent the currently dragged object.
 
-Structure
+Structure:
 ```js
 { type : Item type (string),
-	self : Reference to the draggable element(jQuery object),
+	self : Reference to the draggable element (jQuery object),
 	size : Item size (1 by default),
 	data : The data passed from the <<data>> tag (null if none was supplied),
 	contents : The element's inner contents,
@@ -113,3 +113,38 @@ Using `_drag.data` in a simple inventory system:
 	<<set $storage.delete(_drag.data)>>
 <</drop>>
 ```
+
+### Slots attribute ###
+
+The `slots` property on drop container together with `size` on draggable elements let you define specific item capacities and sizes.
+Slots can be supplied as a single number value, or in the `'currently filled / total slots'` format.
+
+This container has two slots:
+```html
+<<drop '' div slots 2>>
+<</drop>>
+```
+As such it can accept either the large item, or the two small ones:
+```html
+<<drag '' div size 2>>
+Large item!
+<</drag>>
+
+<<drag '' div size 1>>
+Small item!
+<</drag>>
+
+<<drag '' div size 1>>
+Another small item!
+<</drag>>
+```
+
+### Special events ###
+
+| Reference | Description | Target |
+|---|---|---|
+| ':typemismatch' | Item type mismatch between draggable element and drop container, drop aborted. | Drop container |
+| ':noslots' | Drop container doesn't have the slots capacity to accept draggable item, drop aborted. | Drop container |
+| ':predrop' | Happens right before a valid drop, used to confirm the removal process. | Drop container |
+
+Default events related to drag and drop operations can be found here: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API .
