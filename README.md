@@ -2,7 +2,16 @@
 
 ## The 'a' Macro ##
 
-Links and buttons that take any HTML attributes: [The 'a' macro](a-macro/a-macro.md)
+Links and buttons that take any HTML attributes, has built-in keybindings support and multiple ouput options. 
+[The 'a' macro](a-macro/a-macro.md)
+
+***
+
+## The 'drag' and 'drop' macro set ##
+
+Tha `drag` and `drop` macros let you create and manage draggable elements in Sugarcube.
+
+['Drag' and 'drop' macro set](drag-drop-macro/drag-drop-macro.md)
 
 ***
 
