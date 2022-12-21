@@ -101,10 +101,10 @@ Using `_drag.data` in a simple inventory system:
 <<drop>>
 
 	<<for _item range $storage>>
-	  <<drag '' div class 'item'>>
-      <<= _item.name>>
-    <<data _item>>
-	  <</drag>>
+		<<drag '' div class 'item'>>
+			<<= _item.name>>
+		<<data _item>>
+		<</drag>>
 	<</for>>
 
 <<onDrop>>
