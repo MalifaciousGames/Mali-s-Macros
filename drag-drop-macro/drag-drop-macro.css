@@ -1,0 +1,11 @@
+.macro-drop {
+  border: .2em solid #444;
+  min-height: 3em;
+  min-width: 3em;
+  display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.macro-drag {cursor:grab;
+  user-select: none;}
