@@ -48,7 +48,7 @@ The `drop` container comes with multiple presets that affect the way elements ar
 
 ### Item type ###
 
-The first property of both `drag` and `drop` elements is there type. Draggable elements can only be dropped in containers which share their own type.
+The first property of both `drag` and `drop` elements is their type. Draggable elements can only be dropped in containers which share their own type.
 Type-less (not supplied, or empty string) containers accept any draggable, type-less draggables can be dropped anywhere.
 
 ```html
