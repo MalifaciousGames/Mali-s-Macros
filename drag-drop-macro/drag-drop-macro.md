@@ -145,8 +145,8 @@ Another small item!
 
 | Reference | Description | Target |
 |---|---|---|
-| ':typemismatch' | Item type mismatch between draggable element and drop container, drop aborted. | Drop container |
-| ':noslots' | Drop container doesn't have the slots capacity to accept draggable item, drop aborted. | Drop container |
-| ':predrop' | Happens right before a valid drop, used to confirm the removal process. | Drop container |
+| :typemismatch | Item type mismatch between draggable element and drop container, drop aborted. | Drop container |
+| :noslots | Drop container doesn't have the slots capacity to accept draggable item, drop aborted. | Drop container |
+| :predrop | Happens right before a valid drop, used to confirm the removal process. | Drop container |
 
 Default events related to drag and drop operations can be found here: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API .
