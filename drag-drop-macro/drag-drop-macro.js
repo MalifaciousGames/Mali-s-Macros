@@ -28,11 +28,6 @@ Macro.add('drop', {
 			if (typeof attributes[i] === 'object'){// jQuery style object
 				dropElem.attr(attributes[i]);
 				
-			} else if (attributes[i].split('=').length > 1) {
-				const pair = attributes[i].split('=', 2);
-				
-				dropElem.attr( pair[0], eval(parse(pair[1])));
-				
 			} else { //Simple pair
 				dropElem.attr( attributes[i], attributes[i+1]);
 				i++
