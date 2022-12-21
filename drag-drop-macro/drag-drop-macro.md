@@ -2,6 +2,8 @@
 
 This macro set lets you create configurable draggable elements and assorted drop containers.
 
+These macros come with an associated css file!
+
 ### Syntax ###
 
 ```html
