@@ -45,8 +45,7 @@ Code in the `all` block runs after the main payload, that's why it's being used 
 
 ### Type ###
 
-Toggle elements can have any element type tho link or buttons make the most sense. Elements which are normally not interactive remain clickable.
-
+Toggle elements can be of any valid html type, by default they are links. Elements which are normally not interactive remain clickable.
 
 ```html
 <<toggle '_var' 'link/button/span/p/div...'>>
