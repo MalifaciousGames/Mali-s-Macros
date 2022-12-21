@@ -33,7 +33,7 @@ This macro set lets you create configurable draggable elements and assorted drop
 The `drop` container comes with multiple presets that affect the way elements are added to it.
 
 | Preset | Effect | Runs 'onRemove' code |
-|------------|---------------------------------------------------------------------------------------------------------------------|-----|
+|---|:---:|---|
 | 'anywhere'(default) | Place element anywhere in the container. | False |
 | 'append' | Append to the container. |  False |
 | 'prepend' | Prepend to the container. |  False |
