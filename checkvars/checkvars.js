@@ -1,13 +1,12 @@
-/*! <<checkvars>> macro for SugarCube 2.x */
-// version check
-! function() {
-    "use strict";
-    if ("undefined" == typeof version || "undefined" == typeof version.title || "SugarCube" !== version.title || "undefined" == typeof version.major || version.major < 2) throw new Error("<<checkvars>> macro requires SugarCube 2.0 or greater, aborting load");
+//'checkvars' macro, all credit goes to TME 
+// Use in an interactive element (link/button)!
+
 
 Macro.add("checkvars", {
-	handler:
+    isAsync : true,
+	skipArgs : true,
 
-	function() {
+	handler() {
 
 // toString function, processes the objects and indents them
 		
@@ -33,32 +32,21 @@ Macro.add("checkvars", {
 					
       	 	var opener, closer, result = [],indentText = "  ";
 					
-        	return indent || (indent = ""), ("[object Set]" === objType || value instanceof Set) && (value = Array.from(value)),
-					Array.isArray(value) ? (opener = "[\n", closer = "\n" + indent + "]", 
-					value.forEach(function(p, i) {
-       			result.push(indent + indentText + i + " ⇒ " + toString(value[i], indent + indentText))
-					}), 																									     						Object.keys(value).forEach(function(p) {
-     				/^\d+$/.test(p) || result.push(indent + indentText + toString(p) + " ⇒ " + toString(value[p], indent + indentText))
-					})) : "[object Map]" === objType || value instanceof Map ? (opener = "{\n", closer = "\n" + indent + "}",
-																																								Array.from(value).map(function(kv) {
-						result.push(indent + indentText + toString(kv[0], indent + indentText) + " ⇒ " + toString(kv[1], indent + indentText))
-          })) : (opener = "{\n", closer = "\n" + indent + "}",
-								 
-					Object.keys(value).forEach(function(p) {
-						result.push(indent + indentText + toString(p) + " ⇒ " + toString(value[p], indent + indentText))
-         	})),
-					opener + result.join(",\n") + closer
-                    }
-                }
+        	return indent || (indent = ""),
+						("[object Set]" === objType || value instanceof Set) && (value = Array.from(value)), Array.isArray(value) ? (opener = "[\n", closer = "\n" + indent + "]", value.forEach(function(p, i) { result.push(indent + indentText + i + " ⇒ " + toString(value[i], indent + indentText))}), Object.keys(value).forEach(function(p) {/^\d+$/.test(p) || result.push(indent + indentText + toString(p) + " ⇒ " + toString(value[p], indent + indentText))})) : "[object Map]" === objType || value instanceof Map ? (opener = "{\n", closer = "\n" + indent + "}", Array.from(value).map(function(kv) { result.push(indent + indentText + toString(kv[0], indent + indentText) + " ⇒ " + toString(kv[1], indent + indentText))})) : (opener = "{\n", closer = "\n" + indent + "}", Object.keys(value).forEach(function(p) { result.push(indent + indentText + toString(p) + " ⇒ " + toString(value[p], indent + indentText))})), opener + result.join(",\n") + closer}
+       }
 		
 // Var types setup
 
-var dialog, storyvars = Object.keys(State.variables), tempvars = Object.keys(State.temporary), setupvars = Object.keys(setup), settvars = Object.keys(settings);
+var dialog, storyvars = Object.keys(State.variables), 
+		tempvars = Object.keys(State.temporary), 
+		setupvars = Object.keys(setup), 
+		settvars = Object.keys(settings);
 		
 const v = {
 	type: [State.variables, State.temporary, setup, settings],
 	keys: [storyvars, tempvars, setupvars, settvars],
-	but: ['State variables','Temporary variables','Setup objects','Setting objects'],
+	but: [`State variables (${storyvars.length})`,`Temporary variables (${tempvars.length})`,`Setup objects (${setupvars.length})`,`Setting objects (${settvars.length})`],
 	name: [`State variables: ${storyvars.length}`,`Temporary variables: ${tempvars.length}`,`Setup objects: ${setupvars.length}`,`Setting objects: ${settvars.length}`],
 	sigil: ['$','_','setup.','settings.']
 };
@@ -109,22 +97,20 @@ for (let i = 0; i < v.name.length; ++i) {
             {
                 namespace : '.macros',
                 role      : 'button'
-            },
-            (i => () => displayVars(i))(i)
-        )
+            }, function () {
+							displayVars(i); setup.activeNameSpace = i
+				})
         .text(v.but[i])
         .appendTo(container);
 }
 
-    $(dialog).append('<table><tbody></tbody></table>')
+    Dialog.append('<table><tbody></tbody></table>')
 			+ (/applewebkit|chrome/.test(Browser.userAgent) ? "" : '<div class="scroll-pad">&nbsp;</div>');
 
-//Calls for default display of state variables
+//Dialog opens on state variables
 		
-displayVars(0);
-		
-UI.open()
+displayVars(setup.activeNameSpace ?? 0);
+UI.open();
 
-}
+	}
 })
-}();
