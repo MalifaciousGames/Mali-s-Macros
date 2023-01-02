@@ -7,6 +7,8 @@ The 'a' macro adds four interactive elements, two links and two buttons, all of 
 | Standard | `<<a>>` | `<<but>>` |
 | Single use | `<<adel>>` | `<<butdel>>` |
 
+`adel` and `butdel` are single use.
+
 ### HTML attributes ###
 
 ```html
