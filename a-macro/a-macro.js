@@ -53,7 +53,7 @@ Macro.add(['a','adel','but','butdel'], {
 		// Goto attribute
 		if (link.attr('goto')){
 			var passage = link.attr('goto');
-			link.removeAttr('goto');
+			link.removeAttr('goto').attr('data-passage', passage);
 			// Default link processing
 			if (Story.has(passage)) {
 				link.addClass('link-internal');
