@@ -1,0 +1,51 @@
+.macro-hover {
+  display: inline-flex;
+  position: relative;
+  justify-content: center
+}
+
+.macro-hover-swap {
+  cursor: default
+}
+
+.macro-hover-tip::after, .macro-hover-tip::before {
+  content: '';
+  position: absolute;
+  z-index: 10
+}
+
+.macro-hover-tip {
+  position:absolute;
+  top: -1.75em;
+  border: .15em solid;
+  width: max-content;
+  padding: 0 .5em;
+  border-radius: .3em;
+  display: inline-flex;
+  justify-content: center;
+  box-shadow: 0 0 .5em .25em #111;
+  background-color: #111;
+  z-index: 10;
+  opacity: 0;
+  transition: .25s;
+  pointer-events: none; 
+  min-height: 1.75em;
+  align-items: center;
+}
+
+.macro-hover-tip::before {
+  border: .5em solid transparent;
+  border-top-color: revert;
+  top: 1.85em
+}
+
+.macro-hover-tip::after {
+  border: .5em solid transparent;
+  border-top-color: #111;
+  top: 1.6em
+}
+
+.macro-hover:hover > .macro-hover-tip {
+  opacity: 100%;
+  pointer-events: revert
+}
