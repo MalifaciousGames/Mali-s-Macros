@@ -7,6 +7,7 @@ Macro.add('hover', {
 					contAttr = this.args.slice(1);
 		
 		if (swap && !swap.contents) {
+			//Empty <<swap>> has very problematic behavior, thus the error
 			return this.error('<<swap>> tag has no content.');
 		}
 		
@@ -21,30 +22,38 @@ Macro.add('hover', {
 			}
 		}
 		
+		//Create outer + inner container
 		const container = $(document.createElement(this.args[0] ? this.args[0] : 'span')), innerCont = $('<span>');
 		container.append(innerCont);
 		
 		applyAttr(container, contAttr);
 		
-		if (tip) {
-			var tipElem = $('<span>');
+		if (tip) {//Create tip elem, add attributes
+			var tipElem = $('<span>').attr('data-extra','');
 			applyAttr(tipElem, tip.args);
 			container.append(tipElem.addClass('macro-hover-tip'));
 		}
 		
-		innerCont.addClass('macro-hover-'+ (swap ? 'swap' : 'inner'));
+		if (swap) {//Add attributes to inner container (mostly for targetting)
+			applyAttr(innerCont, swap.args);
+		}
 		
-		$(container).hover(this.createShadowWrapper(() => {
+		innerCont.addClass('macro-hover-inner').attr('data-extra','');
+		
+		$(container).hover(this.createShadowWrapper(() => {//In
 				if (swap) {
-					innerCont.empty().wiki(swap.contents);
+					const wikiContent = swap.contents + innerCont.attr('data-extra');
+					innerCont.empty().wiki(wikiContent);
 				}
 				if (tip) {
-					tipElem.empty().wiki(tip.contents);
+					const wikiContent = tip.contents + tipElem.attr('data-extra');
+					tipElem.empty().wiki(wikiContent);
 				}
-			}),//Out
-			this.createShadowWrapper(() => {
+			}),
+			this.createShadowWrapper(() => {//Out
 				if (swap) {
-					innerCont.empty().wiki(this.payload[0].contents);
+					const wikiContent = this.payload[0].contents + innerCont.attr('data-extra');
+					innerCont.empty().wiki(wikiContent);
 				}
 			})
 		);
