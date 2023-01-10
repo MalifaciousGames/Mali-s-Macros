@@ -35,7 +35,7 @@
 
 .macro-hover-tip::before {
   border: .5em solid transparent;
-  border-top-color: revert;
+  border-top-color: inherit;
   top: 1.85em
 }
 
