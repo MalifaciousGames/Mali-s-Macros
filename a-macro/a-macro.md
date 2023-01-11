@@ -9,35 +9,50 @@ The 'a' macro adds four interactive elements, two links and two buttons, all of 
 
 `adel` and `butdel` are single use.
 
-### HTML attributes ###
+### Syntax ###
+
+This macro supports HTML arguments ([Read more.](htmlarguments.md)).
 
 ```html
-Pair syntax:
-<<a "Link text" attribute value...>>
-Contents
-<</a>>
+<<a "Link text" [attribute value...]>>
 
-Object syntax:
-<<a "Link text" `{attribute : value,...}`>>
-Contents
+	[...content to run silently...]
+	[<<rep [selector]>> ...new content...]
+	[<<prep [selector]>> ...content to prepend...]
+	[<<app [selector]>> ...content to append...]
+
 <</a>>
 ```
 
-Note that arguments do not need quotation marks, as such naked variables can be used as is:
+### Output options ###
+
+The 'a' macro comes with three built-in output options:
+
+| Effect | Syntax |
+|------------|------------|
+| Replace | `<<rep>>` |
+| Prepend | `<<prep>>`|
+| Append | `<<app>>` |
+
+These can be supplied with one or multiple comma-separated selectors. If none is given, the link's immediate parent will serve as a target.
 
 ```html
-Pair syntax:
-<<a "Link text" id $id class $someClassName style 'color:red'>>
-        <<app '.passage'>>You clicked a red link!
+<div id='box'>Contents</div>
+
+<<a "Change box contents">>
+	...silent code...
+<<rep '#box'>>
+	Something different!
 <</a>>
+```
 
-Object syntax:
-<<set setup.goBack = { class : 'backButton' ,
-			id : 'back' ,
-			goto : 'MainHub'
-}>>
+A single `<<a>>` element can support all of the output options, these always run in the order described above, `<<rep>>` being first.
 
-<<but "Back to main hub" setup.goBack>>
+```html
+<<but 'Button'>>
+	<<rep '#id1, #id2'>> ...new content!...
+	<<prep '.someClass'>> ...something to prepend...
+	<<app '#someID'>> ...something to append...
 <</but>>
 ```
 
@@ -79,38 +94,6 @@ Generating buttons bound to number keys:
 <</for>>
 
 <span id='id'></span>
-```
-
-### Output options ###
-
-The 'a' macro comes with three built-in output options:
-
-| Effect | Syntax |
-|------------|------------|
-| Replace | `<<rep>>` |
-| Prepend | `<<prep>>`|
-| Append | `<<app>>` |
-
-These can be supplied with one or multiple comma-separated selectors. If none is given, the link's immediate parent will serve as a target.
-
-```html
-<div id='box'>Contents</div>
-
-<<a "Change box contents">>
-	...silent code...
-<<rep '#box'>>
-	Something different!
-<</a>>
-```
-
-A single `<<a>>` element can support all of the output options, these always run in the order described above, `<<rep>>` being first.
-
-```html
-<<but 'Button'>>
-	<<rep '#id1, #id2'>> ...new content!...
-	<<prep '.someClass'>> ...something to prepend...
-	<<app '#someID'>> ...something to append...
-<</but>>
 ```
 
 ###### Notes ######
