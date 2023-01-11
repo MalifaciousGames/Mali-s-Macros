@@ -51,7 +51,7 @@ This outputs a button a toggling button instead of the default link (<a> element
 <</toggle>>
 ```
 
-Element type is always optional and written as `<<macro [elementType] [property value]>>`.
+Element type is always optional and written as `<<macro [elementType] [property value...]>>`.
 
 #### Notes ####
 
