@@ -3,6 +3,7 @@
 ## The 'a' Macro ##
 
 Links and buttons that take any HTML attributes, has built-in keybindings support and multiple ouput options.
+
 [The 'a' macro](a-macro/a-macro.md)
 
 ***
@@ -10,6 +11,7 @@ Links and buttons that take any HTML attributes, has built-in keybindings suppor
 ## The 'drag' and 'drop' macro set ##
 
 Tha `drag` and `drop` macros let you create and manage draggable elements in Sugarcube.
+
 ['Drag' and 'drop' macro set](drag-drop-macro/drag-drop-macro.md)
 
 ***
@@ -17,19 +19,24 @@ Tha `drag` and `drop` macros let you create and manage draggable elements in Sug
 ## The 'input' and 'inputbox' macros ##
 
 Two flavours of macros to generate highly customizable input elements.
+
 [Input macros](input-macros/sc-input.md)
 
 ***
 
 ## JS-free settings API ##
 
-Lets you use the built-in Settings API without JavaScript knowledge: [The settings macros](sc-settings/sc-settings.md)
+Lets you use the built-in Settings API without JavaScript knowledge.
+
+[The settings macro](sc-settings/sc-settings.md)
 
 ***
 
 ## The 'on' and 'trigger' macros ##
 
-This pair of macros make up an event-based refresh system. They are useful as a way to update displays but also for running asynchronous code: [On macro](on-macro/on-macro.md)
+This pair of macros make up an event-based refresh system. They are useful as a way to update displays but also for running asynchronous code.
+
+[On and trigger macros](on-macro/on-macro.md)
 
 ***
 
