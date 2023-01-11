@@ -44,7 +44,7 @@ This argument comes before other attributes, if its value is falsy (empty string
 Element types : https://developer.mozilla.org/en-US/docs/Web/HTML/Element
 
 ```html
-This outputs a button a toggling button instead of the default link (<a> element).
+This outputs a toggling button instead of the default link (<a> element).
 
 <<toggle '_var' button>>
   ...content...
