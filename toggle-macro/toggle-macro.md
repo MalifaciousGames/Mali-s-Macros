@@ -4,7 +4,7 @@ This macro creates a cycling interactive element used to set variables and run c
 
 Syntax:
 ```html
-<<toggle '$variableName' [type] [property value]>>
+<<toggle '$variableName' [elementType] [property value]>>
 
 <<case value1 ['Prompt 1'] [property value]>>
 	...code...
