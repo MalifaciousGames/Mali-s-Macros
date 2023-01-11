@@ -39,7 +39,7 @@ Unquoted variables are automatically passed as their values:
 ### Element type ###
 
 Some macros also support custom element types: `span`, `div`, `button`, `p`...
-This argument comes before the HTML attributes, it its value is falsy (empty string, undefined, 0...) the macro will default to a preset element.
+This argument comes before the HTML attributes, if its value is falsy (empty string, undefined, 0...) the macro will default to a preset element.
 
 Element types : https://developer.mozilla.org/en-US/docs/Web/HTML/Element
 
