@@ -32,6 +32,17 @@ Object syntax:
 <<input color '$highlightColor' `{style : 'height: 2em; border-radius: 1em', id : 'colorSelection'}`>>
 ```
 
+### Label attribute ###
+
+The `label` special attribute lets you create a label for the generated input elements, this is mostly meant for radio-buttons, checkboxes and the like...
+
+```html
+Difficulty:
+<<input radio '_diff' label 'Easy' name 'diff' value 'easy'>>
+<<input radio '_diff' label 'Medium' name 'diff' value 'medium'>>
+<<input radio '_diff' label 'Hard' name 'diff' value 'hard'>>
+```
+
 ### Goto attribute ###
 
 The goto attribute forwards the player to the given passage when them press enter on the input element.
