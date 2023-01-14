@@ -24,6 +24,8 @@ Array syntax:
 
 ### HTML attributes ###
 
+This macro supports HTML arguments ([Read more.](https://github.com/MalifaciousGames/Mali-s-Macros/blob/main/htmlarguments.md)).
+
 ```html
 Pair syntax:
 <<input text '$name' placeholder 'Name' value $name class 'specialInput'>>
