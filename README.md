@@ -84,6 +84,24 @@ By default, the iteration value is `_i`, this can be changed by supplying a quot
 
 ***
 
+## Style passages in Twine 2 ##
+
+The Twine 2 version of Sugarcube doesn't natively allow for stylesheet passages, causing the main stylesheet to become extremely crowded, making it hard to navigate and edit.
+Copying this code in your story Javascript lets you use the `style` tag to create CSS passages.
+```js
+
+$(document).ready(() => {
+    const stylePassages = Story.lookup("tags", "style");
+    let Styles = '';
+    
+    stylePassages.forEach(psg => Styles += psg.text );
+
+    const styleElem = $("<style type='text/css'>").text(Styles).appendTo('head');
+})
+```
+
+***
+
 #### Like the macros and have a few bucks to spare? ####
 
 You should consider donating to Sugarcube's dev, Thomas Michael Edwards, or to Chris, Klembot, Klimas who manages the Twine application. Both of them have done more for the community that I ever will.
