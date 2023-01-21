@@ -96,6 +96,22 @@ Generating buttons bound to number keys:
 <span id='id'></span>
 ```
 
+### Trigger attribute ###
+
+The `trigger` attribute is used to trigger events at document level. It is meant to be used in conjunction with the `<<on>>` macro.
+
+```html
+<<set $var = 45>>
+
+<<a "Refresh cotnent!" trigger 'refresh'>>
+	<<set $var ++>>
+<</a>>
+
+<<on 'refresh'>>
+	$var
+<</on>>
+```
+
 ###### Notes ######
 
 This macro set does not support Twine's bracket notation (`[[passage]]/[img[URL]]`). For clickable images, using `<img src=URL>` is the preferred method.
