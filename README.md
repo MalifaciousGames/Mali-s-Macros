@@ -96,7 +96,7 @@ $(document).ready(() => {
     
     stylePassages.forEach(psg => Styles += psg.text);
 
-    const styleElem = $("<style type='text/css'>").text(Styles).appendTo('head');
+    const styleElem = $("<style id='style-passages' type='text/css'>").text(Styles).appendTo('head');
 })
 ```
 
