@@ -94,7 +94,7 @@ $(document).ready(() => {
     const stylePassages = Story.lookup("tags", "style");
     let Styles = '';
     
-    stylePassages.forEach(psg => Styles += psg.text );
+    stylePassages.forEach(psg => Styles += psg.text);
 
     const styleElem = $("<style type='text/css'>").text(Styles).appendTo('head');
 })
