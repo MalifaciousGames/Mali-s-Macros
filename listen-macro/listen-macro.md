@@ -46,7 +46,19 @@ Color the relevant input field when enter is pressed :
 
 <<payload>>
   <<if _event.code === 'Enter'>>
-		<<run $(_event.target).css('background-color','red')>>
-	<</if>>
+    <<run $(_event.target).css('background-color','red')>>
+  <</if>>
+<</listen>>
+```
+
+Make an element which cannot be right-clicked (and taunts you if you do) :
+
+```html
+<<listen 'contextmenu'>>
+  <div>You cannot right meeee!</div>
+<<payload>>
+  <<run _event.preventDefault(),
+    Dialog.wiki("Don't even try it!"),
+    Dialog.open()>>
 <</listen>>
 ```
