@@ -23,7 +23,7 @@ Macro.add('listen', {
 
 		const wrapper = $(document.createElement(this.args[1] ?? 'span'));
 				
-		wrapper.on(event, runCode);
+		wrapper.on(event, this.createShadowWrapper(runCode));
 		wrapper.wiki(this.payload[0].contents).appendTo(this.output);
 	}
 });
