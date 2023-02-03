@@ -10,15 +10,24 @@ Links and buttons that take any HTML attributes, has built-in keybindings suppor
 
 ## The 'drag' and 'drop' macro set ##
 
-Tha `drag` and `drop` macros let you create and manage draggable elements in Sugarcube.
+The `drag` and `drop` macros let you create and manage draggable elements in Sugarcube.
 
 ['Drag' and 'drop' macro set](drag-drop-macro/drag-drop-macro.md)
+
+***
+
+## The 'listen' macro ##
+
+A configurable event listener in macro form. Mainly used to run code when an input element is modified.
+
+['Listen' macro](listen-macro/listen-macro.md)
 
 ***
 
 ## The 'input' and 'inputbox' macros ##
 
 Two flavours of macros to generate highly customizable input elements.
+-- Being phased out in favor of using the `<<listen>>` macro and a html `<input>` element. --
 
 [Input macros](input-macros/sc-input.md)
 
