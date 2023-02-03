@@ -12,7 +12,7 @@ Links and buttons that take any HTML attributes, has built-in keybindings suppor
 
 The `drag` and `drop` macros let you create and manage draggable elements in Sugarcube.
 
-['Drag' and 'drop' macro set](drag-drop-macro/drag-drop-macro.md)
+[The 'Drag' and 'drop' macro set](drag-drop-macro/drag-drop-macro.md)
 
 ***
 
@@ -20,7 +20,7 @@ The `drag` and `drop` macros let you create and manage draggable elements in Sug
 
 A configurable event listener in macro form. Mainly used to run code when an input element is modified.
 
-['Listen' macro](listen-macro/listen-macro.md)
+[The 'Listen' macro](listen-macro/listen-macro.md)
 
 ***
 
@@ -45,7 +45,7 @@ Lets you use the built-in Settings API without JavaScript knowledge.
 
 This pair of macros make up an event-based refresh system. They are useful as a way to update displays but also for running asynchronous code.
 
-[On and trigger macros](on-macro/on-macro.md)
+[The 'On' and 'trigger' macro set](on-macro/on-macro.md)
 
 ***
 
