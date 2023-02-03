@@ -1,6 +1,6 @@
 ## The listen macro ##
 
-This macro is a container which acts as an event listener for its contents. It listens for `change` events but the event type(s) can be supplied as a space or comma-separated list.
+This macro is a container which acts as an event listener for its contents. By default, it listens for `change` events but the event type(s) can be supplied as a space or comma-separated list.
 
 ### Syntax ###
 
