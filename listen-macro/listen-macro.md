@@ -55,7 +55,7 @@ Make an element which cannot be right-clicked (and taunts you if you do) :
 
 ```html
 <<listen 'contextmenu'>>
-  <div>You cannot right meeee!</div>
+  <div>You cannot right click meeee!</div>
 <<payload>>
   <<run _event.preventDefault(),
     Dialog.wiki("Don't even try it!"),
