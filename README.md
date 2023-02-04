@@ -24,15 +24,6 @@ A configurable event listener in macro form. Mainly used to run code when an inp
 
 ***
 
-## The 'input' and 'inputbox' macros ##
-
-Two flavours of macros to generate highly customizable input elements.
--- Being phased out in favor of using the `<<listen>>` macro and a html `<input>` element. --
-
-[Input macros](input-macros/sc-input.md)
-
-***
-
 ## JS-free settings API ##
 
 Lets you use the built-in Settings API without JavaScript knowledge.
@@ -108,6 +99,14 @@ $(document).ready(() => {
     const styleElem = $("<style id='style-passages' type='text/css'>").text(Styles).appendTo('head');
 })
 ```
+
+***
+
+## Legacy macros ##
+
+`<<input>>` and `<<inputbox>>` => Should use an `<input>` element inside the `<<listen>>` macro instead.
+
+[Input macros](input-macros/sc-input.md)
 
 ***
 
