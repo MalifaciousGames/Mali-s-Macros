@@ -32,7 +32,7 @@ The event object is passed as the `_event` temporary variable which can be used 
 
 **Beware!**
 
-`<input>` element's value are always strings! If you want a number (from `range` input for example), use `Number(_event.target.value)`. For non-primitive values, you'll need to eval them back into an object.
+`<input>` element's values are always strings! If you want a number instead, use `Number(_event.target.value)`. For non-primitive values, you'll need to eval them back into objects.
 
 ### Uses and examples ###
 
