@@ -30,6 +30,10 @@ The event object is passed as the `_event` temporary variable which can be used 
 | `_event.target.value` | The value of the target element mostly useful to get `<input>`'s value |
 | `_event.type` | The type of event (`change`, `click`, `keypress`...), useful if multiple types are used |
 
+**Beware!**
+
+`<input>` element's value are always strings! If you want a number (from `range` input for example), use `Number(_event.target.value)`. For non-primitive values, you'll need to eval them back into an object.
+
 ### Uses and examples ###
 
 Visually update values :
