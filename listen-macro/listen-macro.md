@@ -22,6 +22,14 @@ This macro supports HTML arguments ([Read more.](https://github.com/MalifaciousG
 
 The event object is passed as the `_event` temporary variable which can be used in the code payload. As such, `_event.target` returns the element which triggered the event.
 
+#### Useful properties ####
+
+| Key | Description |
+|------------|------------|
+| `_event.target` | A reference to the element which triggered the event |
+| `_event.target.value` | The value of the target element mostly useful to get `<input>`'s value |
+| `_event.type` | The type of event (`change`, `click`, `keypress`...), useful if multiple types are used |
+
 ### Uses and examples ###
 
 Visually update values :
@@ -77,7 +85,7 @@ Make an element which cannot be right-clicked (and taunts you if you do) :
 
 The world's worst numpad :
 
-````html
+```html
 <div id='display'>You dialed : </div>
 
 <<listen 'click' 'div' style 'display: grid; grid-template-columns: 1fr 1fr 1fr'>>
