@@ -9,7 +9,7 @@ This macro supports HTML arguments ([Read more.](https://github.com/MalifaciousG
 ```html
 <<listen [event type(s)] [element type] [html attributes...]>>
 
-... contents ...
+... inner contents ...
 
 <<then>>
 
