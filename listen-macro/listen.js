@@ -28,10 +28,6 @@ Macro.add('listen', {
 			if (typeof attributes[i] === 'object'){
 				//JQuery style object
 				wrapper.attr(attributes[i]);
-			} else if (attributes[i].includes('=')){
-				const pair = attributes[i].split('=');
-				wrapper.attr(pair[0],
-					Scripting.evalTwineScript(pair[1]));
 			} else { // Simple pairs
 				wrapper.attr(attributes[i], attributes[i+1]);
 				i++;
