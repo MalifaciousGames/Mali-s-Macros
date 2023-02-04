@@ -100,7 +100,7 @@ The world's worst numpad :
 
 <<then>>
 	
-	<<append '#display'>><<= _event.target.innerHTML>><</append>>
+  <<append '#display'>><<= _event.target.innerHTML>><</append>>
 
 <</listen>>
 ``` 
