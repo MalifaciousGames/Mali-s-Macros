@@ -20,7 +20,7 @@ This macro supports HTML arguments ([Read more.](https://github.com/MalifaciousG
 
 ### _event variable ###
 
-The event object is passed as the `_event` temporary variable which can be used in the code payload. As such, `_event.target` returns the element which triggered the event.
+The event object is passed as the `_event` temporary variable which can be used in the code payload.
 
 #### Useful properties ####
 
