@@ -1,11 +1,12 @@
 Macro.add('listen', {
-	tags: ['payload'],
+	tags: ['then'],
 	isAsync : true,
 	
 	handler() {
 	
-		const payload = this.payload.find(pay => pay.name === 'payload'),
-		event = this.args[0] ? this.args[0].replaceAll(',',' ') : 'change';
+		const payload = this.payload.find(pay => pay.name === 'then'),
+			event = (this.args[0] ? this.args[0].replaceAll(',',' ') : 'change'),
+			attributes = this.args.slice(2);
 		
 		function runCode(e) {
 			try {
@@ -23,6 +24,20 @@ Macro.add('listen', {
 
 		const wrapper = $(document.createElement(this.args[1] ?? 'span'));
 				
+		for (let i = 0; i < attributes.length;i++) {
+			if (typeof attributes[i] === 'object'){
+				//JQuery style object
+				wrapper.attr(attributes[i]);
+			} else if (attributes[i].includes('=')){
+				const pair = attributes[i].split('=');
+				wrapper.attr(pair[0],
+					Scripting.evalTwineScript(pair[1]));
+			} else { // Simple pairs
+				wrapper.attr(attributes[i], attributes[i+1]);
+				i++;
+			}
+		}
+		
 		wrapper.on(event, this.createShadowWrapper(runCode));
 		wrapper.wiki(this.payload[0].contents).appendTo(this.output);
 	}
