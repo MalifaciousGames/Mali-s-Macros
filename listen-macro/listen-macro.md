@@ -4,12 +4,14 @@ This macro is a container which acts as an event listener for its contents. By d
 
 ### Syntax ###
 
+This macro supports HTML arguments ([Read more.](https://github.com/MalifaciousGames/Mali-s-Macros/blob/main/htmlarguments.md)).
+
 ```html
-<<listen [event type] [element type]>>
+<<listen [event type(s)] [element type] [html attributes...]>>
 
 ... contents ...
 
-<<payload>>
+<<then>>
 
 ... code to run when the event is triggered ...
 
@@ -26,10 +28,14 @@ Visually update values :
 
 ```html
 <<listen>>
+
   Starting number : <<numberbox '_num' `_num ?? 5`>>
   Multiplier : <<numberbox '_multi' `_multi ?? 5`>>
-<<payload>>
+
+<<then>>
+
   <<replace '#display'>><<= _num*_multi>><</replace>>
+
 <</listen>>
 
 Result : <span id='display'></span>
@@ -44,10 +50,12 @@ Color the relevant input field when enter is pressed :
   <<textbox '$name' 'Doe'>>
   <<textbox '$age' '?'>>
 
-<<payload>>
+<<then>>
+
   <<if _event.code === 'Enter'>>
     <<run $(_event.target).css('background-color','red')>>
   <</if>>
+
 <</listen>>
 ```
 
@@ -55,10 +63,32 @@ Make an element which cannot be right-clicked (and taunts you if you do) :
 
 ```html
 <<listen 'contextmenu'>>
+
   <div>You cannot right click meeee!</div>
-<<payload>>
+
+<<then>>
+
   <<run _event.preventDefault(),
     Dialog.wiki("Don't even try it!"),
     Dialog.open()>>
+
 <</listen>>
 ```
+
+The world's worst numpad :
+
+````html
+<div id='display'>You dialed : </div>
+
+<<listen 'click' 'div' style 'display: grid; grid-template-columns: 1fr 1fr 1fr'>>
+
+  <<for _i=1; _i lt 10;_i++>>
+	  <div style='padding:1em'>_i</div>
+  <</for>>
+
+<<then>>
+	
+	<<append '#display'>><<= _event.target.innerHTML>><</append>>
+
+<</listen>>
+``` 
