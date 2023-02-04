@@ -1,12 +1,13 @@
 Macro.add('drop', {
   isAsync : true,
-	tags : ['onEnter','onLeave','onDrop','onRemove'],
+	tags : ['onEnter','onLeave','onDrop','onRemove','onAny'],
 
 	handler() {
 		
 		const ID = (this.args[0]? this.args[0] : null), type = this.args[1], attributes = this.args.slice(2);
 		const onEnter = this.payload.find(pay => pay.name === 'onEnter'),
 					onLeave = this.payload.find(pay => pay.name === 'onLeave'),
+					onAny = this.payload.find(pay => pay.name === 'onAny'),
 					onDrop = this.payload.find(pay => pay.name === 'onDrop'),
 					onRemove = this.payload.find(pay => pay.name === 'onRemove');
 		let dropMode = onDrop ? onDrop.args[0] : null;
@@ -27,6 +28,11 @@ Macro.add('drop', {
 		for (let i = 0; i < attributes.length;i++) {
 			if (typeof attributes[i] === 'object'){// jQuery style object
 				dropElem.attr(attributes[i]);
+				
+			} else if (attributes[i].split('=').length > 1) {
+				const pair = attributes[i].split('=', 2);
+				
+				dropElem.attr( pair[0], eval(parse(pair[1])));
 				
 			} else { //Simple pair
 				dropElem.attr( attributes[i], attributes[i+1]);
@@ -92,6 +98,7 @@ Macro.add('drop', {
 				$(document).off(':predrop');
 				$(document).one(':predrop', (e) => {
 						onRemove ? $.wiki(onRemove.contents): null;
+						onAny ? $.wiki(onAny.contents): null;
 						if (e.origin !== 'swap' && slots !== undefined) {
 							slots += dragElem.size;
 							dropElem.removeAttr('slots').attr('data-slots', slots);
@@ -104,84 +111,85 @@ Macro.add('drop', {
 			.on('drop', this.createShadowWrapper(
 				(e) => {
 					const dragElem = State.temporary.drag;
-					
+					if (typeof dragElem === 'object'){
+							e.preventDefault();
+
 						if (fillswap){
 							dropMode = slots > 0 ? null : 'swap';
 						}
-					
-					e.preventDefault();
-					
-					if (ID && dragElem.type && dragElem.type !== ID){
-						//Wrond id match!
-						$(e.target).trigger(':typemismatch');
-					} else if (slots - dragElem.size < 0 && dropMode !== 'swap'){
-						$(e.target).trigger(':noslots');
-					} else {
-						
-						//Confirm target removal
-						$(e.target).trigger(
-							{type : ':predrop', slots : slots, origin : e.origin}
-						);
-						
-						onDrop ? $.wiki(onDrop.contents) : null;
-						
-						const target = findClosest(e,dragElem);
-							
-						switch (dropMode){
-							case 'prepend': case 'append':
-								dropElem[dropMode](dragElem.self);
-								slots !== undefined ? slots -= dragElem.size : null;
-								dropElem.removeAttr('slots').attr('data-slots', slots);
-							break;
-							case 'swap':
-								//Drag elem to container
-								if (target === null) {
-									//Only child, no element to swap
-									dropElem.append(dragElem.self);
-								} else {
-									$(target[0])[target[1][0] < 0? 'after' : 'before'](dragElem.self);
-									if (e.origin !== 'swap'){
-										//Avoid infinite swap loop!
-										$(target[0]).trigger('dragstart');
-										$(dragElem.origin).trigger(
-											{type : 'drop', origin : 'swap'}
-										);
-										setTimeout(() => {
-											$(target[0]).show();
-										});
-									}
-								}
-							break;
-							case 'remove':
-								dragElem.self.remove();
-							break;
-							case 'none':break;
-							case 'replace':
-								dropElem.append(dragElem.self);
-								if (target !== null && !$(target).is(dragElem.self)) {
-									//Run removal code on target
-									$(target[0]).trigger('dragstart');
-										$(dropElem).trigger(':predrop');
-										$(target[0]).remove();
-								}
-							break;
-							case 'replaceall':
-								dropElem.empty().append(dragElem.self);
-							break;
-							default:
-								if (target === null) {
-									dropElem.append(dragElem.self);
-								} else {
-									$(target[0])[target[1][0] < 0 ? 'after' : 'before'](dragElem.self);
-								}
-								slots !== undefined ? slots -= dragElem.size : null;
-								dropElem.removeAttr('slots').attr('data-slots', slots);
-						}
-				}
 
-				//Trigger related event
-				$(e.target).trigger(':postdrop');
-			
+						if (ID && dragElem.type && dragElem.type !== ID){
+							//Wrond id match!
+							$(e.target).trigger(':typemismatch');
+						} else if (slots - dragElem.size < 0 && dropMode !== 'swap'){
+							$(e.target).trigger(':noslots');
+						} else {
+
+							//Confirm target removal
+							$(e.target).trigger(
+								{type : ':predrop', slots : slots, origin : e.origin}
+							);
+
+							onDrop ? $.wiki(onDrop.contents) : null;
+							onAny ? $.wiki(onAny.contents): null;
+
+							const target = findClosest(e,dragElem);
+
+							switch (dropMode){
+								case 'prepend': case 'append':
+									dropElem[dropMode](dragElem.self);
+									slots !== undefined ? slots -= dragElem.size : null;
+									dropElem.removeAttr('slots').attr('data-slots', slots);
+								break;
+								case 'swap':
+									//Drag elem to container
+									if (target === null) {
+										//Only child, no element to swap
+										dropElem.append(dragElem.self);
+									} else {
+										$(target[0])[target[1][0] < 0? 'after' : 'before'](dragElem.self);
+										if (e.origin !== 'swap'){
+											//Avoid infinite swap loop!
+											$(target[0]).trigger('dragstart');
+											$(dragElem.origin).trigger(
+												{type : 'drop', origin : 'swap'}
+											);
+											setTimeout(() => {
+												$(target[0]).show();
+											});
+										}
+									}
+								break;
+								case 'remove':
+									dragElem.self.remove();
+								break;
+								case 'none':break;
+								case 'replace':
+									dropElem.append(dragElem.self);
+									if (target !== null && !$(target).is(dragElem.self)) {
+										//Run removal code on target
+										$(target[0]).trigger('dragstart');
+											$(dropElem).trigger(':predrop');
+											$(target[0]).remove();
+									}
+								break;
+								case 'replaceall':
+									dropElem.empty().append(dragElem.self);
+								break;
+								default:
+									if (target === null) {
+										dropElem.append(dragElem.self);
+									} else {
+										$(target[0])[target[1][0] < 0 ? 'after' : 'before'](dragElem.self);
+									}
+									slots !== undefined ? slots -= dragElem.size : null;
+									dropElem.removeAttr('slots').attr('data-slots', slots);
+							}
+					}
+
+					//Trigger related event
+					$(e.target).trigger(':postdrop');
+				}
 			}))
 			.on('dragenter', this.createShadowWrapper(
 				(e) => {
