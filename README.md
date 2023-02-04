@@ -112,7 +112,7 @@ $(document).ready(() => {
 
 #### Like the macros and have a few bucks to spare? ####
 
-You should consider donating to Sugarcube's dev, Thomas Michael Edwards, or to Chris, Klembot, Klimas who manages the Twine application. Both of them have done more for the community that I ever will.
+You should consider donating to Sugarcube's dev, Thomas Michael Edwards, or to Chris, Klembot, Klimas who manages the Twine application. Both of them have done more for the community than I ever could.
 
 TME: https://www.motoslave.net/sugarcube/2/ (top right).
 
