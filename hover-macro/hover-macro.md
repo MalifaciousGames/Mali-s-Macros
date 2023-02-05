@@ -43,21 +43,20 @@ Simple hover counter:
 <</hover>>
 ```
 
-### Appending to the inner container or tooltip ###
+### Capture mode ###
 
-On hover, both `macro-hover-inner` and `macro-hover-tip` are emptied and their content is generated from the code supplied to their respective tags. As such, content appended to these elements is lost.
-
-To add content dynamically to `macro-hover-inner` and `macro-hover-tip`, use the `data-extra` property the content of which gets added to the code payload.
+By default, the `hover` macro's contents update to on hover. When this behaviour isn't desirable you can use the `capture` argument so hovering will only ever display the content as it was when the macro was added to the page.
 
 ```html
-<<hover>>
-  ...stuff...
-  <<tip id 'myTip'>> ...tooltip content...
+<<set _hour = 2, _min = 42>>
+
+<<hover '' capture true>>
+  Look at your watch.
+<<swap>>
+  Time is _hour : _min
 <</hover>>
 
-<<button 'Expand tooltip!'>>
-  <<run $('#myTip').attr('data-extra','more content...').trigger('mouseover')>>
-<</button>>
+<<set _hour += 3, _min += 10>>
 ```
 
 #### Notes ####
