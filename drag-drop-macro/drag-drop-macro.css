@@ -3,9 +3,12 @@
   min-height: 3em;
   min-width: 3em;
   display: flex;
-align-items: center;
-justify-content: center;
+  align-items: center;
+  justify-content: center;
+  user-select: none
 }
 
-.macro-drag {cursor:grab;
-  user-select: none;}
+.macro-drag {
+  cursor: grab;
+  user-select: none
+}
