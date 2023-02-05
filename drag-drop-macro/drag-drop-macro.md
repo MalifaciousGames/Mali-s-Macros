@@ -9,7 +9,7 @@ These macros come with an associated css file!
 ```html
 Draggable element:
 
-<<drag ['itemType'] [elementType] [property value...]>>
+<<drag [elementType] [property value...]>>
 
   [...inner contents...]
 
@@ -19,7 +19,7 @@ Draggable element:
 
 Drop container:
 
-<<drop ['itemType'] [elementType] [property value...]>>
+<<drop [elementType] [property value...]>>
 
   [...inner contents...]
 
@@ -27,6 +27,7 @@ Drop container:
   [<<onRemove>> ...code to run when an item is removed...]
   [<<onEnter>> ...code to run when a draggable element enters the container...]
   [<<onLeave>> ...code to run when a draggable element leaves the container...]
+  [<<onAny>>...code to run on any of the above events...]
 <</drop>>
 ```
 
@@ -48,19 +49,19 @@ The `drop` container comes with multiple presets that affect the way elements ar
 
 ### Item type ###
 
-The first property of both `drag` and `drop` elements is their type. Draggable elements can only be dropped in containers which share their own type.
+The special `type` property lets you specify compatibility between `drag` and `drop` elements. Draggable elements can only be dropped in containers which share their own type.
 Type-less (not supplied, or empty string) containers accept any draggable, type-less draggables can be dropped anywhere.
 
 ```html
 Weapons:
-<<drop 'weapon'>>
+<<drop '' type 'weapon'>>
 <</drop>>
 
 Crafting ingredients:
-<<drop 'crafting'>>
+<<drop '' type 'crafting'>>
 <</drop>>
 
-<<drag 'weapon'>>
+<<drag '' type 'weapon'>>
 9MM pistol
 <</drag>>
 ```
@@ -123,20 +124,20 @@ Slots can be supplied as a single number value, or in the `'currently filled / t
 
 This container has two slots:
 ```html
-<<drop '' div slots 2>>
+<<drop '' slots 2>>
 <</drop>>
 ```
 As such it can accept either the large item, or the two small ones:
 ```html
-<<drag '' div size 2>>
+<<drag '' size 2>>
 Large item!
 <</drag>>
 
-<<drag '' div size 1>>
+<<drag '' size 1>>
 Small item!
 <</drag>>
 
-<<drag '' div size 1>>
+<<drag '' size 1>>
 Another small item!
 <</drag>>
 ```
