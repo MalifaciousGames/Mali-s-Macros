@@ -1,67 +1,69 @@
-Macro.add('drop', {
-  isAsync : true,
-	tags : ['onEnter','onLeave','onDrop','onRemove','onAny'],
+/*-------------------- Drop Macro -----------------------*/
 
+Macro.add('drop', {
+	isAsync : true,
+	tags : ['onEnter','onLeave','onDrop','onRemove','onAny'],
+  
 	handler() {
-		
-		const ID = (this.args[0]? this.args[0] : null), type = this.args[1], attributes = this.args.slice(2);
+		  
+		const  elemType = this.args[0], attributes = this.args.slice(1);
+		  
 		const onEnter = this.payload.find(pay => pay.name === 'onEnter'),
-					onLeave = this.payload.find(pay => pay.name === 'onLeave'),
-					onAny = this.payload.find(pay => pay.name === 'onAny'),
-					onDrop = this.payload.find(pay => pay.name === 'onDrop'),
-					onRemove = this.payload.find(pay => pay.name === 'onRemove');
-		let dropMode = onDrop ? onDrop.args[0] : null;
+			onLeave = this.payload.find(pay => pay.name === 'onLeave'),
+			onAny = this.payload.find(pay => pay.name === 'onAny'),
+			onDrop = this.payload.find(pay => pay.name === 'onDrop'),
+			onRemove = this.payload.find(pay => pay.name === 'onRemove');
+		  
+		let dropMode = onDrop?.args[0] ?? null;
 		const innerContent = this.payload[0].contents;
-		
-		//Type errors
-		[['Id', ID],['Element type', type]].forEach(item =>{
-			if (item[1] && typeof item[1] !== 'string')
-				return this.error(`${item[0]} must be a string, reading: '${typeof item[1]}'`);
-		})
-		
+		  
 		//Invalid dropMode
-		if (dropMode && !['append', 'prepend', 'replace','replaceall', 'swap','none','anywhere','remove','fillswap'].includes(dropMode)) return this.error(`Drop mode (<<onDrop mode>>) is not valid, reading '${dropMode}'`);
+		if (dropMode && !['append', 'prepend', 'replace','replaceall', 'swap','none','anywhere','remove','fillswap'].includes(dropMode))
+			return this.error(`Drop mode (<<onDrop mode>>) is not valid, reading: '${dropMode}'`);
+		  
+		const dropElem = $(`<${elemType || 'div'}/>`).wiki(innerContent);
+	  
+		//Catch slots property
+		if (attributes.includes('slots')){
+			var slots = attributes.deleteAt([attributes.indexOf('slots')+1])[0];
+			if (typeof slots === 'string' && slots.includes('/')){ //Taylored version
+				slots = Number(slots.split('/')[1] - slots.split('/')[0]);
+			} else { //Loose logic
+				slots -= dropElem.children().length;
+			}
+			attributes.delete('slots');
+          	dropElem.attr('data-slots', slots);
+		}
 		
-		const dropElem = $(`<${type ? type : 'div'}/>`);
-	
+      	//Catch type property 
+		if (attributes.includes('type')){
+			var ID = attributes.deleteAt([attributes.indexOf('type')+1])[0];
+			attributes.delete('type');
+          	dropElem.attr('data-type', ID);
+		}
+
 		//Apply attributes
 		for (let i = 0; i < attributes.length;i++) {
 			if (typeof attributes[i] === 'object'){// jQuery style object
 				dropElem.attr(attributes[i]);
-				
-			} else if (attributes[i].split('=').length > 1) {
-				const pair = attributes[i].split('=', 2);
-				
-				dropElem.attr( pair[0], eval(parse(pair[1])));
-				
 			} else { //Simple pair
 				dropElem.attr( attributes[i], attributes[i+1]);
 				i++
 			}
 		}
-		
+		  
 		//Fillswap special variable
-		if (dropMode === 'fillswap' && !dropElem.attr('slots')) {
+		if (dropMode === 'fillswap' && slots === undefined) {
 			return this.error(`'Fillswap' mode needs a 'slots' property to work.`);
 		} else if (dropMode === 'fillswap'){
 			var fillswap = true;
 		}
 		
+      	//Set up type container properties
 		if (ID){
-			dropElem.data('drop-id', ID).addClass(`drag-${ID}`)
+			dropElem.data('drop-id', ID).addClass(`drop-${ID}`)
 		}
-		
-		//Manage slots system
-		if (dropElem.attr('slots')){
-			var slots = dropElem.attr('slots');
-			if (slots.split('/').length === 2){ //Taylored version
-				slots = Number(slots.split('/')[1] - slots.split('/')[0]);
-			} else { //Loose logic
-				slots -= dropElem.children().length;
-			}
-			dropElem.removeAttr('slots').attr('data-slots', slots);
-		}
-		
+		  
 		//Finds the closest existing element in the drop target
 		function findClosest(e,dragElem) {
 			const chi = dropElem.children();
@@ -74,8 +76,8 @@ Macro.add('drop', {
 				for (let i = 0; i < chi.length; i++){
 					//Get index + diagonal distance
 					const PosY = $(chi[i]).offset().top + $(chi[i]).width()/2,
-								PosX = $(chi[i]).offset().left + $(chi[i]).height()/2;
-					
+						PosX = $(chi[i]).offset().left + $(chi[i]).height()/2;
+					  
 					dif.push({
 						diag : Math.hypot(Math.abs(PosY - y), Math.abs(PosX - x)) ,
 						index : i ,
@@ -87,153 +89,162 @@ Macro.add('drop', {
 				return [chi[closest.index], closest.offset];
 			}
 		}
-		
-		//Draggable is dragged out
-		dropElem.on('dragstart', this.createShadowWrapper(
+		  
+		//Draggable is dragged out of container
+		  dropElem.addClass(`macro-${this.name}`)
+		  	.on('dragstart', this.createShadowWrapper(
+			  (e) => {
+				  const dragElem = State.temporary.drag;
+				  
+				  //Wait for the ':predrop' event to validate the move
+				  //This stops improper drags from running the removal code
+				  $(document).off(':predrop');
+				  $(document).one(':predrop', (e) => {
+						  $.wiki(onRemove?.contents);
+						  $.wiki(onAny?.contents);
+						  if (slots !== undefined && dragElem.size) {
+							  slots += dragElem.size;
+							  dropElem.attr('data-slots', slots);
+						  }
+				  });
+			  }
+		  ));
+		  
+		dropElem.on('drop', this.createShadowWrapper(
 			(e) => {
 				const dragElem = State.temporary.drag;
-				
-				//Wait for the ':predrop' event to validate the move
-				//This stops improper drags from running the removal code
-				$(document).off(':predrop');
-				$(document).one(':predrop', (e) => {
-						onRemove ? $.wiki(onRemove.contents): null;
-						onAny ? $.wiki(onAny.contents): null;
-						if (e.origin !== 'swap' && slots !== undefined) {
-							slots += dragElem.size;
+				if (dragElem){ //Stops people from dragging whatever in the zone
+					e.preventDefault();
+  
+					if (fillswap){
+						dropMode = slots > 0 ? null : 'swap';
+					}
+  
+					if (ID && dragElem.type !== ID){
+						//Wrond id match!
+						$(e.target).trigger(':typemismatch');
+					} else if (slots - dragElem.size < 0 && dropMode !== 'swap'){
+						$(e.target).trigger(':noslots');
+					} else {
+  
+						//Confirm target removal
+						$(e.target).trigger({type : ':predrop', slots : slots, origin : e.origin});
+  
+						$.wiki(onDrop?.contents);
+						$.wiki(onAny?.contents);
+  
+						const target = findClosest(e,dragElem);
+  
+						switch (dropMode){
+                            
+						case 'prepend': case 'append':
+							dropElem[dropMode](dragElem.self);
+							slots !== undefined ? slots -= dragElem.size : null;
+							dropElem.attr('data-slots', slots);
+						break;
+                            
+						case 'swap':
+							//Drag elem to container
+							if (target === null) {
+								//Only child, no element to swap
+								dropElem.append(dragElem.self);
+							} else {
+								$(target[0])[target[1][0] < 0? 'after' : 'before'](dragElem.self);
+								if (e.origin !== 'swap'){
+									//Avoid infinite swap loop!
+									$(target[0]).trigger('dragstart');
+									$(dragElem.origin).trigger({type : 'drop', origin : 'swap'});
+									setTimeout(() => {
+										$(target[0]).show();
+									});
+								}
+							}
+						break;
+                            
+						case 'remove':
+							dragElem.self.remove();
+						break;
+                            
+						case 'none':break;
+                            
+						case 'replace':
+							dropElem.append(dragElem.self);
+							if (target !== null && !$(target).is(dragElem.self)) {
+								//Run removal code on target
+								$(target[0]).trigger('dragstart');
+								$(dropElem).trigger(':predrop');
+								$(target[0]).remove();
+							}
+						break;
+                            
+						case 'replaceall':
+							dropElem.empty().append(dragElem.self);
+						break;
+                            
+						default:
+							if (target === null) {
+								dropElem.append(dragElem.self);
+							} else {
+								$(target[0])[target[1][0] < 0 ? 'after' : 'before'](dragElem.self);
+							}
+							slots !== undefined ? slots -= dragElem.size : null;
 							dropElem.removeAttr('slots').attr('data-slots', slots);
 						}
-				});
-			}
-		));
-		
-		dropElem.addClass(`macro-${this.name}`)
-			.on('drop', this.createShadowWrapper(
-				(e) => {
-					const dragElem = State.temporary.drag;
-					if (typeof dragElem === 'object'){
-							e.preventDefault();
-
-						if (fillswap){
-							dropMode = slots > 0 ? null : 'swap';
-						}
-
-						if (ID && dragElem.type && dragElem.type !== ID){
-							//Wrond id match!
-							$(e.target).trigger(':typemismatch');
-						} else if (slots - dragElem.size < 0 && dropMode !== 'swap'){
-							$(e.target).trigger(':noslots');
-						} else {
-
-							//Confirm target removal
-							$(e.target).trigger(
-								{type : ':predrop', slots : slots, origin : e.origin}
-							);
-
-							onDrop ? $.wiki(onDrop.contents) : null;
-							onAny ? $.wiki(onAny.contents): null;
-
-							const target = findClosest(e,dragElem);
-
-							switch (dropMode){
-								case 'prepend': case 'append':
-									dropElem[dropMode](dragElem.self);
-									slots !== undefined ? slots -= dragElem.size : null;
-									dropElem.removeAttr('slots').attr('data-slots', slots);
-								break;
-								case 'swap':
-									//Drag elem to container
-									if (target === null) {
-										//Only child, no element to swap
-										dropElem.append(dragElem.self);
-									} else {
-										$(target[0])[target[1][0] < 0? 'after' : 'before'](dragElem.self);
-										if (e.origin !== 'swap'){
-											//Avoid infinite swap loop!
-											$(target[0]).trigger('dragstart');
-											$(dragElem.origin).trigger(
-												{type : 'drop', origin : 'swap'}
-											);
-											setTimeout(() => {
-												$(target[0]).show();
-											});
-										}
-									}
-								break;
-								case 'remove':
-									dragElem.self.remove();
-								break;
-								case 'none':break;
-								case 'replace':
-									dropElem.append(dragElem.self);
-									if (target !== null && !$(target).is(dragElem.self)) {
-										//Run removal code on target
-										$(target[0]).trigger('dragstart');
-											$(dropElem).trigger(':predrop');
-											$(target[0]).remove();
-									}
-								break;
-								case 'replaceall':
-									dropElem.empty().append(dragElem.self);
-								break;
-								default:
-									if (target === null) {
-										dropElem.append(dragElem.self);
-									} else {
-										$(target[0])[target[1][0] < 0 ? 'after' : 'before'](dragElem.self);
-									}
-									slots !== undefined ? slots -= dragElem.size : null;
-									dropElem.removeAttr('slots').attr('data-slots', slots);
-							}
 					}
-
+  
 					//Trigger related event
 					$(e.target).trigger(':postdrop');
 				}
-			}))
-			.on('dragenter', this.createShadowWrapper(
+			})).on('dragenter', this.createShadowWrapper(
 				(e) => {
 					//Run onEnter code
-					onEnter ? $.wiki(onEnter.contents): null;
-
+					$.wiki(onEnter?.contents);
+  
 					e.preventDefault();
-					
-			}))
-			.on('dragover', (e) => {e.preventDefault();})
-			.on('dragleave', this.createShadowWrapper(
+					  
+			})).on('dragover', (e) => {
+          		e.preventDefault();
+        	}).on('dragleave', this.createShadowWrapper(
 				(e) => {
 					//Run onLeave code
-					onLeave ? $.wiki(onLeave.contents): null;
-
+					$.wiki(onLeave?.contents);
+  
 					e.preventDefault();
 			}))
-		dropElem.wiki(innerContent);
+
 		dropElem.appendTo(this.output);
 	}
-})
-
-//---------------------------------------------------------------------
-												 
+});
+  
+/*-------------------- Drag Macro -----------------------*/
+												   
 Macro.add('drag', {
-  isAsync : true,
+	isAsync : true,
 	tags : ['onStart', 'data'],
-
+  
 	handler() {
-		
-		const ID = (this.args[0]? this.args[0] : null), type = this.args[1], attributes = this.args.slice(2);
+		  
+		const elemType = this.args[0], attributes = this.args.slice(1);
 		const innerContent = this.payload[0].contents,
-					onStart = this.payload.find(pay => pay.name === 'onStart'),
-					data = this.payload.find(pay => pay.name === 'data');
+			onStart = this.payload.find(pay => pay.name === 'onStart'),
+			data = this.payload.find(pay => pay.name === 'data');
+		  
+		//Create element
+		const dragElem = $(`<${elemType || 'span'}/>`).wiki(innerContent);
+	  	
+      	//Catch type property
+		if (attributes.includes('type')){
+			var ID = attributes.deleteAt([attributes.indexOf('type')+1])[0];
+			attributes.delete('type');
+		}
+			
+      	//Catch size attribute
+		if (attributes.includes('size')){
+			var size = attributes.deleteAt([attributes.indexOf('size')+1])[0];
+			attributes.delete('size');
+		}
 		
-		//Type checker
-		
-		[['Id',ID],['Element type',type]].forEach(item =>{
-			if (item[1] && typeof item[1] !== 'string')
-				return this.error(`${item[0]} must be a string, reading: '${typeof item[1]}'`);
-		})
-		
-		const dragElem = $(`<${type ? type : 'span'}/>`);
-	
+      	//Apply properties
 		for (let i = 0; i < attributes.length;i+=2) {
 			if (typeof attributes[i] === 'object'){// jQuery style object
 				dragElem.attr(attributes[i]);
@@ -243,53 +254,50 @@ Macro.add('drag', {
 			}
 		}
 		
-		if (dragElem.attr('size')){
-			var size = Number(dragElem.attr('size'));
-			dragElem.removeAttr('size').attr('data-size', size);
-		}
-		
-		if (ID){
-			dragElem.data('drop-id', ID).addClass(`drag-${ID}`)
-		}
-		
+      	//Special set up if type is supplied
+		if (ID){ dragElem.data('drop-id', ID).addClass(`drag-${ID}`) }
+      
+      	//Make all descendants draggable=false
+      	dragElem.find('*').prop('draggable', false);
+		  
 		const oldData = State.temporary.drag;
-		
+		  
 		dragElem.attr('draggable','true')
 			.addClass(`macro-${this.name}`)
 			.on('dragstart', this.createShadowWrapper(
 				(e) => {
-
+  
 					//Handle old data
 					State.temporary.drag = {
 						type : ID,
 						self : dragElem,
 						size : (size ?? 1),
-						data : (data ? data.args[0] : null),
+						data : (data?.args[0] ?? null),
 						contents : innerContent,
 						origin : $(e.target).parent(),
 						originIndex : $(e.target).index()
 					};
-
+  
 					//Wikify associated payload
-					onStart ? $.wiki(onStart) : null;
-
+					$.wiki(onStart);
+  
 					//Hide static copy when dragged
 					setTimeout(() => {
 						$(e.target).hide()
 					});
-
+  
 			})).on('dragend', this.createShadowWrapper(
 				(e) => {
-
+  
 					//Reset _drag to former value
 					oldData === undefined ? 
 						delete State.temporary.drag :
 						State.temporary.drag = oldData;
-
-					//Remove special class
-						$(e.target).show();
+  
+					//Show element again
+					$(e.target).show();
 			}));
-			dragElem.wiki(innerContent);
-			dragElem.appendTo(this.output);
+      
+		dragElem.appendTo(this.output);
 	}
-})
+});
