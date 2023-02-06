@@ -91,24 +91,25 @@ Macro.add('drop', {
 		}
 		  
 		//Draggable is dragged out of container
-		  dropElem.addClass(`macro-${this.name}`)
-		  	.on('dragstart', this.createShadowWrapper(
-			  (e) => {
-				  const dragElem = State.temporary.drag;
+		dropElem.addClass(`macro-${this.name}`)
+			.on('dragstart', this.createShadowWrapper((e) => {
+				const dragElem = State.temporary.drag;
 				  
-				  //Wait for the ':predrop' event to validate the move
-				  //This stops improper drags from running the removal code
-				  $(document).off(':predrop');
-				  $(document).one(':predrop', this.createShadowWrapper((e) => {
-						  $.wiki(onRemove?.contents);
-						  $.wiki(onAny?.contents);
-						  if (slots !== undefined && dragElem.size) {
-							  slots += dragElem.size;
-							  dropElem.attr('data-slots', slots);
-						  }
-				  }));
-			  }
-		  ));
+				//Wait for the ':predrop' event to validate the move
+				//This stops improper drags from running the removal code
+				$(document).off(':predrop');
+				$(document).one(':predrop', this.createShadowWrapper((e) => {
+					if (e.origin !== 'swap'){
+						$.wiki(onRemove?.contents);
+						$.wiki(onAny?.contents);
+						if (slots !== undefined && dragElem.size) {
+							slots += dragElem.size;
+							dropElem.attr('data-slots', slots);
+						}
+					}
+				}));
+			}
+		));
 		  
 		dropElem.on('drop', this.createShadowWrapper(
 			(e) => {
