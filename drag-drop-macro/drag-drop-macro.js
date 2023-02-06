@@ -280,7 +280,7 @@ Macro.add('drag', {
 					};
   
 					//Wikify associated payload
-					$.wiki(onStart);
+					$.wiki(onStart?.contents);
   
 					//Hide static copy when dragged
 					setTimeout(() => {
