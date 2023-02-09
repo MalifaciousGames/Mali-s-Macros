@@ -22,7 +22,7 @@ Macro.add('listen', {
 			}
 		}
 
-		const wrapper = $(document.createElement(this.args[1] ?? 'span'));
+		const wrapper = $(document.createElement(this.args[1] || 'span'));
 				
 		for (let i = 0; i < attributes.length;i++) {
 			if (typeof attributes[i] === 'object'){
