@@ -14,13 +14,24 @@ Macro.add('drop', {
 			onDrop = this.payload.find(pay => pay.name === 'onDrop'),
 			onRemove = this.payload.find(pay => pay.name === 'onRemove');
 		  
-		let dropMode = onDrop?.args[0] ?? null;
+		let dropMode = null, dropParam = onDrop?.args[0] ?? null;
 		const innerContent = this.payload[0].contents;
 		  
 		//Invalid dropMode
-		if (dropMode && !['append', 'prepend', 'replace','replaceall', 'swap','none','anywhere','remove','fillswap'].includes(dropMode))
-			return this.error(`Drop mode (<<onDrop mode>>) is not valid, reading: '${dropMode}'`);
-		  
+      	if (dropParam){
+      		if (typeof dropParam === 'string') {//Param is non-empty string
+				if (['append', 'prepend', 'replace','replaceall', 'swap','none','anywhere','remove','fillswap'].includes(dropParam.toLowerCase())) { //Is one of the drop modes
+            		dropMode = dropParam;
+            	} else {//Is an expression
+          	  		dropParam = {type: 'exp', content : dropParam};
+            	}
+        	} else if (typeof dropParam === 'function') {//Is function
+				dropParam = {type: 'func', content : dropParam};
+       		} else {//Some truthy value of the wrong type!
+        		return this.error(`Drop mode (<<onDrop mode>>) is not valid, reading: '${dropMode}'`);
+        	}
+        }
+      	console.log(dropParam);
 		const dropElem = $(`<${elemType || 'div'}/>`).wiki(innerContent);
 	  
 		//Catch slots property
@@ -50,13 +61,6 @@ Macro.add('drop', {
 				dropElem.attr( attributes[i], attributes[i+1]);
 				i++
 			}
-		}
-		  
-		//Fillswap special variable
-		if (dropMode === 'fillswap' && slots === undefined) {
-			return this.error(`'Fillswap' mode needs a 'slots' property to work.`);
-		} else if (dropMode === 'fillswap'){
-			var fillswap = true;
 		}
 		
       	//Set up type container properties
@@ -91,34 +95,41 @@ Macro.add('drop', {
 		}
 		  
 		//Draggable is dragged out of container
-		dropElem.addClass(`macro-${this.name}`)
-			.on('dragstart', this.createShadowWrapper((e) => {
-				const dragElem = State.temporary.drag;
+		  dropElem.addClass(`macro-${this.name}`)
+		  	.on('dragstart', this.createShadowWrapper(
+			  (e) => {
+				  const dragElem = State.temporary.drag;
 				  
-				//Wait for the ':predrop' event to validate the move
-				//This stops improper drags from running the removal code
-				$(document).off(':predrop');
-				$(document).one(':predrop', this.createShadowWrapper((e) => {
-					if (e.origin !== 'swap'){
-						$.wiki(onRemove?.contents);
-						$.wiki(onAny?.contents);
-						if (slots !== undefined && dragElem.size) {
-							slots += dragElem.size;
-							dropElem.attr('data-slots', slots);
-						}
-					}
-				}));
-			}
-		));
+				  //Wait for the ':predrop' event to validate the move
+				  //This stops improper drags from running the removal code
+				  $(document).off(':predrop');
+				  $(document).one(':predrop', (e) => {
+						  $.wiki(onRemove?.contents);
+						  $.wiki(onAny?.contents);
+						  if (slots !== undefined && dragElem.size) {
+							  slots += dragElem.size;
+							  dropElem.attr('data-slots', slots);
+						  }
+				  });
+			  }
+		  ));
 		  
 		dropElem.on('drop', this.createShadowWrapper(
 			(e) => {
 				const dragElem = State.temporary.drag;
 				if (dragElem){ //Stops people from dragging whatever in the zone
 					e.preventDefault();
-  
-					if (fillswap){
-						dropMode = slots > 0 ? null : 'swap';
+                  
+      				if (dropParam?.type){
+        				dropParam.type === 'exp' ? dropMode = eval(dropParam.content) : dropMode = dropParam.content.call(this);
+        			}
+                  
+					if (dropMode === 'fillswap') {
+                    	if (slots === undefined){
+                        	return this.error(`'Fillswap' mode needs a 'slots' property to work.`);
+                        } else {
+							dropMode = slots > 0 ? null : 'swap';
+                        }
 					}
   
 					if (ID && dragElem.type !== ID){
@@ -280,7 +291,7 @@ Macro.add('drag', {
 					};
   
 					//Wikify associated payload
-					$.wiki(onStart?.contents);
+					$.wiki(onStart);
   
 					//Hide static copy when dragged
 					setTimeout(() => {
