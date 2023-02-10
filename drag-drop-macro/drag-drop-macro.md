@@ -35,7 +35,8 @@ Drop container:
 
 ### Drop modes ###
 
-The `drop` container comes with multiple presets that affect the way elements are added to it. The drop mode is supplied to the `<<onDrop [dropMode]>>` tag.
+The `drop` container comes with multiple presets that affect the way elements are added to it, drop modes are supplied to the `<<onDrop [dropMode]>>` tag.
+They can be a string, a quoted expression which evaluates to a preset or a function which returns a preset.
 
 | Preset | Effect | Removes target element |
 |---|:---:|---|
