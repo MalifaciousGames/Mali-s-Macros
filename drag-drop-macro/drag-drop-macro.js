@@ -121,26 +121,26 @@ Macro.add('drop', {
 					e.preventDefault();
                   
       				if (dropParam?.type){
-        				dropParam.type === 'exp' ? dropMode = eval(dropParam.content) : dropMode = dropParam.content.call(this);
+        				dropParam.type === 'exp' ? dropMode = eval(parse(dropParam.content)) : dropMode = dropParam.content.call(this);
         			}
                   
-					if (dropMode === 'fillswap') {
-                    	if (slots === undefined){
-                        	return this.error(`'Fillswap' mode needs a 'slots' property to work.`);
-                        } else {
-							dropMode = slots > 0 ? null : 'swap';
-                        }
-					}
+				if (dropMode === 'fillswap') {
+                    			if (slots === undefined){
+                        			return this.error(`'Fillswap' mode needs a 'slots' property to work.`);
+                       			} else {
+						dropMode = slots > 0 ? null : 'swap';
+                      			}
+				}
   
-					if (ID && dragElem.type !== ID){
-						//Wrond id match!
-						$(e.target).trigger(':typemismatch');
-					} else if (slots - dragElem.size < 0 && dropMode !== 'swap'){
-						$(e.target).trigger(':noslots');
-					} else {
+				if (ID && dragElem.type !== ID){
+					//Wrong id match!
+					$(e.target).trigger(':typemismatch');
+				} else if (slots - dragElem.size < 0 && dropMode !== 'swap'){
+					$(e.target).trigger(':noslots');
+				} else {
   
-						//Confirm target removal
-						$(e.target).trigger({type : ':predrop', slots : slots, origin : e.origin});
+					//Confirm target removal
+					$(e.target).trigger({type : ':predrop', slots : slots, origin : e.origin});
   
 						$.wiki(onDrop?.contents);
 						$.wiki(onAny?.contents);
