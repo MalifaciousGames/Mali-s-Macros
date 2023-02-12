@@ -6,7 +6,7 @@ These macros come with an associated css file!
 
 ### Syntax ###
 
-These macros supports HTML arguments ([Read more.](https://github.com/MalifaciousGames/Mali-s-Macros/blob/main/htmlarguments.md)).
+These macros support HTML arguments ([Read more.](../htmlarguments.md)).
 
 ```html
 Draggable element:
