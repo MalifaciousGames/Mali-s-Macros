@@ -5,25 +5,43 @@ Syntax:
 <</on>>
 To run the contents again (update it):
 <<trigger 'eventName'>> */
-	
+
+(function() {
+
+setup.on_macro_events = [];
+
+//Clean listeners on passage transition to avoid stacking !
+$(document).on(':passageinit', function () {
+	setup.on_macro_events.forEach(event => $(document).off(event));
+	setup.on_macro_events = [];
+});
+
 Macro.add('on', {
 	tags  : null,
 
 	handler() {
 		
 		if (!this.args[0]) {
-			return this.error(`Missing event name.`);
+			return this.error(`Missing event type.`);
 		} else if (typeof this.args[0] !== 'string'){
 			return this.error(`Event name must be a string, reading: ${typeof this.args[0]}.`);
-		}
-		
-		let trig = this.args[0].split(','), onInit = true;
-		const content = this.payload[0].contents, attributes = this.args.slice(2);
-		trig = trig.map(event => event.trim());
-			
+		};
+        
+		const trig = this.args[0].split(',').map(event => event.trim()),
+        		content = this.payload[0].contents,
+            		attributes = this.args.slice(2);
+      		let onInit;
+      
 		// Create element, apply attributes
-		let container = $(document.createElement(this.args[1] ?? 'span')).addClass(`macro-${this.name}`);
-			
+		let container = $(document.createElement(this.args[1] || 'span'));
+		
+      		if (attributes.includes('onInit')){
+        		onInit = eval(attributes.deleteAt(attributes.indexOf('onInit')+1)[0]);
+          		attributes.delete('onInit');
+		} else {
+        		onInit = true;
+		};
+      
 		for (let i = 0; i < attributes.length;i++) {
 			if (typeof attributes[i] === 'object'){//JQuery style object
 				container.attr(attributes[i]);
@@ -31,58 +49,42 @@ Macro.add('on', {
 				container.attr(attributes[i], attributes[i+1]);
 				i++;
 			}
-		}
-		
-		if (container.attr('onInit') !== undefined){
-			onInit = eval(container.attr('onInit'));
-			container.removeAttr('onInit').attr('data-onInit', onInit);
-		}
+		};
 
 		// Apply listener for each event name
 		trig.forEach(event => {
-			if (Config.debug) {
-				console.log(`Listener added for ${event}.`);
-			}
-			customEvents.pushUnique(event);
+			setup.on_macro_events.pushUnique(event);
 			$(document).on(event, function() {
 				container.empty().wiki(content);
 			});
-		})
+		});
+      
 		// Wikify on passage load, unless onInit is false
-		onInit ? container.wiki(content) : null;
-		container.appendTo(this.output);
+		container.addClass(`macro-${this.name}`).wiki(onInit ? content : '').appendTo(this.output);
 	}
 });
 
-// Triggers custom event
+// Triggers custom events
 
 Macro.add('trigger', {
 	handler() {
 		
-		if (this.args[0] === undefined || this.args[0] === '') {
-			return this.error(`Missing event name.`);
-		} else if (typeof this.args[0] !== 'string'){
-			return this.error(`Event name must be a string, reading: ${typeof this.args[0]}.`);
+      		let trig = this.args[0];
+      
+		if (!['string','object'].includes(typeof trig)) {
+			return this.error(`Invalid event type, reading :'${typeof trig}'.`);
 		}
 		
-		let trig = this.args[0].split(',');
-		trig = trig.map(event => event.trim());
-		
+		if (typeof trig === 'string'){ //Comma-separated string of events
+			trig = trig.split(',').map(event => event.trim());
+		} else if (typeof trig === 'object' && !Array.isArray(trig)){ //A single event object
+        		trig = [trig];
+        	}//Do nothing if trig is already an array, it's fine
+
 		// Triggers each event supplied
 		trig.forEach(event => {
-			$(document).trigger(event);
-			if (Config.debug) {
-				console.log(`Triggered custom event: ${event}.`);
-			}
-		})
+			$(this.args[1] ?? document).trigger(event);
+		});
 	}
 });
-
-// Cleans custom events on passage transition (stops them from stacking)
-
-window.customEvents = [];
-		
-$(document).on(':passageinit', function () {
-	customEvents.forEach(event => $(document).off(event));
-	customEvents = [];
-});
+})();
