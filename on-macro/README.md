@@ -1,6 +1,6 @@
 ## The 'on' and 'trigger' macros ##
 
-The `on` macro generates a customizable element which refreshes its contents when a special event is triggered. The `trigger` macro is used to trigger such events.
+The `<<on>>` macro generates a customizable element which refreshes its contents when a special event is triggered. The `<<trigger>>` macro is used to trigger such events.
 
 ### Syntax ###
 
@@ -12,7 +12,7 @@ Both `on` and `trigger` require at least one event name to function.
 <<trigger 'event1[,envent2,...]'>>
 ```
 
-The `on` block is a `<span>` by default. This can be changed by supplying the element type as a second argument.
+The `<<on>>` block is a `<span>` by default. This can be changed by supplying the element type as a second argument.
 
 Example:
 
@@ -29,7 +29,7 @@ Example:
 
 ### 'onInit' special attribute ###
 
-By default, the `on` macro runs once as the current passage is loaded, setting the `onInit` property to `false` make it so it only runs when triggered.
+By default, the `<<on>>` macro runs once as the current passage is loaded, setting the `onInit` property to `false` make it so it only runs when triggered.
 
 ```html
 <<on 'cannotEquip' p onInit false>>
@@ -39,7 +39,7 @@ By default, the `on` macro runs once as the current passage is loaded, setting t
 
 ### Trigger options ###
 
-Updating `on` blocks relies on triggering the proper event type at `document` level (directly or through bubbling). This can be done with a simple `<<trigger 'eventType'>>`, however the `trigger` macro has broader syntax support.
+Updating `<<on>>` blocks relies on triggering the proper event type at `document` level (directly or through bubbling). This can be done with a simple `<<trigger 'eventType'>>`, however the `<<trigger>>` macro has broader syntax support.
 
 ```html
 Comma-separated string : <<trigger 'event1, event2' [myElement]>>
