@@ -4,6 +4,8 @@ The `on` macro generates a customizable element which refreshes its contents whe
 
 ### Syntax ###
 
+This macro supports html arguments ([Read more.](../htmlarguments.md)).
+
 Both `on` and `trigger` require at least one event name to function.
 ```html
 <<on 'event1[,event2,...]' [elementType] [attribute + value]>> ...content... <</on>>
