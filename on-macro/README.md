@@ -33,6 +33,19 @@ By default, the `on` macro runs once as the current passage is loaded, setting t
 
 ```html
 <<on 'cannotEquip' p onInit false>>
-You cannot equip this item!
+	You cannot equip this item!
 <</on>>
 ```
+
+### Trigger options ###
+
+Updating `on` blocks relies on triggering the proper event type at `document` level (directly or through bubbling). This can be done with a simple `<<trigger 'eventType'>>`, however the `trigger` macro has broader syntax support.
+
+```html
+Comma-separated string : <<trigger 'event1, event2' [myElement]>>
+
+Custom event object : <<trigger `{type : 'eventType', data : 'Data passed with the event object.'}` [myElement]>>
+
+Array : <<trigger `['event1',{type : 'event2'}]` [myElement]>>
+```
+
