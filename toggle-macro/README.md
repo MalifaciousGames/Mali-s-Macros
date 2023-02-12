@@ -2,7 +2,10 @@
 
 This macro creates a cycling interactive element used to set variables and run code.
 
-Syntax:
+### Syntax ###
+
+This macro supports html arguments ([Read more.](../htmlarguments.md)).
+
 ```html
 <<toggle '$variableName' [elementType] [property value]>>
 
