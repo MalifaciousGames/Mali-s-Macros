@@ -5,6 +5,7 @@ It can handle html elements, macros, markup and anything that would print in a s
 
 ### Syntax and HTML output ###
 
+This macro supports html arguments ([Read more.](../htmlarguments.md))
 
 ```html
 <<hover [elementType] [property value...]>>
