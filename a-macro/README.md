@@ -98,7 +98,7 @@ Generating buttons bound to number keys:
 
 ### Trigger attribute ###
 
-The `trigger` attribute is used to trigger events at document level. It is meant to be used in conjunction with the [`<<on>>` macro](https://github.com/MalifaciousGames/Mali-s-Macros/blob/main/on-macro/on-macro.md).
+The `trigger` attribute is used to trigger events at document level. It is meant to be used in conjunction with the [`<<on>>` macro](../on-macro).
 
 ```html
 <<set $var = 45>>
