@@ -11,9 +11,8 @@ The 'a' macro adds four interactive elements, two links and two buttons, all of 
 
 ### Syntax ###
 
-This macro supports HTML arguments ([Read more.](https://github.com/MalifaciousGames/Mali-s-Macros/blob/main/htmlarguments.md)).
-This macro supports HTML arguments ([Read more.](./htmlarguments.md)).
 This macro supports HTML arguments ([Read more.](../htmlarguments.md)).
+
 ```html
 <<a "Link text" [attribute value...]>>
 
