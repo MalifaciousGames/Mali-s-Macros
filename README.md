@@ -40,14 +40,6 @@ This pair of macros make up an event-based refresh system. They are useful as a 
 
 ***
 
-## The 'toggle' Macro ##
-
-A more customizable version of Sugarcube's `<<cycle>>` macro. Each option can run its own code payload and/or execute common code. 
-
-Comes in link and button format : [The 'toggle' macro](toggle-macro)
-
-***
-
 ## The 'checkvars' macro ##
 
 This macro brings up a dialog window which displays State variables, settings objects and setup objects.
@@ -104,9 +96,9 @@ $(document).ready(() => {
 
 ## Legacy macros ##
 
-`<<input>>` and `<<inputbox>>` => Should use an `<input>` element inside the `<<listen>>` macro instead.
+`<<input>>` and `<<inputbox>>` => Should use an `<input>` element inside the `<<listen>>` macro instead : [Input macros](input-macros).
 
-[Input macros](input-macros)
+The `<<toggle>>` macro, customizable counterpart to SC's `<<cycle>>`. Most of these functionalities can be acchieved with a `<<cycle>>` inside a `<<listen>>` container : [The 'toggle' macro](toggle-macro).
 
 ***
 
