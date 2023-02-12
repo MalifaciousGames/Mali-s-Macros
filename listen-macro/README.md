@@ -4,7 +4,7 @@ This macro is a container which acts as an event listener for its contents. By d
 
 ### Syntax ###
 
-This macro supports HTML arguments ([Read more.](https://github.com/MalifaciousGames/Mali-s-Macros/blob/main/htmlarguments.md)).
+This macro supports HTML arguments ([Read more.](../htmlarguments.md)).
 
 ```html
 <<listen [event type(s)] [element type] [html attributes...]>>
