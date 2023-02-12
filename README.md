@@ -67,9 +67,8 @@ Sometimes you just want to run code x times without using the full loop syntax..
 By default, the iteration value is `_i`, this can be changed by supplying a quoted variable as second argument.
 
 ```html
-<<set $amount = 5>>
-
-<<times $amount>>
+<<times 5 '_var'>>
+	_var : <<= setup.item.name>>
 	<<set $inventory.push(setup.item)>>
 <</times>>
 ```
