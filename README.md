@@ -4,7 +4,7 @@
 
 Links and buttons that take any HTML attributes, has built-in keybindings support and multiple ouput options.
 
-[The 'a' macro](a-macro/a-macro.md)
+[The 'a' macro](a-macro)
 
 ***
 
@@ -12,7 +12,7 @@ Links and buttons that take any HTML attributes, has built-in keybindings suppor
 
 The `drag` and `drop` macros let you create and manage draggable elements in Sugarcube.
 
-[The 'Drag' and 'drop' macro set](drag-drop-macro/drag-drop-macro.md)
+[The 'Drag' and 'drop' macro set](drag-drop-macro)
 
 ***
 
@@ -20,7 +20,7 @@ The `drag` and `drop` macros let you create and manage draggable elements in Sug
 
 A configurable event listener in macro form. Mainly used to run code when an input element is modified.
 
-[The 'Listen' macro](listen-macro/listen-macro.md)
+[The 'Listen' macro](listen-macro)
 
 ***
 
@@ -28,7 +28,7 @@ A configurable event listener in macro form. Mainly used to run code when an inp
 
 Lets you use the built-in Settings API without JavaScript knowledge.
 
-[The settings macro](sc-settings/sc-settings.md)
+[The settings macro](sc-settings)
 
 ***
 
@@ -36,7 +36,7 @@ Lets you use the built-in Settings API without JavaScript knowledge.
 
 This pair of macros make up an event-based refresh system. They are useful as a way to update displays but also for running asynchronous code.
 
-[The 'On' and 'trigger' macro set](on-macro/on-macro.md)
+[The 'On' and 'trigger' macro set](on-macro)
 
 ***
 
@@ -44,7 +44,7 @@ This pair of macros make up an event-based refresh system. They are useful as a 
 
 A more customizable version of Sugarcube's `<<cycle>>` macro. Each option can run its own code payload and/or execute common code. 
 
-Comes in link and button format : [The 'toggle' macro](toggle-macro/toggle-macro.md)
+Comes in link and button format : [The 'toggle' macro](toggle-macro)
 
 ***
 
@@ -106,7 +106,7 @@ $(document).ready(() => {
 
 `<<input>>` and `<<inputbox>>` => Should use an `<input>` element inside the `<<listen>>` macro instead.
 
-[Input macros](input-macros/sc-input.md)
+[Input macros](input-macros)
 
 ***
 
