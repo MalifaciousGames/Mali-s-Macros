@@ -53,6 +53,8 @@ Visually update values :
 Result : <span id='display'></span>
 ```
 
+<hr>
+
 Color the relevant input field when enter is pressed :
 
 ```html
@@ -71,6 +73,8 @@ Color the relevant input field when enter is pressed :
 <</listen>>
 ```
 
+<hr>
+
 Make an element which cannot be right-clicked (and taunts you if you do) :
 
 ```html
@@ -86,6 +90,8 @@ Make an element which cannot be right-clicked (and taunts you if you do) :
 
 <</listen>>
 ```
+
+<hr>
 
 The world's worst numpad :
 
