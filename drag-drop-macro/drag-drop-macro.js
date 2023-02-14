@@ -31,7 +31,7 @@ Macro.add('drop', {
         		return this.error(`Drop mode (<<onDrop mode>>) is not valid, reading: '${dropMode}'`);
         	}
         }
-      	console.log(dropParam);
+
 		const dropElem = $(`<${elemType || 'div'}/>`).wiki(innerContent);
 	  
 		//Catch slots property
