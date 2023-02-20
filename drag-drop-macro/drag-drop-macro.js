@@ -103,14 +103,16 @@ Macro.add('drop', {
 				  //Wait for the ':predrop' event to validate the move
 				  //This stops improper drags from running the removal code
 				  $(document).off(':predrop');
-				  $(document).one(':predrop', (e) => {
+				  $(document).one(':predrop', this.createShadowWrapper(
+                    (e) => {
 						  $.wiki(onRemove?.contents);
 						  $.wiki(onAny?.contents);
 						  if (slots !== undefined && dragElem.size) {
 							  slots += dragElem.size;
 							  dropElem.attr('data-slots', slots);
 						  }
-				  });
+				  	})
+                 );
 			  }
 		  ));
 		  
