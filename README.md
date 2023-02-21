@@ -98,17 +98,3 @@ $(document).ready(() => {
 `<<input>>` and `<<inputbox>>` => Should use an `<input>` element inside the `<<listen>>` macro instead : [Input macros](input-macros).
 
 The `<<toggle>>` macro, customizable counterpart to SC's `<<cycle>>`. Most of these functionalities can be acchieved with a `<<cycle>>` inside a `<<listen>>` container : [The 'toggle' macro](toggle-macro).
-
-***
-
-#### Like the macros and have a few bucks to spare? ####
-
-You should consider donating to Sugarcube's dev, Thomas Michael Edwards, or to Chris, Klembot, Klimas who manages the Twine application. Both of them have done more for the community than I ever could.
-
-TME: https://www.motoslave.net/sugarcube/2/ (top right).
-
-Klembot: https://www.patreon.com/klembot .
-
-That said, I do have a ko-fi account, any contribution is highly appreciated <3
-
-https://ko-fi.com/malifaciousgames
