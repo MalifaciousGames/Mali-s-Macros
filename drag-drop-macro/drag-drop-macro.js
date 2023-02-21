@@ -211,22 +211,22 @@ Macro.add('drop', {
 				}
 			})).on('dragenter', this.createShadowWrapper(
 				(e) => {
-					//Run onEnter code
-					$.wiki(onEnter?.contents);
-  
+                  			if (!State.temporary.drag.origin.is(dropElem)) {
+						//Run onEnter code
+						$.wiki(onEnter?.contents);
+                    			}
 					e.preventDefault();
 					  
 			})).on('dragover', (e) => {
-          		e.preventDefault();
-        	}).on('dragleave', this.createShadowWrapper(
+          			e.preventDefault();
+        		}).on('dragleave', this.createShadowWrapper(
 				(e) => {
-					//Run onLeave code
-					$.wiki(onLeave?.contents);
-  
+                  			if (State.temporary.drag.origin.is(dropElem)) {
+						//Run onLeave code
+						$.wiki(onLeave?.contents);
+                    			}
 					e.preventDefault();
-			}))
-
-		dropElem.appendTo(this.output);
+			})).appendTo(this.output);
 	}
 });
   
