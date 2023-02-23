@@ -46,7 +46,7 @@ Simple hover counter:
 
 ### Capture mode ###
 
-By default, the `hover` macro's contents update to on hover. When this behaviour isn't desirable you can use the `capture` argument so hovering will only ever display the content as it was when the macro was added to the page.
+By default, both `swap` and `tip` update on hover to reflect current variables. When this behaviour isn't desirable you can use the `capture` special argument so variables will only ever display their values as they were on passage load.
 
 ```html
 <<set _hour = 2, _min = 42>>
