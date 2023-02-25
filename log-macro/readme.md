@@ -1,14 +1,12 @@
 ## The 'log' macro ##
 
-The `'log'` macro lets you log data to the console for debugging. It comes with three presets : time, data and source.
+The `'log'` macro lets you log data to the console for debugging. It comes with three presets : source, data and time.
 
 ### Source log ###
 
-Using a simple `<<log>>` displays the code which called the `<<log>>` macro, it is mostly useful as a way to check if things are running properly.
+Using a simple `<<log>>` displays the code which called the `<<log>>` macro, it is mostly useful as a way to check if code is executing properly.
 
-***
-
-### Logging variables ###
+### Logging data ###
 
 Supplying variables to `<<log>>` displays them in the console.
 If multiple are given, they will form a collapsible group under a label, this label can be supplied like so: `<<log ... '(My custom label!)'>>`.
@@ -18,7 +16,13 @@ If multiple are given, they will form a collapsible group under a label, this la
 <<log _var _object _array>>
 ```
 
-***
+This syntax can also be used to track code execution in a verbose way.
+
+```html
+<<if $var>> 
+  <<log '$var is truthy, proceed...'>>
+<</if>>
+```
 
 ### Logging time ###
 
@@ -30,7 +34,43 @@ Calling the `<<logtime>>` macro lets you create time trackers, then log the elap
 <<logstop>> => Deletes tracker and logs time elapsed.
 ```
 
-#### Custom trackers ####
+<b> Custom trackers </b>
 
 You can declare custom trackers by suppling an id and an optional css styles like so: `<<logtime 'myTimer' 'color:red;text-decoration:underline'>>`. Any call to this id will be styled accordingly.
+
+Comparing Sugarcube's macros to native JS in terms of speed:
+
+```html
+<<silently>>
+/* ---------------------------------- Sugarcube --------------------------------- */
+  <<set _i = 0, _acc = 0>>
+
+  <<logtime 'SCloop' 'color:lightblue'>>
+  
+  <<for ;_i lt 1000;_i++>>
+    <<set _acc += _i>>
+  <</for>>
+  
+  <<log `'_i value : '+_i` `'Accumulator value : '+_acc`>>
+  <<logstop 'SCloop'>>
+
+/* ---------------------------------- JavaScript --------------------------------- */
+
+  <<logtime 'JSloop'  'color:red'>>
+  
+  <<run let i = 0, acc = 0;
+    for (;i < 1000;i++){
+      acc += i;
+    };
+    console.log(`i value : ${i}`);
+    console.log(`Accumulator value : ${acc}`);>>
+    
+  <<logstop 'JSloop'>>
+<</silently>>
+```
+
+<b> About time trackers </b>
+
+Time trackers do not tick in the background, this is why I try not to call them 'timers'. They consist in a date object bound to an ID, whenever they are called, this date object is compared to current time to return an offset.
+As such, active trackers do not consumme any resources, don't fret.
 
