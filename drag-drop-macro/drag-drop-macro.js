@@ -26,10 +26,11 @@ Macro.add('drop', {
 		//Catch slots property
 		if (attributes.includes('slots')){
 			var initSlots = attributes.deleteAt([attributes.indexOf('slots')+1])[0];
-          	attributes.delete('slots');
+          		attributes.delete('slots');
           
 			if (typeof initSlots === 'string' && initSlots.includes('/')){ //Taylored version
 				var slots = Number(initSlots.split('/')[1] - initSlots.split('/')[0]);
+                		initSlots = Number(initSlots.split('/')[1]);
             			dropElem.attr('data-slots', slots);
 			} else { //Loose logic
               			var slots = countSlots(initSlots);
