@@ -24,6 +24,14 @@ This macro supports HTML arguments ([Read more.](../htmlarguments.md)).
 <</a>>
 ```
 
+With bracket syntax :
+
+```html
+<<a [[Link text|passage]]>><</a>>
+<<a [img[...url...][passage][$var = 10]]>><</a>>
+<<a 'Text!' goto [[passage]]>><</a>>
+```
+
 ### Output options ###
 
 The 'a' macro comes with three built-in output options:
@@ -96,6 +104,24 @@ Generating buttons bound to number keys:
 <span id='id'></span>
 ```
 
+### Choice attribute ###
+
+The `choice` attribute creates groups of links, if one of them is clicked, all the others will be removed from the page. 
+
+```html
+<<adel "Option 1" choice 'opt'>>
+	<<rep '#opt'>>You chose n°1.
+<</adel>>
+
+<<adel "Option 2" choice 'opt'>>
+	<<rep '#opt'>>You chose n°2.
+<</adel>>
+
+<span id='opt'/>
+```
+
+<b>This feature doesn't have any form of memory, navigating back and forth will cause previously deleted choices to appear again.</b>
+
 ### Trigger attribute ###
 
 The `trigger` attribute is used to trigger events at document level. It is meant to be used in conjunction with the [`<<on>>` macro](../on-macro).
@@ -111,7 +137,3 @@ The `trigger` attribute is used to trigger events at document level. It is meant
 	$var
 <</on>>
 ```
-
-###### Notes ######
-
-This macro set does not support Twine's bracket notation (`[[passage]]/[img[URL]]`). For clickable images, using `<img src=URL>` is the preferred method.
