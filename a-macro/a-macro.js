@@ -26,15 +26,16 @@ Macro.add(['a','adel','but','butdel'], {
       	//Flatten objects into attributes pairs, while handles nested objects
       	while (i < attributes.length) {
         	const attr = attributes[i];
-		if (Array.isArray(attr)) {//Array of pairs
-             		attributes.deleteAt(i)[0].forEach((el) => attributes.push(el));
-            	} else if (typeof attr === 'object'){//JQ-style object
-            		$.each(attributes.deleteAt(i)[0] , (key, value)=> {
-                		attributes.push(key.toLowerCase());
-                  		attributes.push(value);
-                	});
-          	}
+          	if (Array.isArray(attr)) {//Array of pairs
+             	attributes.deleteAt(i)[0].forEach((el) => attributes.push(el));
+            } else if (typeof attr === 'object'){//JQ-style object
+            	$.each(attributes.deleteAt(i)[0] , (key, value)=> {
+                	attributes.push(key.toLowerCase());
+                  	attributes.push(value);
+                });
+            } else {
           	i++;
+            }
         }
       	//Check all attributes are pairs
       	if (attributes.length%2) return this.error(`Non-object arguments should always come in pairs. ${attributes.includes('disabled') ? "Even the 'disabled' attribute." : ''}`);
