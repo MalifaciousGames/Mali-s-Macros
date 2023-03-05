@@ -98,9 +98,9 @@ Using `_drag.data` in a simple inventory system:
 <<drop>>
 
 <<onDrop>>
-	  <<set $equip.push(_drag.data)>>
+	  <<set $inventory.push(_drag.data)>>
 <<onRemove>>
-	<<set $equip.delete(_drag.data)>>
+	<<set $inventory.delete(_drag.data)>>
 <</drop>>
 
 <p>Storage:</p>
