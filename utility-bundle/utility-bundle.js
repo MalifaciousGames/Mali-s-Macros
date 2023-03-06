@@ -18,7 +18,8 @@ window.MalisMacros = {
         	})
       	};
     },
-  	on_macro_events : []
+  	on_macro_events : [],
+	version : '1.0'
 }
 
 Array.prototype.attrFinder = function (match, elem) {
