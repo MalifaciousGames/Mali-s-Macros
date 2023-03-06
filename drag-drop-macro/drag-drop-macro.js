@@ -12,7 +12,7 @@ Macro.add('drop', {
 	tags : ['onEnter','onLeave','onDrop','onRemove','onAny'],
   
 	handler() {
-      	if (window.MalisMacros === undefined) return this.error(`<<${this.name}>> needs a utility bundle to function! It can be downloaded there: url . Much love, Maliface!`);
+      	if (window.MalisMacros === undefined) return this.error(`<<${this.name}>> needs a utility bundle to function! It can be downloaded there: https://github.com/MalifaciousGames/Mali-s-Macros/blob/main/utility-bundle/utility-bundle-min.js . Much love, Maliface!`);
 		  
 		const elemType = this.args[0],
 			attributes = this.args.slice(1).unpack(),
