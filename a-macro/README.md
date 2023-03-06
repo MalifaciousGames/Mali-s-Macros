@@ -9,6 +9,10 @@ The 'a' macro adds four interactive elements, two links and two buttons, all of 
 
 `adel` and `butdel` are single use.
 
+### Utility bundle ###
+
+This macro comes with a minified copy of the utility bundle, if you already have one in your story JS, you can freely delete this one!
+
 ### Syntax ###
 
 This macro supports HTML arguments ([Read more.](../htmlarguments.md)).
@@ -20,6 +24,7 @@ This macro supports HTML arguments ([Read more.](../htmlarguments.md)).
 	[<<rep [selector]>> ...new content...]
 	[<<prep [selector]>> ...content to prepend...]
 	[<<app [selector]>> ...content to append...]
+	[<<diag ['Title'] ['styles']>> ...content to display in dialog...]
 
 <</a>>
 ```
@@ -36,13 +41,13 @@ With bracket syntax :
 
 The 'a' macro comes with three built-in output options:
 
-| Effect | Syntax |
-|------------|------------|
-| Replace | `<<rep>>` |
-| Prepend | `<<prep>>`|
-| Append | `<<app>>` |
+| Effect | Syntax | First argument | Second argument |
+|:------------:|:------------:|:------------:|:------------:|
+| Replace | `<<rep>>` | Valid selector | N/A |
+| Prepend | `<<prep>>`| Valid selector | N/A |
+| Append | `<<app>>` | Valid selector |  N/A |
+| Dialog | `<<diag>>` | Dialog title | CSS styles for dialog body|
 
-These can be supplied with one or multiple comma-separated selectors. If none is given, the link's immediate parent will serve as a target.
 
 ```html
 <div id='box'>Contents</div>
