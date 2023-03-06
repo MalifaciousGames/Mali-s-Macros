@@ -10,5 +10,17 @@
 
 .macro-drag {
   cursor: grab;
-  user-select: none
+  user-select: none;
+  margin: 1rem;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: .2em solid #444;
+  min-height: 1rem;
+  min-width: 1rem;
+}
+
+.macro-drag.selected {
+  filter: drop-shadow(0 0 2px seashell);
 }
