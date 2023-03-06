@@ -4,13 +4,13 @@ This macro set lets you create configurable draggable elements and assorted drop
 
 These macros come with an associated css file!
 
-### Syntax ###
-
-These macros support HTML arguments ([Read more.](../htmlarguments.md)).
-
 ### Utility bundle ###
 
 This macro comes with a minified copy of the utility bundle, if you already have one in your story JS, you can freely delete this one!
+
+### Syntax ###
+
+These macros support HTML arguments ([Read more.](../htmlarguments.md)).
 
 ```html
 Draggable element:
