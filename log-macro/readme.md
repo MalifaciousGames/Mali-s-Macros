@@ -2,7 +2,7 @@
 
 The `'log'` macro lets you log data to the console for debugging. It comes with three presets : source, data and time.
 
-### Source log ###
+### Logging source ###
 
 Using a simple `<<log>>` displays the code which called the `<<log>>` macro, it is mostly useful as a way to check if code is executing properly.
 
@@ -23,6 +23,23 @@ This syntax can also be used to track code execution in a verbose way.
   <<log '$var is truthy, proceed...'>>
 <</if>>
 ```
+
+
+### Logging byte size ###
+
+`<<logsize>>` logs the approximate size, in bytes, of the supplied variable.
+
+The syntax is as follows: `<<logsize $variable ['Custom name'] ['Custom styling']>>`.
+
+```html
+<<set _arr = [ 'First','Second','Third']>>
+<<logsize _arr 'Array'>> => Array's size is 38 bytes.
+
+<<set _num = 455>>
+<<logsize _num 'Number'>> => Number's size is 8 bytes.
+```
+
+<b>Disclaimer</b> : This setting doesn't claim to provide a perfectly accurate byte size, the value is mostly useful when comparing variables to each others.
 
 ### Logging time ###
 
