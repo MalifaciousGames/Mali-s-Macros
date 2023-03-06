@@ -8,6 +8,10 @@ These macros come with an associated css file!
 
 These macros support HTML arguments ([Read more.](../htmlarguments.md)).
 
+### Utility bundle ###
+
+This macro comes with a minified copy of the utility bundle, if you already have one in your story JS, you can freely delete this one!
+
 ```html
 Draggable element:
 
@@ -17,6 +21,7 @@ Draggable element:
 
   [<<data someData>>]
   [<<onStart>> ...code to run when the dragging operation starts...]
+  [<<onEnd>> ...code to run when the dragging operation ends...]
 <</drag>>
 
 Drop container:
@@ -38,7 +43,7 @@ Drop container:
 The `drop` container comes with multiple presets that affect the way elements are added to it, drop modes are supplied to the `<<onDrop [dropMode]>>` tag.
 They can be a string, a quoted expression which evaluates to a preset or a function which returns a preset.
 
-| Preset | Effect | Removes target element |
+| Preset | Effect | Causes an element swap |
 |---|:---:|---|
 | 'anywhere'(default) | Place element anywhere in the container. | False |
 | 'append' | Append to the container. |  False |
@@ -152,5 +157,6 @@ Another small item!
 | :typemismatch | Item type mismatch between draggable element and drop container, drop aborted. | Drop container |
 | :noslots | Drop container doesn't have the slots capacity to accept draggable item, drop aborted. | Drop container |
 | :predrop | Happens right before a valid drop, used to confirm the removal process. | Drop container |
+| :postdrop | Happens at the end of the drop event. | Drop container |
 
 Default events related to drag and drop operations can be found here: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API .
