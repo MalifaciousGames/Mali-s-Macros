@@ -1,6 +1,6 @@
 ## The 'log' macro ##
 
-The `'log'` macro lets you log data to the console for debugging. It comes with three presets : source, data and time.
+The `'log'` macro lets you log data to the console for debugging. It comes with four presets : source, data, size and time.
 
 ### Logging source ###
 
