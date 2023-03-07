@@ -23,6 +23,7 @@ Macro.add('vanish', {
               fade = () => {
                 wrapper.animate({opacity : visible ? 0 : 1}, 300)
                   .css('pointer-events', visible ? 'none' : 'all')
+                  .removeClass(visible ? 'visible' : 'hidden').addClass(visible ? 'hidden' : 'visible')
                   .find('a, button').ariaDisabled(visible)
                   .attr('tabindex', visible ? '-1' : '0');
                 visible = !visible;
@@ -35,6 +36,7 @@ Macro.add('vanish', {
         	wrapper.on(this.args[0], fade);
         }
       
-        wrapper.addClass('macro-vanish').css('opacity', visible ? 1 : 0).wiki(this.payload[0].contents).appendTo(this.output);
+        wrapper.addClass('macro-vanish '+(visible ? 'visible' : 'hidden')).css('opacity', visible ? 1 : 0).wiki(this.payload[0].contents).appendTo(this.output);
 	}
 });
+
