@@ -15,22 +15,26 @@ Macro.add('vanish', {
       	if (window.MalisMacros === undefined) return this.error(`<<${this.name}>> needs a utility bundle to function! It can be downloaded there: https://github.com/MalifaciousGames/Mali-s-Macros/blob/main/utility-bundle/utility-bundle-min.js . Much love, Maliface!`);
       
       	if (!this.args[0]) return this.error('<<vanish>> needs either a delay or an event argument.');
-      
-      	const needsEvent = /\b[0-9]/.test(this.args[0]) ? false : true;
-      
-		const wrapper = $(document.createElement(this.args[1] || 'span')),
-              hide = () => {
-                wrapper.removeClass('macro-vanish-visible').addClass('macro-vanish-hidden').css('pointer-events', 'none').find('a, button').ariaDisabled(true).attr('tabindex','-5');
-              },
-              fadeout = () => {wrapper.animate({opacity : 0}, 300, 'swing', hide)};
       	
+      	let visible = !this.args.attrFinder('hidden');
+      
+      	const needsEvent = /\b[0-9]/.test(this.args[0]) ? false : true,
+              wrapper = $(document.createElement(this.args[1] || 'span')).applyAttr(this.args.slice(2).unpack()),
+              fade = () => {
+                wrapper.animate({opacity : visible ? 0 : 1}, 300)
+                  .css('pointer-events', visible ? 'none' : 'all')
+                  .find('a, button').ariaDisabled(visible)
+                  .attr('tabindex', visible ? '-1' : '0');
+                visible = !visible;
+              };
+      
       	if (!needsEvent){//With a number delay
         	var delay = Math.max(Engine.minDomActionDelay, Util.fromCssTime(this.args[0]));
-        	setTimeout(fadeout, delay);
+        	setTimeout(fade, delay);
         } else {//Detect event
-        	$(document).one(this.args[0], fadeout);
+        	wrapper.on(this.args[0], fade);
         }
       
-        wrapper.applyAttr(this.args.slice(2).unpack()).addClass('macro-vanish macro-vanish-visible').css('opacity', 1).wiki(this.payload[0].contents).appendTo(this.output);
+        wrapper.addClass('macro-vanish').css('opacity', visible ? 1 : 0).wiki(this.payload[0].contents).appendTo(this.output);
 	}
 });
