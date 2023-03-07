@@ -6,3 +6,15 @@ Bundling these functions together cuts down on needless copy-pasting, making eac
 
 While each macro comes with a minified copy of this bundle, you only ever need <b>one</b>, meaning you can delete subsequent copies if you are using multiple macros.
 
+### Concerned macros ###
+
+The macros that need the bundle are: 
+
+* `<<a>>`
+* The `<<drag>>` and `<<drop>>` set
+* `<<hover>>`
+* `<<listen>>`
+* `<<on>>`
+* `<<vanish>>`
+
+All of these come with a minified version of the bundle in their JS file.
