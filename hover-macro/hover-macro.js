@@ -11,7 +11,7 @@ Macro.add('hover', {
 	tags : ['swap','tip'],
 	
 	handler() {
-	if (window.MalisMacros === undefined) return this.error(`<<${this.name}>> needs a utility bundle to function! It can be downloaded there: url . Much love, Maliface!`);
+	if (window.MalisMacros === undefined) return this.error(`<<${this.name}>> needs a utility bundle to function! It can be downloaded there: https://github.com/MalifaciousGames/Mali-s-Macros/blob/main/utility-bundle/utility-bundle-min.js . Much love, Maliface!`);
       	const payloads = this.payload.payloadsToObj(this.self.tags),
               hasTip = payloads?.tip ? true : false,
               hasSwap = payloads?.swap ? true : false,
