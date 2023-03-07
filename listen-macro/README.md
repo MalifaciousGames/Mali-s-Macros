@@ -15,7 +15,7 @@ This macro supports HTML arguments ([Read more.](../htmlarguments.md)).
 
 ... inner contents ...
 
-<<when [eventType1]>>
+<<when [eventType1[, eventType2]]>>
 
 ... code to run when an event of the given type is triggered ...
 
@@ -88,7 +88,7 @@ Make an element which cannot be right-clicked (and taunts you if you do) :
 ```html
 <<listen>>
 
-  <div>You cannot right click meeee!</div>
+  You cannot right click meeee!
 
 <<when 'contextmenu'>>
 
