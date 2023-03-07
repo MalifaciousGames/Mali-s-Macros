@@ -2,21 +2,29 @@
 
 This macro is a container which acts as an event listener for its contents. By default, it listens for `change` events but the event type(s) can be supplied as a space or comma-separated list.
 
+### Utility bundle ###
+
+This macro comes with a minified copy of the utility bundle, if you already have one in your story JS, you can freely delete this one!
+
 ### Syntax ###
 
 This macro supports HTML arguments ([Read more.](../htmlarguments.md)).
 
 ```html
-<<listen [event type(s)] [element type] [html attributes...]>>
+<<listen [elementType] [attribute value...]>>
 
 ... inner contents ...
 
-<<then>>
+<<when [eventType1]>>
 
-... code to run when the event is triggered ...
+... code to run when an event of the given type is triggered ...
+
+[<<when [eventType2]>> ... ]
 
 <</listen>>
 ```
+
+If no event type is supplied to the `<<when>>` tag, it will trigger on `change` events by default. See JS events for an [exhaustive list](https://developer.mozilla.org/en-US/docs/Web/Events#event_listing).
 
 ### _event variable ###
 
@@ -44,7 +52,7 @@ Visually update values :
   Starting number : <<numberbox '_num' `_num ?? 5`>>
   Multiplier : <<numberbox '_multi' `_multi ?? 5`>>
 
-<<then>>
+<<when>>
 
   <<replace '#display'>><<= _num*_multi>><</replace>>
 
@@ -58,13 +66,13 @@ Result : <span id='display'></span>
 Color the relevant input field when enter is pressed :
 
 ```html
-<<listen 'keypress'>>
+<<listen>>
 
   <<textbox '$fname' 'John'>>
   <<textbox '$name' 'Doe'>>
   <<textbox '$age' '?'>>
 
-<<then>>
+<<when 'keypress'>>
 
   <<if _event.code === 'Enter'>>
     <<run $(_event.target).css('background-color','red')>>
@@ -78,16 +86,21 @@ Color the relevant input field when enter is pressed :
 Make an element which cannot be right-clicked (and taunts you if you do) :
 
 ```html
-<<listen 'contextmenu'>>
+<<listen>>
 
   <div>You cannot right click meeee!</div>
 
-<<then>>
+<<when 'contextmenu'>>
 
   <<run _event.preventDefault(),
     Dialog.wiki("Don't even try it!"),
     Dialog.open()>>
 
+<<when 'click'>>
+
+  <<run Dialog.wiki("That's the good click!"),
+    Dialog.open()>>
+    
 <</listen>>
 ```
 
@@ -98,13 +111,13 @@ The world's worst numpad :
 ```html
 <div id='display'>You dialed : </div>
 
-<<listen 'click' 'div' style 'display: grid; grid-template-columns: 1fr 1fr 1fr'>>
+<<listen 'div' style 'display: grid; grid-template-columns: 1fr 1fr 1fr'>>
 
   <<for _i=1; _i lt 10;_i++>>
 	  <div style='padding:1em'>_i</div>
   <</for>>
 
-<<then>>
+<<when 'click'>>
 	
   <<append '#display'>><<= _event.target.innerHTML>><</append>>
 
