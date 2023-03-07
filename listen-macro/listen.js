@@ -10,25 +10,25 @@ window.MalisMacros={wikiWrapper:function(t,e){const r={};"object"==typeof t&&$.e
 Macro.add('listen', {
 	tags: ['when'],
 	isAsync : true,
-	
 	handler() {
-
-	const payloads = {}, events = [], wrapper = $(document.createElement(this.args[0] || 'span'));
-      
-        wrapper.applyAttr(this.args.slice(1).unpack());
+		
+	if (window.MalisMacros === undefined) return this.error(`<<${this.name}>> needs a utility bundle to function! It can be downloaded there: https://github.com/MalifaciousGames/Mali-s-Macros/blob/main/utility-bundle/utility-bundle-min.js . Much love, Maliface!`);
+	const payloads = {}, events = [],
+              wrapper = $(document.createElement(this.args[0] || 'span')).applyAttr(this.args.slice(1).unpack());
       
       	this.payload.slice(1).forEach(tag => {
           	const event = tag.args[0]?.toLowerCase() ?? 'change';
-        	payloads[event] = tag.contents;
-          	events.push(event);
+          	event.split(/\s|,/g).forEach(e => {
+              		if (e) { //Not empty string
+        			payloads[e] = tag.contents;
+          			events.push(e);
+                	}
+            	});
         });
 
 	wrapper.on(events.join(' '), this.createShadowWrapper(
-        	(e) => {
-        		MalisMacros.wikiWrapper({event : e},
+        	(e) => {MalisMacros.wikiWrapper({event : e},
                 	() => {$.wiki(payloads[e.type])}
-                )
-        	}
+		)}
         )).wiki(this.payload[0].contents).appendTo(this.output);
-	}
-});
+}});
