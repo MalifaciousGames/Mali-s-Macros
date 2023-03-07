@@ -2,6 +2,10 @@
 
 The `<<on>>` macro generates a customizable element which refreshes its contents when a special event is triggered. The `<<trigger>>` macro is used to trigger such events.
 
+### Utility bundle ###
+
+This macro comes with a minified copy of the utility bundle, if you already have one in your story JS, you can freely delete this one!
+
 ### Syntax ###
 
 The `<<on>>` container supports html arguments ([Read more.](../htmlarguments.md)).
@@ -29,7 +33,7 @@ Example:
 
 ### 'onInit' special attribute ###
 
-By default, the `<<on>>` macro runs once as the current passage is loaded, setting the `onInit` property to `false` make it so it only runs when triggered.
+By default, the `<<on>>` macro runs once as the current passage is loaded, setting the `onInit` property to a falsy value makes it so it only runs when triggered.
 
 ```html
 <<on 'cannotEquip' p onInit false>>
