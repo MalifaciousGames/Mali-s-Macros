@@ -40,6 +40,22 @@ This pair of macros make up an event-based refresh system. They are useful as a 
 
 ***
 
+## The 'vanish' macros ##
+
+Creates custom containers that can be made to vanish/appear based on a timed delay or triggered events.
+
+[The 'Vanish' macro set](vanish-macro)
+
+***
+
+## The 'log' macro ##
+
+Lets you easily log data to the console, set up time trackers to monitor code execution and measure byte sizes.
+
+['Log' macro](log-macro)
+
+***
+
 ## The 'checkvars' macro ##
 
 This macro brings up a dialog window which displays State variables, settings objects and setup objects.
