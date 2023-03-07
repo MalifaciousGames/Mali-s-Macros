@@ -18,7 +18,7 @@ Macro.add('on', {
 	tags    : null,
 
 	handler() {
-		if (window.MalisMacros === undefined) return this.error(`<<${this.name}>> needs a utility bundle to function! It can be downloaded there: url . Much love, Maliface!`);
+		if (window.MalisMacros === undefined) return this.error(`<<${this.name}>> needs a utility bundle to function! It can be downloaded there: https://github.com/MalifaciousGames/Mali-s-Macros/blob/main/utility-bundle/utility-bundle-min.js . Much love, Maliface!`);
 		if (!this.args[0]) {
 			return this.error(`Missing event type.`);
 		} else if (typeof this.args[0] !== 'string'){
