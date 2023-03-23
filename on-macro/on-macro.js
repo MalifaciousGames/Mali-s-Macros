@@ -30,7 +30,7 @@ Macro.add('on', {
 			container = $(document.createElement(this.args[1] || 'span')),
 			payload = this.payload[0].contents;
 		
-      		const onInit = attributes.attrFinder('onInit') || true;
+      		const onInit = attributes.attrFinder('onInit') ?? true;
 
 		container.applyAttr(attributes).addClass(`macro-${this.name}`).wiki(onInit ? payload : '').appendTo(this.output);
       
