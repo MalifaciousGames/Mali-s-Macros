@@ -93,13 +93,13 @@ Make an element which cannot be right-clicked (and taunts you if you do) :
 <<when 'contextmenu'>>
 
   <<run _event.preventDefault(),
-    Dialog.wiki("Don't even try it!"),
-    Dialog.open()>>
+	Dialog.setup(),
+    	Dialog.wiki("Don't even try it!").open()>>
 
 <<when 'click'>>
 
-  <<run Dialog.wiki("That's the good click!"),
-    Dialog.open()>>
+  <<run Dialog.setup(),
+	Dialog.wiki("That's the good click!").open()>>
     
 <</listen>>
 ```
