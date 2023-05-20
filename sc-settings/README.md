@@ -73,6 +73,6 @@ _this replaces settings.FontSize, acts as a number.
 ```
 
 Note: 
-`_this` is not a true temporary variable as the State isn't loaded when Storyinit runs. 
+`_this` is not a true temporary variable. 
 
 More on the settings API: https://www.motoslave.net/sugarcube/2/docs/#setting-api 
