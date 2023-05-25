@@ -1,18 +1,12 @@
 ## The 'on' and 'trigger' macros ##
 
-The `<<on>>` macro generates a customizable element which refreshes its contents when a special event is triggered. The `<<trigger>>` macro is used to trigger such events.
-
-### Utility bundle ###
-
-This macro comes with a minified copy of the utility bundle, if you already have one in your story JS, you can freely delete this one!
+The `<<on>>` macro generates a customizable element which refreshes its contents when the corresponding event is triggered. Events can be either standard JS events (click, contextmenu, keypress...) or custom ones, in which case the `<<trigger>>` macro can be used to trigger them.
 
 ### Syntax ###
 
-The `<<on>>` container supports html arguments ([Read more.](../htmlarguments.md)).
-
 Both `<<on>>` and `<<trigger>>` require at least one event name to function.
 ```html
-<<on 'event1[,event2,...]' [elementType] [attribute + value]>> ...content... <</on>>
+<<on 'event1[,event2,...]' [elementType] [{attribute object}] [t8n] [startHidden/hidden]>> ...content... <</on>>
 <<trigger 'event1[,envent2,...]'>>
 ```
 
@@ -31,15 +25,19 @@ Example:
 <</button>>
 ```
 
-### 'onInit' special attribute ###
+### 'hidden/startHidden' argument ###
 
-By default, the `<<on>>` macro runs once as the current passage is loaded, setting the `onInit` property to a falsy value makes it so it only runs when triggered.
+By default, the `<<on>>` macro executes its contents when the page is loaded, the `hidden/startHidden` special argument makes it waits for an event before doing so.
 
 ```html
-<<on 'cannotEquip' p onInit false>>
+<<on 'cannotEquip' p hidden>>
 	You cannot equip this item!
 <</on>>
 ```
+
+### 't8n/transition' argument ###
+
+Similarly to other sugarcube macros, this causes a fade-in effect when the `<<on>>` container is refreshed.
 
 ### Trigger options ###
 
