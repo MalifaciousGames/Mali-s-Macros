@@ -39,6 +39,17 @@ By default, the `<<on>>` macro executes its contents when the page is loaded, th
 
 Similarly to other sugarcube macros, this causes a fade-in effect when the `<<on>>` container is refreshed.
 
+### _event variable ###
+
+The `_event` temporary variable lets you access and manipulate the event which triggered the refresh. This can be used to discriminate between custom events or interact with JS standard events.
+
+Turn the clicked element red:
+```html
+<<on 'click'>>
+	<<run $(_event.target).css('background-color','red')>>
+<</on>>
+```
+
 ### Trigger options ###
 
 Updating `<<on>>` blocks relies on triggering the proper event type at `document` level (directly or through bubbling). This can be done with a simple `<<trigger 'eventType'>>`, however the `<<trigger>>` macro has broader syntax support.
