@@ -79,7 +79,9 @@ The `goto` attribute lets you specify a passage to forward the player to. It wor
 
 The `key` attribute is used to bind one or more keys to an element. When one of the given keys is pressed, the element behaves as if it had been clicked.
 
-The `key` attribute accepts both `e.code` (see: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code) and `e.key` as values (see: https://developer.mozilla.org/en-US/docs/web/api/ui_events/keyboard_event_key_values).
+The `key` attribute accepts both `e.code` and `e.key`.
+`e.code` values: https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_code_values .
+`e.key` values : https://developer.mozilla.org/en-US/docs/web/api/ui_events/keyboard_event_key_values .
 
 ```html
 /* Supports both QWERTY and AZERTY keyboards using e.key*/
