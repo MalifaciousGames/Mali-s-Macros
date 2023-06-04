@@ -155,3 +155,25 @@ The `trigger` attribute is used to trigger events at document level. It is meant
 	$var
 <</on>>
 ```
+
+### Count attribute ###
+
+The `count` attribute enables you to set a maximum amount of clicks before the link disappears. 
+
+```html
+<<but 'This button can only be clicked 3 times' count 3>>
+	<<rep '#left'>> <<= 3-_this.count>>
+<</but>>
+
+Clicks left: <span id='left'>3</span>
+```
+
+### _this variable ###
+
+The temporary variable `_this` can be used in the link to reference its own context.
+
+| Key | Value |
+|:------------:|:------------:|
+| `_this.self` | Reference to the link element
+| `_this.event` | Reference to the click event
+| `_this.count` | Number of times the link has been clicked
