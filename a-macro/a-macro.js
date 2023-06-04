@@ -1,120 +1,160 @@
-/* ----------------------- UTILITY BUNDLE ----------------------- */
-/* ------------------- ONLY ONE COPY NEEDED! -------------------- */
-
-window.MalisMacros={wikiWrapper:function(t,e){const r={};"object"==typeof t&&$.each(t,((t,e)=>{r[t]=State.temporary?.[t],State.temporary[t]=e}));try{e()}finally{$.each(r,((t,e)=>{State.temporary[t]=e}))}},on_macro_events:[],version: '1.0'},Array.prototype.attrFinder=function(t,e){const r=this.indexOf(t);if(-1!==r){const[a]=this.deleteAt(r+1);return this.delete(t),e&&e.attr(`data-${t}`,a),a}return!1},Array.prototype.payloadsToObj=function(){const t={default:this[0].contents};return this.slice(1).forEach((e=>{t[e.name]=e})),t},Array.prototype.unpack=function(){let t=0,e=this;for(;t<e.length;){const r=e[t];Array.isArray(r)?e.deleteAt(t)[0].forEach((t=>e.push(t))):"object"!=typeof r||r.isLink?t++:$.each(e.deleteAt(t)[0],((t,r)=>{e.push(t.toLowerCase()),e.push(r)}))}if(e.length%2)throw new Error("Non-object arguments should always come in pairs. "+(e.includes("disabled")?"Even the 'disabled' attribute.":""));return e},$.fn.extend({applyAttr:function(t){for(let e=0;e<t.length;e+=2)this.attr(t[e],t[e+1]);return this},runOutput:function(t,e){if(e)switch(t){case"rep":$(e.args[0]??this.parent()).empty().wiki(e.contents);break;case"prep":$(document.createDocumentFragment()).wiki(e.contents).prependTo(e.args[0]??this.parent());break;case"app":$(e.args[0]??this.parent()).wiki(e.contents);break;case"diag":Dialog.setup(e.args?.[0],e.args?.[1]),Dialog.wiki(e.contents),Dialog.open();break;case"refresh":this.empty().wiki(e);break;default:$.wiki(e)}},diagFrom:function(t,e){const r=this.offset().top-this.height()/2,a=this.offset().left-this.width()/2;return{distance:Math.hypot(r-e,a-t),top:e-r,left:t-a}}});
-
-/* ------------------- END OF UTILITY BUNDLE -------------------- */
-
 /* Mali's <<a>> macro for Sugarcube */
 
 Macro.add(['a','adel','but','butdel'], {
 	isAsync : true,
 	tags    : ['rep','prep','app','diag'],
-
-	handler() {
-      	if (window.MalisMacros === undefined) return this.error(`<<${this.name}>> needs a utility bundle to function! It can be downloaded there: https://github.com/MalifaciousGames/Mali-s-Macros/blob/main/utility-bundle/utility-bundle-min.js . Much love, Maliface!`);
-      
-		const type = this.name[0] === 'b' ? 'button' : 'link',
-		      attributes = this.args.slice(1).unpack(),
-		      payloads = this.payload.payloadsToObj(this.self.tags);
-
-      	let oldThis, passage, setter, linkContent = this.args[0], link = $(`<${type === 'button'? type : 'a'}>`);
-		
-		//Process bracket syntax
-      	if (typeof linkContent === 'object'){
-        	if (linkContent.setFn){//Has a setter
-        		setter = linkContent.setFn;
+  
+  	argsToObj : function(args) {
+    		let argObject = {}, i = 0;
+    		while(i < args.length){
+          		const arg = args[i];
+        		if (Array.isArray(arg)) {//An array, splice into position
+            			args.splice(i--, 1, ...arg);
+            		} else if (typeof arg === 'object') {//Merge objects!
+            			Object.assign(argObject, arg);
+           		} else if (arg.toLowerCase() === 'disabled') {//Boolean attribute, set to true
+              			argObject.disabled = true;
+            		} else {//Following pairs
+              			const val = args[i+=1];
+              			if (val === undefined){throw new Error('Uneven number of arguments.')};
+            			argObject[arg.toLowerCase()] = val;
+            		}
+          		i++;
         	}
-        	if (linkContent.isImage) {//[img[url][passage]]
-            	passage = linkContent?.link;
-				linkContent = `<img src=${linkContent.source} class=link-image>`;
-			} else {//[[Text|passage]]
-              	passage = linkContent.link;
-				linkContent = linkContent.text;
-			}
+      		return argObject;
+    	},
+  	activeKeys : [],
+	handler() {
+      
+      	//Parse arguments and payloads into objects
+	const type = this.name[0] === 'b' ? 'button' : 'link', attributes = this.self.argsToObj(this.args.slice(1)), payloads = {};
+		
+	//Payload object only includes content for child tags
+      	this.payload.slice(1).forEach(pay => {
+		payloads[pay.name] = pay;
+	});
+		
+      	//Condition property, processed early to save on processing if not fulfilled
+      	if (attributes.hasOwnProperty('condition')) {
+          	var cond = attributes.condition;
+        	delete attributes.condition;
+          	if (!cond || !Scripting.evalTwineScript(cond)){
+            		return false;
+            }
+        };
+		
+      	let oldThis, deleteSelf = this.name.includes('del'), count = 0;
+      
+      	//Process bracket syntax
+      	if (typeof this.args[0] === 'object'){
+          	var {text : txt, link : passage, source : src} = this.args[0];
+        } else {
+        	var txt = this.args[0];
+          	if (attributes.hasOwnProperty('goto')) {
+            		var passage = attributes.goto;
+              		delete attributes.goto;
+            	};
+		if (typeof passage === 'object'){passage = passage.link};//<<a '...' goto [[passage]]>>
         }
       
-      	// Catch choice property
-      	if (attributes.includes('choice')){
-			var choiceID = attributes.attrFinder('choice', link);
-          	choiceID = choiceID.split(',');
-		};
+      	//Create link element with proper text or image
+      	const link = $(`<${type === 'button'? type : 'a'}>`)
+        	.wikiWithOptions({ profile : 'core' }, src ? `<img src='${src}' class='link-image'>` : txt)
+        	.attr({'data-passage': passage, 'data-count' : count});
       
-      	// Catch trigger property
-      	if (attributes.includes('trigger')){
-			var trig = attributes.attrFinder('trigger').split(',').map(e => e.trim());
-		};
-      
-      	// Catch goto property
-		passage = attributes.attrFinder('goto');
+      	// Trigger, can be comma-separated string, event object or array of events...
+      	if (attributes.hasOwnProperty('trigger')) {
+		var trig = clone(attributes.trigger);
+          	delete attributes.trigger;
+          	trig = (typeof trig === 'string') ? trig.split(',').map(v => v.trim()) : [trig];
+	};
       	
-      	// Catch key property
-		if (attributes.includes('key')){
-			var keyArray = attributes.attrFinder('key', link);
-          	keyArray = keyArray.split(',');
-
-          	$(document).keyup('macro-a-key', (e) => {
-				keyArray.every(key => {
-					if (e[isNaN(Number(key)) ? 'key' : 'keyCode'] == key){
-						e.preventDefault();
-						link.click();
-						return false; //Stops the every()
-						//Makes sure it runs only once even if redundant keys are given
-					}
-					return true;
-				})
-			})
-		};
-          
-      	link.applyAttr(attributes);
+      	//Max number of clicks has been given!
+     	if (attributes.hasOwnProperty('count')) {
+          	var maxCount = attributes.count;
+          	if (typeof maxCount !== 'number' || maxCount < 1) {
+            		return this.error(`The 'count' attribute must be a number greater than 1, reading : ${count}.`);
+            	}
+        	delete attributes.count;
+        }; 
       
-      	// Process passage links like SC's link macro would
+	//Mutually exclusive links!
+      	if (attributes.hasOwnProperty('choice')){
+		var choiceID = attributes.choice;
+          	link.attr('data-choice', choiceID);
+          	delete attributes.choice;
+	};
+      
+      	// Catch key property
+	if (attributes.hasOwnProperty('key')){
+		var keyArray = attributes.key;
+          	if (typeof keyArray === 'string') {keyArray = keyArray.split(',')};
+
+          	const acKeys = this.self.activeKeys;
+          	if (!acKeys.length) {//Initiate new global listener
+            		$(document).keyup('macro-a', (e) => {
+                		const validLinks = acKeys.filter(obj => obj.keys.includesAny(e.key, e.code));
+    				validLinks.forEach(o => {o.link.click()});
+                	});
+            	} else {//Do a cleaning pass once this.output is in DOM! Do it when new link is added so the length of activeKeys is always 1 (and another listener doesn't get added).
+            		setTimeout(() => {
+                		acKeys.forEach(o => {
+                			if (!$.contains(document.body, o.link[0])) {acKeys.delete(o)};
+                		})
+                	}, Engine.minDomActionDelay);
+		}
+          	acKeys.push({keys : keyArray, link : link});
+	};
+      
+        // Apply non-processed attributes to the link
+      	link.attr(attributes).addClass(`macro-${this.name} link-${attributes.href ? 'external' : 'internal'}`);
+      
+      	// Apply proper classes based on passage availability!
       	if (passage) {
-          	if (typeof passage === 'object') {
-            	passage = passage.link;
-            }
-          	link.attr('data-passage', passage);
-        	if (Story.has(passage)) {
-				link.addClass('link-internal');
-				if (Config.addVisitedLinkClass && State.hasPlayed(passage)) {
-					link.addClass('link-visited');
-				}
-			} else {
-				link.addClass('link-broken');
-			}
+		if (Config.addVisitedLinkClass && State.hasPlayed(passage)) {
+			link.addClass('link-visited');
+		} else if (!Story.has(passage)) {
+			link.addClass('link-broken');
+		}
         };
 
-		// Wiki link text
-		link.wikiWithOptions({ profile : 'core' }, linkContent).addClass(`macro-${this.name} link-internal`);
-
       	link.ariaClick( //Options object
-			{namespace : '.macros',
-			role : type ,
-			one : (this.name.length > 3 || passage) ? true : false},
-        this.createShadowWrapper(
-          MalisMacros.wikiWrapper.bind(this, {'link' : link},
-			function() { // Main call with wikiWrapper
-        		if (setter) {setter()};
-				$.each(payloads, (key, pay) => {
-            		link.runOutput(key, pay);
-            	});
-				if (trig) {
-                	trig.forEach(e => {
-                    	$(document).trigger(e)
-                    })
-                };
-			}),
-          
-        	function() { // After call
-				if (passage){ //Go to passage
-					Engine.play(passage);
-				} else if (this.name.length > 3){ //Remove link
-					link.remove();
-				}
-            	if (choiceID){
-            		choiceID.forEach(id => { $(`[data-choice*=${id}]`).not(link).remove() });
-            	}
-			})
-      ).appendTo(this.output);
+		{namespace : '.macros', role : type, one : (deleteSelf || passage) ? true : false},
+        	this.createShadowWrapper((e) => {
+                try {
+                      	oldThis = State.temporary.this;
+                  	State.temporary.this = {event : e, self : link, count : count};//Init _this variable
+                      
+                      	$.wiki(this.payload[0].contents);
+                  	$.each(payloads, (k,pay) => {
+                        	const target = pay.args[0] ? $(pay.args[0]) : $(e.target).parent(), trans = pay.args.includesAny('transition','t8n'), attrObject = pay.args.find(a => typeof a === 'object' && !a instanceof jQuery) ?? {};
+                          	let result;
+                          	switch(k) {
+              			case 'rep': result = target.attr(attrObject).empty().wiki(pay.contents); break;
+              			case 'prep': result = $('<span>').attr(attrObject).addClass(`macro-${k}-insert`).wiki(pay.contents).prependTo(target); break; 
+              			case 'app': result = $('<span>').attr(attrObject).addClass(`macro-${k}-insert`).wiki(pay.contents).appendTo(target); break;
+              			case 'diag': Dialog.setup(pay.args[0] ?? '', pay.args[1] ?? '');
+                			result = Dialog.wiki(pay.contents).open();
+                                break;
+           			}
+                        	if (result && trans) {$(result).fadeOut(0).fadeIn(400)};
+                        });
+                      	trig?.forEach(e => $(document).trigger(e));//Trigger events!
+                      
+                    } finally {//Clean _this value after use
+                    	oldThis !== undefined ? State.temporary.this = oldThis : delete State.temporary.this;
+                    }
+                }, () => {
+			link.attr('data-count', count+=1);//Increment click counter
+                  	if (choiceID) {//Delete other choice contenders
+                    		$(`[data-choice*=${choiceID}]`).not(link).remove();
+                    	}
+                	if (passage){
+                    		Engine.play(passage);
+                    	} else if (count === maxCount || deleteSelf || (cond && !Scripting.evalTwineScript(cond))) {
+                    		link.remove();
+                    	}
+                }
+            )).appendTo(this.output);
 	}
 });
