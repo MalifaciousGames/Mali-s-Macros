@@ -80,7 +80,10 @@ The `goto` attribute lets you specify a passage to forward the player to. It wor
 The `key` attribute is used to bind one or more keys to an element. When one of the given keys is pressed, the element behaves as if it had been clicked.
 
 The `key` attribute accepts both `e.code` and `e.key`.
+
+
 `e.code` values: https://developer.mozilla.org/en-US/docs/Web/API/UI_Events/Keyboard_event_code_values .
+
 `e.key` values : https://developer.mozilla.org/en-US/docs/web/api/ui_events/keyboard_event_key_values .
 
 ```html
@@ -107,7 +110,7 @@ Generating buttons bound to number keys using the `e.code` syntax:
 
 ### Condition attribute ###
 
-The `condition` attribute is supplied as quoted expression, the link appears only if it evaluates to a truthy value. When the link is clicked, this condition is evaluated again, if it has changed to a falsy value, the link is removed.
+The `condition` attribute is supplied as a quoted expression, the link appears only if it evaluates to a truthy value. When the link is clicked, this condition is evaluated again, if it has changed to a falsy value, the link is removed.
 This is a shortcut to wrapping the link in an `<<if>>` macro.
 
 ```html
