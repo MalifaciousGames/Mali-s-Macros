@@ -9,22 +9,18 @@ The 'a' macro adds four interactive elements, two links and two buttons, all of 
 
 `adel` and `butdel` are single use.
 
-### Utility bundle ###
-
-This macro comes with a minified copy of the utility bundle, if you already have one in your story JS, you can freely delete this one!
-
 ### Syntax ###
 
-This macro supports HTML arguments ([Read more.](../htmlarguments.md)).
+This macro supports HTML arguments as objects, arrays or simple pairs. ([Read more.](../htmlarguments.md)).
 
 ```html
 <<a "Link text" [attribute value...]>>
 
 	[...content to run silently...]
-	[<<rep [selector]>> ...new content...]
-	[<<prep [selector]>> ...content to prepend...]
-	[<<app [selector]>> ...content to append...]
-	[<<diag ['Title'] ['styles']>> ...content to display in dialog...]
+	[<<rep [selector] [{attributes}] [t8n]>> ...new content...]
+	[<<prep [selector] [{attributes}] [t8n]>> ...content to prepend...]
+	[<<app [selector] [{attributes}] [t8n]>> ...content to append...]
+	[<<diag ['Title'] ['styles'] [t8n]>> ...content to display in dialog...]
 
 <</a>>
 ```
@@ -33,7 +29,7 @@ With bracket syntax :
 
 ```html
 <<a [[Link text|passage]]>><</a>>
-<<a [img[...url...][passage][$var = 10]]>><</a>>
+<<a [img[...url...][passage]]>><</a>>
 <<a 'Text!' goto [[passage]]>><</a>>
 ```
 
@@ -41,13 +37,14 @@ With bracket syntax :
 
 The 'a' macro comes with three built-in output options:
 
-| Effect | Syntax | First argument | Second argument |
-|:------------:|:------------:|:------------:|:------------:|
-| Replace | `<<rep>>` | Valid selector | N/A |
-| Prepend | `<<prep>>`| Valid selector | N/A |
-| Append | `<<app>>` | Valid selector |  N/A |
-| Dialog | `<<diag>>` | Dialog title | CSS styles for dialog body|
+| Effect | Syntax | First argument | Second argument | Third argument |
+|:------------:|:------------:|:------------:|:------------:|:------------:|
+| Replace | `<<rep>>` | Selector | Attribute object | 'transition/t8n'
+| Prepend | `<<prep>>`| Selector | Attribute object | 'transition/t8n'
+| Append | `<<app>>` | Selector |  Attribute object | 'transition/t8n'
+| Dialog | `<<diag>>` | Dialog title | CSS styles for dialog body | 'transition/t8n'
 
+If the selector's value is falsy (empty string, 0, false...), the link will default to its immediate parent and append to/prepend to/replace that instead.
 
 ```html
 <div id='box'>Contents</div>
@@ -59,13 +56,13 @@ The 'a' macro comes with three built-in output options:
 <</a>>
 ```
 
-A single `<<a>>` element can support all of the output options, these always run in the order described above, `<<rep>>` being first.
+A single `<<a>>` element can support all of the output options, these run in alphabetical order: `app => diag => prep => rep`.
 
 ```html
 <<but 'Button'>>
-	<<rep '#id1, #id2'>> ...new content!...
-	<<prep '.someClass'>> ...something to prepend...
 	<<app '#someID'>> ...something to append...
+	<<prep '.someClass'>> ...something to prepend...
+	<<rep '#id1, #id2'>> ...new content!...
 <</but>>
 ```
 
@@ -82,31 +79,45 @@ The `goto` attribute lets you specify a passage to forward the player to. It wor
 
 The `key` attribute is used to bind one or more keys to an element. When one of the given keys is pressed, the element behaves as if it had been clicked.
 
-The `key` attribute accepts both keyCode numbers (see: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/keyCode) and key values (see: https://developer.mozilla.org/en-US/docs/web/api/ui_events/keyboard_event_key_values).
+The `key` attribute accepts both `e.code` (see: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code) and `e.key` as values (see: https://developer.mozilla.org/en-US/docs/web/api/ui_events/keyboard_event_key_values).
 
 ```html
-/* Supports both QWERTY and AZERTY keyboards */
+/* Supports both QWERTY and AZERTY keyboards using e.key*/
 <<a "Push forward." key 'w,z' goto 'NextPassage'>>
-<</a>>
-
-<<a "Go back." key 's' goto 'PreviousPassage'>>
 <</a>>
 ```
 
-Generating buttons bound to number keys:
+Generating buttons bound to number keys using the `e.code` syntax:
 
 ```html
 <<set $inventory = ['Potion','Knife','Flint','Bandage']>>
 
 <<for _i, _item range $inventory>>
 	<<capture _item>>
-		<<but `'Use _item (press '+(_i+1)+')'` key `49+_i`>>
+		<<but `'Use _item (press '+(_i+1)+')'` key `'Digit'+(_i+1)`>>
 			<<rep '#id'>>...used _item...
 		<</but>>
 	<</capture>>
 <</for>>
 
 <span id='id'></span>
+```
+
+### Condition attribute ###
+
+The `condition` attribute is supplied as quoted expression, the link appears only if it evaluates to a truthy value. When the link is clicked, this condition is evaluated again, if it has changed to a falsy value, the link is removed.
+This is a shortcut to wrapping the link in an `<<if>>` macro.
+
+```html
+<<set $hasItem = true>>
+
+<<a 'Grab the item!' condition '!$hasItem'>>
+<<set $hasItem = true>>
+<</a>>
+
+<<a 'Drop the item!' condition '$hasItem'>>
+<<set $hasItem = false>>
+<</a>>
 ```
 
 ### Choice attribute ###
@@ -125,11 +136,11 @@ The `choice` attribute creates groups of links, if one of them is clicked, all t
 <span id='opt'/>
 ```
 
-<b>This feature doesn't have any form of memory, navigating back and forth will cause previously deleted choices to appear again.</b>
+This feature doesn't have its own memory so it should be used in conjunction with the condition attribute if you want choices to remain hidden after navigating back to a passage.
 
 ### Trigger attribute ###
 
-The `trigger` attribute is used to trigger events at document level. It is meant to be used in conjunction with the [`<<on>>` macro](../on-macro).
+The `trigger` attribute is used to trigger events at document level. It is meant to be used in conjunction with the [`<<on>>` macro](../on-macro). Events can be supplied as a commas separated string, a valid event object or an array of strings or objects.
 
 ```html
 <<set $var = 45>>
