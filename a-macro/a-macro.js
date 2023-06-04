@@ -121,6 +121,7 @@ Macro.add(['a','adel','but','butdel'], {
       	link.ariaClick( //Options object
 		{namespace : '.macros', role : type, one : (deleteSelf || passage) ? true : false},
         	this.createShadowWrapper((e) => {
+		link.attr('data-count', count+=1);//Increment click counter
                 try {
                       	oldThis = State.temporary.this;
                   	State.temporary.this = {event : e, self : link, count : count};//Init _this variable
@@ -145,7 +146,6 @@ Macro.add(['a','adel','but','butdel'], {
                     	oldThis !== undefined ? State.temporary.this = oldThis : delete State.temporary.this;
                     }
                 }, () => {
-			link.attr('data-count', count+=1);//Increment click counter
                   	if (choiceID) {//Delete other choice contenders
                     		$(`[data-choice*=${choiceID}]`).not(link).remove();
                     	}
