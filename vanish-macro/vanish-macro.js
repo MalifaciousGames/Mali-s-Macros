@@ -39,4 +39,3 @@ Macro.add('vanish', {
         wrapper.addClass('macro-vanish '+(visible ? 'visible' : 'hidden')).css('opacity', visible ? 1 : 0).wiki(this.payload[0].contents).appendTo(this.output);
 	}
 });
-
