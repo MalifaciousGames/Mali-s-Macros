@@ -12,8 +12,6 @@ Macro.add(['a','adel','but','butdel'], {
             			args.splice(i--, 1, ...arg);
             		} else if (typeof arg === 'object') {//Merge objects!
             			Object.assign(argObject, arg);
-           		} else if (arg.toLowerCase() === 'disabled') {//Boolean attribute, set to true
-              			argObject.disabled = true;
             		} else {//Following pairs
               			const val = args[i+=1];
               			if (val === undefined){throw new Error('Uneven number of arguments.')};
