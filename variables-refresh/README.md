@@ -38,4 +38,4 @@ Time passes, it is now {{$time}} .
 
 ### HTML ###
 
-The generate update wrappers are `span` elements with the `updateWrapper` class applied to them. Each bears a custom ID generated on passage load.
+The generated update wrappers are `span` elements with the `updateWrapper` class applied to them. Each bears a custom ID generated on passage load.
