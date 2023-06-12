@@ -2,7 +2,7 @@
 
 ## The 'a' Macro ##
 
-Links and buttons that take any HTML attributes, has built-in keybindings support and multiple ouput options.
+Links and buttons that take any HTML attributes, has built-in keybindings support and multiple output options.
 
 [The 'a' macro](a-macro)
 
