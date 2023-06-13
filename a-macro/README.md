@@ -108,10 +108,9 @@ Generating buttons bound to number keys using the `e.code` syntax:
 <span id='id'></span>
 ```
 
-### Condition attribute ###
+### Condition/disabled attribute ###
 
-The `condition` attribute is supplied as a quoted expression, the link appears only if it evaluates to a truthy value. When the link is clicked, this condition is evaluated again, if it has changed to a falsy value, the link is removed.
-This is a shortcut to wrapping the link in an `<<if>>` macro.
+The `condition` and `disabled` attributes are evaluated attributes which decide if a link is shown or enabled. If they value is a quoted expression, it is evaluated after each click, if the resulting value is truthy, the element is either removed or disabled.
 
 ```html
 <<set $hasItem = true>>
