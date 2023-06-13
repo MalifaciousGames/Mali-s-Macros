@@ -24,20 +24,20 @@ Macro.add(['a','adel','but','butdel'], {
   	activeKeys : [],
 	handler() {
       
-      	//Parse arguments and payloads into objects
-	const type = this.name[0] === 'b' ? 'button' : 'link', attributes = this.self.argsToObj(this.args.slice(1)), payloads = {};
+		//Parse arguments and payloads into objects
+		const type = this.name[0] === 'b' ? 'button' : 'link', attributes = this.self.argsToObj(this.args.slice(1)), payloads = {};
 		
-	//Payload object only includes content for child tags
+		//Payload object only includes content for child tags
       	this.payload.slice(1).forEach(pay => {
-		payloads[pay.name] = pay;
-	});
+			payloads[pay.name] = pay;
+		});
 		
       	//Condition property, processed early to save on processing if not fulfilled
       	if (attributes.hasOwnProperty('condition')) {
           	var cond = attributes.condition;
         	delete attributes.condition;
           	if (!cond || !Scripting.evalTwineScript(cond)){
-            		return false;
+            	return false;
             }
         };
 		
@@ -59,6 +59,14 @@ Macro.add(['a','adel','but','butdel'], {
       	const link = $(`<${type === 'button'? type : 'a'}>`)
         	.wikiWithOptions({ profile : 'core' }, src ? `<img src='${src}' class='link-image'>` : txt)
         	.attr({'data-passage': passage, 'data-count' : count});
+      
+      	//Disabled property
+      	if (attributes.hasOwnProperty('disabled')) {
+          	var dis = attributes.disabled;
+          	link.ariaDisabled(Scripting.evalTwineScript(dis));
+        	delete attributes.disabled;
+        };
+      
       
       	// Trigger, can be comma-separated string, event object or array of events...
       	if (attributes.hasOwnProperty('trigger')) {
@@ -148,10 +156,12 @@ Macro.add(['a','adel','but','butdel'], {
                     		$(`[data-choice*=${choiceID}]`).not(link).remove();
                     	}
                 	if (passage){
-                    		Engine.play(passage);
-                    	} else if (count === maxCount || deleteSelf || (cond && !Scripting.evalTwineScript(cond))) {
-                    		link.remove();
-                    	}
+                    	Engine.play(passage);
+                    } else if (count === maxCount || deleteSelf || (cond && !Scripting.evalTwineScript(cond))) {
+                    	link.remove();
+                    } else if (dis){
+                    	link.ariaDisabled(Scripting.evalTwineScript(dis));
+                    }
                 }
             )).appendTo(this.output);
 	}
