@@ -7,7 +7,9 @@ Still, this approach is cumbersome as it needs to be applied to every media elem
 
 This short script aims to be a drop-in solution for games that use standard relative URLs (`<img src='myFolder/pic.png'`). 
 
-To do so, you need to supply either a local directory (on your computer) or a remote one (hosted online), where the assets can be found and loaded from. When launching the game from Twine, these directories will be used to load the assets properly.
+To do so, you need to supply either a local directory (on your computer) or a remote one (hosted online), where the assets can be found and loaded from.
+
+This script is designed to **only** work when launching from Twine (either the desktop application, or the web version), it does nothing if the game is distributed as files or hosted online. Authors might wish to remove it from the released version but it is not necessary.
 
 **This code works for every story format.**
 
@@ -38,10 +40,5 @@ window.defaultFilePath = {
 };
 ```
 
+
 Note : An online directory can always be used (the code will default to it if no local path has been supplied), it is wasteful, however, to download remote files when they are/should be on your computer already.
-
-## Troubleshooting ##
-
-- Assets don't load when running the game locally
-
-This script only 'hooks up' relative URLs when using Twine's `Play` or `Test` buttons. In other circumstances, the game's html file needs to be in the proper folder.
