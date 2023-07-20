@@ -91,6 +91,14 @@ By default, the iteration value is `_i`, this can be changed by supplying a quot
 
 ***
 
+## URL fixer for Twine ##
+
+A quick script which fixes relative URLs when launching from Twine.
+
+[The URL fixer](URLfixer)
+
+***
+
 ## Style passages in Twine 2 ##
 
 The Twine 2 version of Sugarcube doesn't natively allow for stylesheet passages, causing the main stylesheet to become extremely crowded, making it hard to navigate and edit.
