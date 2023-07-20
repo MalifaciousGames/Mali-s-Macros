@@ -9,7 +9,13 @@ window.defaultFilePath = {
 
 (() => {
   	if (!defaultFilePath.remote && !defaultFilePath.local) {return false};
-  	let path, tempPaths = ['AppData/Local','var/folders','/tmp'];
+	
+  	let path, tempPaths = [
+		'AppData/Local', //Windows
+		'var/folders', //mac OS
+		'/tmp' //Linux
+	];
+	
 	if (location.origin.includes('twinery')) {//Launched from browser Twine
         if (!defaultFilePath.remote) {
             return console.log(`No remote directory supplied, relative assets won't be available for testing.`);
