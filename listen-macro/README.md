@@ -111,15 +111,15 @@ The world's worst numpad :
 ```html
 <div id='display'>You dialed : </div>
 
+<<nobr>>
 <<listen 'div' style 'display: grid; grid-template-columns: 1fr 1fr 1fr'>>
 
-  <<for _i=1; _i lt 10;_i++>>
-	  <div style='padding:1em'>_i</div>
-  <</for>>
+	<<for _i=1; _i lt 10;_i++>>
+		<button>_i</button>
+	<</for>>
 
 <<when 'click'>>
-	
-  <<append '#display'>><<= _event.target.innerHTML>><</append>>
-
+	<<append '#display'>><<= _event.target.innerHTML>><</append>>
 <</listen>>
+<</nobr>>
 ``` 
