@@ -1,3 +1,5 @@
+/* Mali's <<listen>> macro for Sgarcube */
+
 Macro.add('listen', {
 	tags: ['when'],
 	isAsync : true,
