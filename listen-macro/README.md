@@ -2,10 +2,6 @@
 
 This macro is a container which acts as an event listener for its contents. By default, it listens for `change` events but the event type(s) can be supplied as a space or comma-separated list.
 
-### Utility bundle ###
-
-This macro comes with a minified copy of the utility bundle, if you already have one in your story JS, you can freely delete this one!
-
 ### Syntax ###
 
 This macro supports HTML arguments ([Read more.](../htmlarguments.md)).
