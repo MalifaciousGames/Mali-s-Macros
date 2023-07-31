@@ -21,7 +21,7 @@ Macro.add('listen', {
         return argObject;
     },
 	handler() {
-	    const payloads = {}, events = [], wrapper = $(`<${this.args[0] ?? 'span'}>`).attr(this.self.argsToObj(this.args.slice(1))).addClass(`macro-${this.name}`);
+	    const payloads = {}, events = [], wrapper = $(`<${this.args[0] || 'span'}>`).attr(this.self.argsToObj(this.args.slice(1))).addClass(`macro-${this.name}`);
         let oldEvent;
       	this.payload.slice(1).forEach(tag => {
           	const event = tag.args[0]?.toLowerCase() ?? 'change';
