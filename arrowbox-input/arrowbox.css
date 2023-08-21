@@ -1,0 +1,54 @@
+.macro-arrowbox {
+  display: inline-flex;
+  align-items: center;
+  gap: .25em;
+}
+.macro-arrowbox > input {
+  min-width: 3em;
+  text-align: center;
+  padding: 0;
+}
+.arrowbox-value {
+  border: 1px solid #444;
+  user-select: none;
+  padding: 0 .5em;
+}
+.macro-arrowbox:focus > .arrowbox-value {
+  border-color:seashell;
+}
+.macro-arrowbox > :first-child, .macro-arrowbox > :last-child {
+  line-height: 1em;
+  padding: .2em;
+}
+.macro-arrowbox:focus, .macro-arrowbox:hover {
+  outline: 1px solid #444;
+}
+.macro-arrowbox.vertical {
+  flex-direction: column;
+  gap: 0;
+  margin: 1em 0;
+  position: relative;
+}
+.macro-arrowbox.vertical > :first-child, .macro-arrowbox.vertical > :last-child {
+  position: absolute;
+  width: 100%;
+  line-height: .4em;
+}
+.arrowbox-arrow-up {top: -1em}
+.arrowbox-arrow-down {bottom: -1em}
+.anim-wrapper {
+  z-index: -1;
+  position: relative;
+  animation-duration: .4s;
+}
+@keyframes arrowbox-slideup {from {translate: 0 0;opacity: 1} to {translate: 0 2em;opacity: 0}}
+.anim-wrapper.slideup {animation-name: arrowbox-slideup}
+
+@keyframes arrowbox-slidedown {from {translate: 0 0;opacity: 1} to {translate: 0 -2em;opacity: 0}}
+.anim-wrapper.slidedown {animation-name: arrowbox-slidedown}
+
+@keyframes arrowbox-slideleft {from {translate: 0 0;opacity: 1} to {translate: 2em 0;opacity: 0}}
+.anim-wrapper.slideleft {animation-name: arrowbox-slideleft}
+
+@keyframes arrowbox-slideright {from {translate: 0 0;opacity: 1} to {translate: -2em 0;opacity: 0}}
+.anim-wrapper.slideright {animation-name: arrowbox-slideright}
