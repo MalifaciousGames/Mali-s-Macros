@@ -58,15 +58,9 @@ Lets you easily log data to the console, set up time trackers to monitor code ex
 
 ## The 'checkvars' macro ##
 
-This macro brings up a dialog window which displays State variables, settings objects and setup objects.
+This macro prints the active variables (State variables and temporary, `settings` and `setup`) to a dialog. The new version also lets you edit their values for testing.
 
-```html
-<<button 'Check the variables!'>>
-	<<checkvars>>
-<</button>>
-```
-
-This in an expansion on TME's original code (available here: https://www.motoslave.net/sugarcube/2/). All credit goes to him.
+['checkvars' macro](checkvars)
 
 ***
 
