@@ -1,6 +1,6 @@
 Interactive demo on my [website](https://malifaciousgames.neocities.org/#drag-and-drop-set)
 
-Both `<<drag>>` and `<<drop>>` support HTML arguments.
+Both `<<drag>>` and `<<drop>>` support [HTML arguments](../htmlarguments.md).
 
 ## The `<<drag>>` macro ##
 
