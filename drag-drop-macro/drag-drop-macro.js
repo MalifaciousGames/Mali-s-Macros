@@ -1,6 +1,6 @@
 (()=> {
   	const setting = {
-    	explicitDropIcons : true
+    	explicitDropIcons : false
     };
   
   	const dataPool = {};
