@@ -33,9 +33,11 @@
 /* Drop */
 
 .macro-drop {
-  min-height: 4em;
-  min-width: 4em;
-  display: flex;
+  min-height: 5em;
+  min-width: 5em;
+  display: grid;
+  grid-auto-flow: column;
+  place-items: center;
   border: .15em solid #444;
   width: fit-content;
   padding: .5em;
