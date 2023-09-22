@@ -1,4 +1,8 @@
 (()=> {
+  	const setting = {
+    	explicitDropIcons : true
+    };
+  
   	const dataPool = {};
   
 	const argsToObj = (args) => {
@@ -188,8 +192,10 @@ Macro.add('drop', {
         	delete attr.condition;
         }
 
-      	$el.attr(attr).addClass('macro-'+this.name)
-        .on('dragover', e => e.preventDefault()).on('dragleave', e => {
+      	$el.attr(attr).addClass('macro-'+this.name + (setting.explicitDropIcons ? ' explicit':''))
+      	.on('dragstart', e => {
+        	if (config.remove === 'destroy'){$el.addClass('destroy')}
+        }).on('dragover', e => e.preventDefault()).on('dragleave', e => {
           	const leaveTo = $(e.relatedTarget);
           	if (!$el.find(leaveTo).length && !$el.is(leaveTo)) {
             	$el.removeClass('dropPossible dropForbidden');
@@ -396,8 +402,8 @@ Macro.add('drag', {
               	const q = dragObject.quantity;
               	if (q !== 0 && q !== 1) {
                 	const frag = $(document.createDocumentFragment()),
-                    	src = typeof q === 'number' ? this.source.replace(/(?<=\squantity\s)(\d+)/, m => q-1) : this.source;
-                	varWrapper(shadowed, () => {frag.wiki(src)});
+                    	src = typeof q === 'number'? this.source.replace(/(?<=\squantity\s)(\d+)/, m => q-1) : this.source;
+                  	varWrapper(shadowed, () => {frag.wiki(src)});
                 	insertAt(parent, frag, dragObject.index);
                 }
               	//This instance is the one that ends up in the next container
@@ -405,14 +411,17 @@ Macro.add('drag', {
               	$el[0].removeAttribute('data-quantity');
             }
           
-          	const newParent = $el.parent();
-          	if (!newParent.is(parent)) {
-            	parent.trigger('removal');
-              	dragObject.parent = newParent;
-              	dragObject.index = $el.index();
-              	parent = newParent;
+          	if (!dragObject.dropped){
+            	parent.removeClass('destroy');
+            } else {
+              	parent.trigger('removal');
+            	setTimeout(() => {
+            		parent = $el.parent();
+              		dragObject.parent = parent;
+              		dragObject.index = $el.index();
+                  	State.temporary.drag = null
+                },20);
             }
-          	setTimeout(() => {State.temporary.drag = null}, 40);
         })).appendTo($(this.output));
       	
     }
