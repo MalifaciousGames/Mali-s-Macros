@@ -8,14 +8,14 @@ customElements.define(
     		super();
   		}
   		connectedCallback() {
-        	const id = parseInt(this.getAttribute('data-id')), raw = registry[id], val = State.getVar(raw);
-			$(this).empty().wiki(val);
+        	const id = this.getAttribute('data-id'), raw = registry[id], val = State.getVar(raw);
+			this.innerText = val;
           	this.updateData = {id : id, raw : raw, val : val};
   		}
       	update() {
-        	const newVal = State.getVar(this.updateData.raw), oldVal = this.updateData.val;
-          	if (newVal === oldVal) return;
-          	$(this).empty().wiki(this.updateData.val = newVal);
+        	const newVal = State.getVar(this.updateData.raw);
+          	if (newVal === this.updateData.val) return;
+          	this.innerText = this.updateData.val = newVal;
         }
   		disconnectedCallback() {
           	delete registry[this.updateData.id];
@@ -39,10 +39,10 @@ setup.processUpdateMarkup = (txt) => {
 $(document).on('change click drop refreshUpdateContainers', e => {
   	if (cooldown) return;
 	setup.updateWrappers();
+  
   	cooldown = true;
   	setTimeout(e => {cooldown = false}, 40);
 });
-  
 })();
 
 Config.passages.onProcess = (p) => {
