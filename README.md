@@ -1,4 +1,4 @@
-# Overview #
+# Macros #
 
 ## The 'a' Macro ##
 
@@ -82,6 +82,16 @@ By default, the iteration value is `_i`, this can be changed by supplying a quot
 	<<set $inventory.push(setup.item)>>
 <</times>>
 ```
+
+***
+
+# Scripts #
+
+## The update markup ##
+
+This special syntax lets you automatically display variable changes : `{{$myVar}}`.
+
+[Update markup](update-markup)
 
 ***
 
