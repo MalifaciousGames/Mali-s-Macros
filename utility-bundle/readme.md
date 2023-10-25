@@ -1,4 +1,5 @@
-## The utility bundle ##
+# This code is deprecated, most recent macros do not require the bundle! #
+
 
 Some of the macros on this page require a utility bundle to function properly.
 It consists in a handful of methods and a `MalisMacros` window object that serve in various steps of the macro execution.
@@ -10,11 +11,7 @@ While each macro comes with a minified copy of this bundle, you only ever need <
 
 The macros that need the bundle are: 
 
-* `<<a>>`
-* The `<<drag>>` and `<<drop>>` set
 * `<<hover>>`
-* `<<listen>>`
-* `<<on>>`
 * `<<vanish>>`
 
 All of these come with a minified version of the bundle in their JS file.
