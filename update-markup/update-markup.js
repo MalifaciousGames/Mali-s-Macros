@@ -1,5 +1,5 @@
 (() => {
-let registry = {count : 0};
+let registry = {count : 0}, cooldown = false;
 
 customElements.define(
 	'update-wrapper',
@@ -37,8 +37,12 @@ setup.processUpdateMarkup = (txt) => {
 };
   
 $(document).on('change click drop refreshUpdateContainers', e => {
-	setup.updateWrappers()
+  	if (cooldown) return;
+	setup.updateWrappers();
+  	cooldown = true;
+  	setTimeout(e => {cooldown = false}, 40);
 });
+  
 })();
 
 Config.passages.onProcess = (p) => {
