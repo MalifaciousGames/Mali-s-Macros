@@ -1,48 +1,47 @@
-window.Update = {
-  	markupParser : function (txt) {
-    	const matches = txt.match(/{{(?:.*?}})/g);
-  		if (matches) {
-        	matches.forEach(m => {
-            	const inner = m.slice(2,-2), id = 'var-upd-'+this.counter;
-            	txt = txt.replace(m, `<span id='${id}' class='updateWrapper'></span>`);
-              
-              	setTimeout(()=>{
-                  const val = State.getVar(inner);
-                  $('#'+id).text(val);
-                  this.targets.push({content : inner, id : id, value : val}); 
-                });
-              
-          		this.counter++;
-        	});
-    	}
-		return txt;
-    },
-  	targetCleaner : function() { //Clean the pool of values to compare if the wrapper isn't on page!
-    	this.targets.forEach(v => {
-          if (!$.contains(document.body, $('#'+v.id)[0])){
-            this.targets.delete(v);
-          }
-        });
-    },
-  	targetCompare : function() {
-      	if (this.targets.length) {
-        	setTimeout(()=> {
-    			this.targets.forEach(v => {
-          			const newVal = State.getVar(v.content);
-        			if (newVal !== v.value) {$('#'+v.id).text(newVal)};
-          			v.value = newVal;
-        		});
-            });
+(() => {
+let registry = {count : 0};
+
+customElements.define(
+	'update-wrapper',
+  	class extends HTMLSpanElement {
+		constructor() {
+    		super();
+  		}
+  		connectedCallback() {
+        	const id = parseInt(this.getAttribute('data-id')), raw = registry[id], val = State.getVar(raw);
+			$(this).empty().wiki(val);
+          	this.updateData = {id : id, raw : raw, val : val};
+  		}
+      	update() {
+        	const newVal = State.getVar(this.updateData.raw), oldVal = this.updateData.val;
+          	if (newVal === oldVal) return;
+          	$(this).empty().wiki(this.updateData.val = newVal);
         }
-    },
-	targets : [],
-  	counter : 0
+  		disconnectedCallback() {
+          	delete registry[this.updateData.id];
+  		}
+	},
+  {extends: 'span'}
+);
+
+setup.updateWrappers = () => {
+	$('[is="update-wrapper"]').each((i,e) => e.update());
 };
 
-$(document).on('click change refreshUpdateContainers', Update.targetCompare.bind(Update)).on(':passageend', Update.targetCleaner.bind(Update));
+setup.processUpdateMarkup = (txt) => {
+	return txt.replace(/{{(?:.*?}})/g, m => {
+      	const id = registry.count++;
+      	registry[id] = m.slice(2,-2).trim();
+    	return `<span is=update-wrapper data-id=${id}></span>`;
+    });
+};
+  
+$(document).on('change click drop', e => {
+	setup.updateWrappers()
+});
+})();
 
-Config.passages.onProcess = function(p) {
-  	//Use onProcess as usual, just make sure the final output is processed for markup parsing...
-
-	return Update.markupParser(p.text);
+Config.passages.onProcess = (p) => {
+	/* For the update markup to work, passage text has to go through the setup.processUpdateMarkup() function */
+  	return setup.processUpdateMarkup(p.text);
 };
