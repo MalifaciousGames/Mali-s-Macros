@@ -3,14 +3,14 @@ let registry = {count : 0}, cooldown = false;
 
 customElements.define(
 	'update-wrapper',
-  	class extends HTMLSpanElement {
+  	class extends HTMLElement {
 		constructor() {
     		super();
   		}
   		connectedCallback() {
         	const id = this.getAttribute('data-id'), raw = registry[id], val = State.getVar(raw);
 			this.innerText = val;
-          	this.updateData = {id : id, raw : raw, val : val};
+          	this.updateData = {raw : raw, val : val};
   		}
       	update() {
         	const newVal = State.getVar(this.updateData.raw);
@@ -18,28 +18,26 @@ customElements.define(
           	this.innerText = this.updateData.val = newVal;
         }
   		disconnectedCallback() {
-          	delete registry[this.updateData.id];
+          	delete registry[this.getAttribute('data-id')];
   		}
-	},
-  {extends: 'span'}
+	}
 );
 
 setup.updateWrappers = () => {
-	$('[is="update-wrapper"]').each((i,e) => e.update());
+	$('update-wrapper').each((i,e) => e.update());
 };
 
 setup.processUpdateMarkup = (txt) => {
 	return txt.replace(/{{(?:.*?}})/g, m => {
       	const id = registry.count++;
       	registry[id] = m.slice(2,-2).trim();
-    	return `<span is=update-wrapper data-id=${id}></span>`;
+    	return `<update-wrapper data-id=${id}></update-wrapper>`;
     });
 };
   
 $(document).on('change click drop refreshUpdateContainers', e => {
   	if (cooldown) return;
 	setup.updateWrappers();
-  
   	cooldown = true;
   	setTimeout(e => {cooldown = false}, 40);
 });
