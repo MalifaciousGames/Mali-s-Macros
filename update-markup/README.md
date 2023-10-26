@@ -2,6 +2,8 @@
 
 This script enables you to refresh displayed variables whenever they are modified. It is done by wrapping naked variables in two sets of curly brackets : `{{$myVar}}`.
 
+<b>Thank you to [TME](https://github.com/tmedwards) for his invaluable code contribution!</b>
+
 ### Syntax ###
 
 ```html
