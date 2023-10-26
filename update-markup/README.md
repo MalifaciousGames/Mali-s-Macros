@@ -39,4 +39,4 @@ Time passes, it is now {{$time}} .
 ### HTML output ###
 
 The `{{}}` syntax is processed into an HTML element using the `setup.processUpdateMarkup(<string>)` function, this is why this script requires access to the `config.onProcess` function.
-The output is a custom `<span is=update-wrapper>` element with a unique `data-id` attribute.
+The output is a custom `<update-wrapper>` element with a unique `data-id` attribute linked to the variable's raw expression.
