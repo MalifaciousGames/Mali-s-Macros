@@ -9,6 +9,7 @@
   background-color: #111;
   padding: .25em;
   position: relative;
+  max-width: fit-content;
 }
 
 .macro-drag:active {cursor:grabbing}
@@ -84,17 +85,18 @@ content: attr(data-slots);
 
 /* With icons */
 
-.macro-drop.dropPossible::after, .macro-drop.dropForbidden::after {outline: .15em solid; opacity:1}
+.macro-drop.dropPossible::after, .macro-drop.dropForbidden::after {outline: 2px solid; opacity:1}
+
+.macro-drop.dropForbidden::after {color: red; content: '⦸';font-size: 2em}
+
 .macro-drop.dropPossible::after {color: lime}
-.macro-drop.dropForbidden::after {color: red}
-.macro-drop.dropForbidden::after {content: '🛇'}
-.macro-drop.dropPossible::after {content: '⭳';color: lime}
+.macro-drop.dropPossible::after {content: '⭣';color: lime}
 .macro-drop.dropPossible[data-drop=none] {border-color: #444;}
 .macro-drop.dropPossible[data-drop=none]::after {content: '⭘';color: #444;}
 .macro-drop.dropPossible[data-drop=replace]::after {content: '⧄⊠⧅';font-size: 1.25em}
 .macro-drop.dropPossible[data-drop=replaceAll]::after {content: '⊠⊠⊠';font-size: 1.25em}
-.macro-drop.dropPossible[data-drop=append]::after {content: '⭲'}
-.macro-drop.dropPossible[data-drop=prepend]::after {content: '⭰'}
+.macro-drop.dropPossible[data-drop=append]::after {content: '⭢'}
+.macro-drop.dropPossible[data-drop=prepend]::after {content: '⭠'}
 .macro-drop.dropPossible[data-drop=swap]::after {content: '⥯'}
 .macro-drop.dropPossible[data-drop=remove] {border-color: darkorange}
 .macro-drop.dropPossible[data-drop=remove]::after {content: '♺';color: darkorange}
