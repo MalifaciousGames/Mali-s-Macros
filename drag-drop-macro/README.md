@@ -125,5 +125,31 @@ If the variable is not an array:
 <<fromSource '$variableName' '_alias' {attributes object}>>
 ```
 
-By default, the alias variable is `_item`. 
-The alias variable is supplied as a `<<data>>` value, thus it is bound to each `<<drag>>` element.
+<b>Example</b>
+
+```html
+<<set $array = [1,2,3]>>
+
+<<drop>>
+<<fromSource '$array' '_n' `{class:'item', type:'number'}`>>
+<</drop>>
+
+The output of the code above would be the same as:
+
+<<drag class 'item' type 'number'>>
+  1
+  <<data 1>>
+<</drag>>
+<<drag class 'item' type 'number'>>
+  2
+  <<data 2>>
+<</drag>>
+<<drag class 'item' type 'number'>>
+  3
+  <<data 3>>
+<</drag>>
+```
+
+If no alias is supplied, `_item` is used to represent to current item.
+The alias variable is supplied as a `<<data>>` value, thus it is localized to each `<<drag>>` element and its child macros.
+If the `<<fromSource>>` tag is left empty, the item's value will be printed instead. This works for primitives but outputs `[object Object]` for objects.
