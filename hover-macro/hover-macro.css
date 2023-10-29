@@ -1,51 +1,60 @@
-.macro-hover {
-  display: inline-flex;
-  position: relative;
-  justify-content: center
-}
-
-.macro-hover-swap {
-  cursor: default
-}
-
-.macro-hover-tip::after, .macro-hover-tip::before {
-  content: '';
-  position: absolute;
-  z-index: 10
-}
-
-.macro-hover-tip {
-  position:absolute;
-  top: -1.75em;
-  border: .15em solid;
-  width: max-content;
-  padding: 0 .5em;
-  border-radius: .3em;
-  display: inline-flex;
-  justify-content: center;
-  box-shadow: 0 0 .5em .25em #111;
-  background-color: #111;
-  z-index: 10;
+/* Important styles, these ensure proper display, should'nt be messed with */
+#macro-hover-tip {
+  position: fixed;
+  z-index: 100000;
+  display: grid;
+  place-items: center;
   opacity: 0;
-  transition: .25s;
-  pointer-events: none; 
-  min-height: 1.75em;
-  align-items: center;
+  user-select: none;
 }
 
-.macro-hover-tip::before {
-  border: .5em solid transparent;
-  border-top-color: inherit;
-  top: 1.85em
+#macro-hover-tip.visible {
+  opacity: 1;
+  user-select: auto;
+  transition: opacity .3s;
 }
 
-.macro-hover-tip::after {
-  border: .5em solid transparent;
-  border-top-color: #111;
-  top: 1.6em
+/* Cosmetic styling, can be changed without issues! */
+.macro-hover.tip {
+  cursor: help;
 }
 
-.macro-hover:hover > .macro-hover-tip {
-  opacity: 100%;
-  pointer-events: revert
+#macro-hover-tip {
+  border: .15em solid;
+  border-radius: .2em;
+  background-color: #111;
+  width: fit-content;
+  padding-inline: .5em;
+}
+
+/* The small arrow */
+#macro-hover-tip::before {
+  content: '';
+  height: .5em;
+  width: .5em;
+  display: block;
+  background-color: inherit;
+  border: inherit;
+  position: absolute;
+  border-left: none;
+  border-top: none;
+}
+
+/* Orient the arrow properly based on tip direction */
+#macro-hover-tip.over::before {display: none}
+#macro-hover-tip.up::before {
+  bottom: -.4em;
+  rotate: 45deg;
+}
+#macro-hover-tip.down::before {
+  top: -.4em;
+  rotate: 225deg;
+}
+#macro-hover-tip.left::before {
+  right: -.4em;
+  rotate: 315deg;
+}
+#macro-hover-tip.right::before {
+  left: -.4em;
+  rotate: 135deg;
 }
