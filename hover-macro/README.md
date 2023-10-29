@@ -8,58 +8,10 @@ It can handle html elements, macros, markup and anything that would print in a s
 This macro supports html arguments ([Read more.](../htmlarguments.md))
 
 ```html
-<<hover [elementType] [property value...]>>
+<<hover [attribute object]>>
   ...default content...
-[<<swap [property value...]>> ...replaces default content...]
-[<<tip [property value...]>> ...tooltip content...]
+[<<swap>> ...replaces default content...]
+[<<tip [direction]>> ...tooltip content...]
 <</hover>>
 ```
 
-
-```html
-<span class='macro-hover'>
-  
-  <span class='macro-hover-inner'>
-	  ...default content (gets replaced on swap)...
-  </span>
-  
-  <span class='macro-hover-tip'>
-	  ...tooltip content...
-  </span>
-  
-</span>
-```
-
-### Running code ###
-
-As this macro relies on wikifier calls to display its contents, any code supplied to the tags will run on hover.
-
-Simple hover counter:
-```html
-<<set _var = 0>>
-
-<<hover>>
-  _var
-  <<swap>> <<set _var++>> _var
-<</hover>>
-```
-
-### Capture mode ###
-
-By default, both `swap` and `tip` update on hover to reflect current variables. When this behaviour isn't desirable you can use the `capture` special argument so variables will only ever display their values as they were on passage load.
-
-```html
-<<set _hour = 2, _min = 42>>
-
-<<hover '' capture true>>
-  Look at your watch.
-<<swap>>
-  Time is _hour : _min
-<</hover>>
-
-<<set _hour += 3, _min += 10>>
-```
-
-#### Notes ####
-
-The macro's main container accepts an `elementType` argument, it is however `display: inline-flex` by default. This property can easily be overwritten but keep in mind that the centering of the tooltip relies on the container being some flavor of `flex`.
