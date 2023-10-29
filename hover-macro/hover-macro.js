@@ -1,58 +1,105 @@
-/* ----------------------- UTILITY BUNDLE ----------------------- */
-/* ------------------- ONLY ONE COPY NEEDED! -------------------- */
+/* Mali's <<hover>> macro */
+(()=>{
 
-window.MalisMacros={wikiWrapper:function(t,e){const r={};"object"==typeof t&&$.each(t,((t,e)=>{r[t]=State.temporary?.[t],State.temporary[t]=e}));try{e()}finally{$.each(r,((t,e)=>{State.temporary[t]=e}))}},on_macro_events:[],version: '1.0'},Array.prototype.attrFinder=function(t,e){const r=this.indexOf(t);if(-1!==r){const[a]=this.deleteAt(r+1);return this.delete(t),e&&e.attr(`data-${t}`,a),a}return!1},Array.prototype.payloadsToObj=function(){const t={default:this[0].contents};return this.slice(1).forEach((e=>{t[e.name]=e})),t},Array.prototype.unpack=function(){let t=0,e=this;for(;t<e.length;){const r=e[t];Array.isArray(r)?e.deleteAt(t)[0].forEach((t=>e.push(t))):"object"!=typeof r||r.isLink?t++:$.each(e.deleteAt(t)[0],((t,r)=>{e.push(t.toLowerCase()),e.push(r)}))}if(e.length%2)throw new Error("Non-object arguments should always come in pairs. "+(e.includes("disabled")?"Even the 'disabled' attribute.":""));return e},$.fn.extend({applyAttr:function(t){for(let e=0;e<t.length;e+=2)this.attr(t[e],t[e+1]);return this},runOutput:function(t,e){if(e)switch(t){case"rep":$(e.args[0]??this.parent()).empty().wiki(e.contents);break;case"prep":$(document.createDocumentFragment()).wiki(e.contents).prependTo(e.args[0]??this.parent());break;case"app":$(e.args[0]??this.parent()).wiki(e.contents);break;case"diag":Dialog.setup(e.args?.[0],e.args?.[1]),Dialog.wiki(e.contents),Dialog.open();break;case"refresh":this.empty().wiki(e);break;default:$.wiki(e)}},diagFrom:function(t,e){const r=this.offset().top-this.height()/2,a=this.offset().left-this.width()/2;return{distance:Math.hypot(r-e,a-t),top:e-r,left:t-a}}});
+const $tip = $('<div>').attr({id:'macro-hover-tip','aria-live':'polite'});
+  
+const getSqPos = ($e,dir) => {
+	const {left : x, top : y, height : h, width : w} = $e[0].getBoundingClientRect(),
+        p = [x + w/2, y + h/2];
 
-/* ------------------- END OF UTILITY BUNDLE -------------------- */
+  	switch (dir) {
+      case 'left': p[0] = x; break;
+      case 'right': p[0] = x + w; break;
+      case 'up': p[1] = y; break;
+      case 'down': p[1] = y + h;
+    }
+  	return p;
+};
+  
+let curScroll = 0, tipVis = false;
+  
+const summonTip = (txt, $cont, dir) => {
+  	tipVis = true;
+  	curScroll = $(document).scrollTop();
+  	$cont.append($tip);
+  	$tip.removeClass().wiki(txt);
+  
+  	const {height : h, width : w} = $tip[0].getBoundingClientRect(), mrg = 4;
 
-/* Mali's <<hover>> macro for Sgarcube*/
+  	let [x,y] = getSqPos($cont, dir);
+  	//Have overflow safety?
+    switch (dir) {
+		case 'up': x -= w/2; y -= h+mrg; break;
+		case 'down': x -= w/2; y += mrg; break;
+		case 'left': y -= h/2; x -= w+mrg; break;
+		case 'right': x += mrg; y -= h/2; break;
+		default: x -= w/2; y -= h/2;
+    }
 
+  	$tip.attr({'aria-hidden':false}).css({top:y, left:x}).addClass('visible '+dir);
+};
+
+const hideTip = () => {
+  	tipVis = false;
+  	$tip.attr({'aria-hidden':true}).removeClass().empty();
+};
+
+$(document).on('scroll', e => {
+  	if (!tipVis) return;
+  
+	const scr = $(document).scrollTop(), off = scr - curScroll;
+  	const pos = Number($tip.css('top').replace('px',''));
+	$tip.css({top : pos - off});
+  	curScroll = scr;
+}).on(':passageinit', hideTip);
+
+  
 Macro.add('hover', {
 	tags : ['swap','tip'],
-	
-	handler() {
-	if (window.MalisMacros === undefined) return this.error(`<<${this.name}>> needs a utility bundle to function! It can be downloaded there: https://github.com/MalifaciousGames/Mali-s-Macros/blob/main/utility-bundle/utility-bundle-min.js . Much love, Maliface!`);
-      	const payloads = this.payload.payloadsToObj(this.self.tags),
-              hasTip = payloads?.tip ? true : false,
-              hasSwap = payloads?.swap ? true : false,
-              contAttr = this.args.slice(1).unpack();
+  	handler() {
+      	const attr = this.args.find(a => typeof a === 'object') ?? {},
+            pay = {}, $wrap = $('<span>'),
+            inner = this.payload[0].contents,
+            callbacks = {in : [], out : []};
+      
+      	let active = false;
 
-		if (hasSwap && payloads.swap.contents.trim() === '') return this.error('<<swap>> tag needs to have content.');
+      	//Attributes argument
+      	attr.tabindex = 0;
+      	$wrap.attr(attr);
+      
+		this.payload.slice(1).forEach((p,i) => {
+          	pay[p.name] = p;
+          	$wrap.addClass(p.name);
+        });
 		
-		//Create outer + inner container
-		const container = $(document.createElement(this.args[0]||'span')),
-			innerCont = $('<span>').wiki(this.payload[0].contents).addClass('macro-hover-inner');
-		
-		// Catch capture mode!
-		const capture = contAttr.attrFinder('capture');
+      	//swap
+      	if (pay.swap) {
+        	callbacks.in.push(e => {$wrap.empty().wiki(pay.swap.contents)});
+        	callbacks.out.push(e => {
+              $wrap.empty().wiki(inner)
+            });
+        }
+      	
+      	//tip 
+      	if (pay.tip) {
+        	const dir = pay.tip.args.find(a => ['down','left','right','over'].includes(a)) ?? 'up';
+          
+          	$wrap.attr('role','tooltip');
+          	callbacks.in.push(summonTip.bind(null, pay.tip.contents, $wrap, dir));
+          	callbacks.out.push(hideTip); 
+        }
 
-		container.applyAttr(contAttr).append(innerCont);
-		
-		if (hasTip) {//Create tip elem, add attributes
-			var tipElem = $('<span>').applyAttr(payloads.tip.args.unpack()).addClass('macro-hover-tip');
-			if (capture) {tipElem.wiki(payloads.tip.contents)};
-			container.append(tipElem);
-		}
-		
-		if (hasSwap && capture) {
-			var shadowSwap = $(document.createDocumentFragment()).wiki(payloads.swap.contents),
-				shadowCont = $(document.createDocumentFragment()).wiki(this.payload[0].contents);	
-		}
+      	$wrap.on('mouseenter focus', e => {
+          	if (active) return;
+          	active = true;
+          	callbacks.in.forEach(f => f.call());
+        }).on('mouseleave focusout', e => {
+          	active = false;
+        	callbacks.out.forEach(f => f.call());
+        }).wiki(inner).addClass(`macro-${this.name}`);
 
-		$(container).hover(this.createShadowWrapper(() => {//In
-			if (hasSwap) {
-				innerCont.empty();
-				capture ? innerCont.append(clone(shadowSwap)) : innerCont.wiki(payloads.swap.contents);
-			}
-			if (hasTip && !capture) {
-				tipElem.empty().wiki(payloads.tip.contents);
-			}
-		}),
-		this.createShadowWrapper(() => {//Out
-			if (hasSwap) {
-				innerCont.empty();
-				capture ? innerCont.append(clone(shadowCont)) : innerCont.wiki(this.payload[0].contents);
-			}
-		})).addClass('macro-hover').appendTo(this.output);
-	}
+    	$(this.output).append($wrap);
+    }
 });
+})();
