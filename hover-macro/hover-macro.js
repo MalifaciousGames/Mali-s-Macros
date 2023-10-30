@@ -19,7 +19,7 @@ const summonTip = (txt, $cont, dir) => {
             down : {at : [contRect.center.x, contRect.bottom], stickout : {main : h+mrg, sec : w/2}},
             left : {at : [contRect.left, contRect.center.y], stickout : {main : -(w+mrg), sec : h/2}},
             right : {at : [contRect.right, contRect.center.y], stickout : {main : w+mrg, sec : h/2}},
-            over : {at : [contRect.center.x, contRect.center.y]}
+            over : {at : [contRect.center.x, contRect.center.y], stickout : {main : 0, sec : 0}}
           };
 	
   	const checkPos = dir => {
@@ -102,7 +102,7 @@ Macro.add('hover', {
         }
       	
       	if (pay.tip) {
-          	let dir = null;
+          	let dir = [];
           	if (pay.tip.args.length) {
             	dir = pay.tip.args.map(a => a.split(' ')).flat();
             }
