@@ -1,38 +1,61 @@
 /* Mali's <<hover>> macro */
 (()=>{
-
-const $tip = $('<div>').attr({id:'macro-hover-tip','aria-live':'polite'});
-  
-const getSqPos = ($e,dir) => {
-	const {left : x, top : y, height : h, width : w} = $e[0].getBoundingClientRect(),
-        p = [x + w/2, y + h/2];
-
-  	switch (dir) {
-      case 'left': p[0] = x; break;
-      case 'right': p[0] = x + w; break;
-      case 'up': p[1] = y; break;
-      case 'down': p[1] = y + h;
-    }
-  	return p;
-};
-  
 let curScroll = 0, tipVis = false;
+  
+const $tip = $('<div>').attr({id:'macro-hover-tip','aria-live':'polite'});
   
 const summonTip = (txt, $cont, dir) => {
   	tipVis = true;
   	curScroll = $(document).scrollTop();
   	$cont.append($tip);
   	$tip.removeClass().wiki(txt);
-  
-  	const {height : h, width : w} = $tip[0].getBoundingClientRect(), mrg = 4;
 
-  	let [x,y] = getSqPos($cont, dir);
-  	//Have overflow safety?
+  	const {height : h, width : w} = $tip[0].getBoundingClientRect(), mrg = 4, contRect = $cont[0].getBoundingClientRect();
+  
+    contRect.center = {y :contRect.top+contRect.height/2, x : contRect.left+contRect.width/2};
+    
+    const positions = {
+          	up : {at : [contRect.center.x, contRect.top], stickout : {main : -(h+mrg), sec : w/2}},
+            down : {at : [contRect.center.x, contRect.bottom], stickout : {main : h+mrg, sec : w/2}},
+            left : {at : [contRect.left, contRect.center.y], stickout : {main : -(w+mrg), sec : h/2}},
+            right : {at : [contRect.right, contRect.center.y], stickout : {main : w+mrg, sec : h/2}},
+            over : {at : [contRect.center.x, contRect.center.y]}
+          };
+	
+  	const checkPos = dir => {
+    	const pos = positions[dir], checked = [];
+      	switch (dir) {
+          case 'up': case 'down': 
+            const vert = pos.at[1] + pos.stickout.main;
+            checked.push(
+              	(vert > 0 && vert < window.innerHeight), 
+           		(pos.at[0] - pos.stickout.sec > 0), 
+            	(pos.at[0] + pos.stickout.sec < window.innerWidth)
+            );
+          	break;
+          case 'left': case 'right': 
+            const hori = pos.at[0] + pos.stickout.main;
+            checked.push(
+              	(hori > 0 && hori < window.innerWidth), 
+           		(pos.at[1] - pos.stickout.sec > 0), 
+            	(pos.at[1] + pos.stickout.sec < window.innerHeight)
+            );
+          	break;
+          default: checked.push(true);
+        }
+      	return checked.every(e => e);
+    };
+
+  	dir = dir.find(d => checkPos(d));
+  	if (!dir) {dir = ['up','right','down','left','over'].find(d => checkPos(d))}
+  
+  	let [x,y] = positions[dir].at, {main,sec} = positions[dir].stickout;
+
     switch (dir) {
-		case 'up': x -= w/2; y -= h+mrg; break;
-		case 'down': x -= w/2; y += mrg; break;
-		case 'left': y -= h/2; x -= w+mrg; break;
-		case 'right': x += mrg; y -= h/2; break;
+		case 'up': y += main; x -= sec; break;
+		case 'down': y += mrg; x -= sec; break;
+		case 'left': y -= sec; x += main; break;
+		case 'right': y -= sec; x += mrg; break;
 		default: x -= w/2; y -= h/2;
     }
 
@@ -48,12 +71,11 @@ $(document).on('scroll', e => {
   	if (!tipVis) return;
   
 	const scr = $(document).scrollTop(), off = scr - curScroll;
-  	const pos = Number($tip.css('top').replace('px',''));
+  	const pos = Number($tip.css('top').slice(0,-2));
 	$tip.css({top : pos - off});
   	curScroll = scr;
 }).on(':passageinit', hideTip);
 
-  
 Macro.add('hover', {
 	tags : ['swap','tip'],
   	handler() {
@@ -64,7 +86,6 @@ Macro.add('hover', {
       
       	let active = false;
 
-      	//Attributes argument
       	attr.tabindex = 0;
       	$wrap.attr(attr);
       
@@ -73,7 +94,6 @@ Macro.add('hover', {
           	$wrap.addClass(p.name);
         });
 		
-      	//swap
       	if (pay.swap) {
         	callbacks.in.push(e => {$wrap.empty().wiki(pay.swap.contents)});
         	callbacks.out.push(e => {
@@ -81,10 +101,11 @@ Macro.add('hover', {
             });
         }
       	
-      	//tip 
       	if (pay.tip) {
-        	const dir = pay.tip.args.find(a => ['down','left','right','over'].includes(a)) ?? 'up';
-          
+          	let dir = null;
+          	if (pay.tip.args.length) {
+            	dir = pay.tip.args.map(a => a.split(' ')).flat();
+            }
           	$wrap.attr('role','tooltip');
           	callbacks.in.push(summonTip.bind(null, pay.tip.contents, $wrap, dir));
           	callbacks.out.push(hideTip); 
@@ -97,9 +118,7 @@ Macro.add('hover', {
         }).on('mouseleave focusout', e => {
           	active = false;
         	callbacks.out.forEach(f => f.call());
-        }).wiki(inner).addClass(`macro-${this.name}`);
-
-    	$(this.output).append($wrap);
+        }).wiki(inner).addClass(`macro-${this.name}`).appendTo($(this.output));
     }
 });
 })();
