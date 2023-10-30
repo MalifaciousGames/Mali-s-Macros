@@ -10,9 +10,8 @@ const summonTip = (txt, $cont, dir) => {
   	$cont.append($tip);
   	$tip.removeClass().wiki(txt);
 
-  	const {height : h, width : w} = $tip[0].getBoundingClientRect(), mrg = 4, contRect = $cont[0].getBoundingClientRect();
-  
-    contRect.center = {y :contRect.top+contRect.height/2, x : contRect.left+contRect.width/2};
+  const {height : h, width : w} = $tip[0].getBoundingClientRect(), mrg = 4, contRect = $cont[0].getBoundingClientRect();
+  contRect.center = {y :contRect.top+contRect.height/2, x : contRect.left+contRect.width/2};
     
     const positions = {
           	up : {at : [contRect.center.x, contRect.top], stickout : {main : -(h+mrg), sec : w/2}},
