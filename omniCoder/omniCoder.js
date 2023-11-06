@@ -1,4 +1,4 @@
-window.omniCoder = {
+window.OmniCoder = {
     add(name, alphabet, split) {
         if (!name || typeof name !== 'string') throw new Error(`Invalid alphabet name, reading ${name}.`);
         if (typeof alphabet !== 'object') throw new Error('Alphabet definition must be either an array or a plain object!');
