@@ -26,7 +26,7 @@ window.OmniCoder = {
                 def.encode[i] = c;
                 def.decode[c] = i;
             });
-            def.split = split ? ? ' ';
+            def.split = split ?? ' ';
         }
 
         this.alphabets[name] = def;
