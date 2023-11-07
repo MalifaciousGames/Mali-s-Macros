@@ -53,7 +53,7 @@ Macro.add('listen', {
         $trg.on(events.join(' '), this.createShadowWrapper(e => {
             try {
                 oldEvent = st.event;
-                st.event = e.originalEvent ? ? e;
+                st.event = e.originalEvent ?? e;
 
                 $.wiki(payloads[e.type]);
             } finally {
