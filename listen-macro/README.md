@@ -7,20 +7,40 @@ This macro is a container which acts as an event listener for its contents. By d
 This macro supports HTML arguments ([Read more.](../htmlarguments.md)).
 
 ```html
-<<listen [elementType] [attribute value...]>>
+<<listen [attribute value...]>>
 
 ... inner contents ...
 
-<<when [eventType1[, eventType2]]>>
+<<when [eventType1[, eventType2]] [eventType3]>>
 
 ... code to run when an event of the given type is triggered ...
 
-[<<when [eventType2]>> ... ]
+[<<when [eventType4]>> ... ]
 
 <</listen>>
 ```
 
 If no event type is supplied to the `<<when>>` tag, it will trigger on `change` events by default. See JS events for an [exhaustive list](https://developer.mozilla.org/en-US/docs/Web/Events#event_listing).
+
+
+### `type` argument ###
+
+The `type` argument decides on which element the `<<listen>>` wrapper will be, a `span` by default.
+
+### `filter` argument ###
+
+The `filter` argument is used to choose which elements can trigger the event. This argument can be any valid jQuery selector (`element`, `.class`, `#id`, `[attribute]`...).
+
+```html
+<<listen filter 'button'>>
+
+	<<button 'Trigger'>><</button>>
+	<<link "Don't trigger">><</link>>
+
+<<when 'click'>>
+	...payload to only trigger on button click...
+<</listen>>
+```
 
 ### _event variable ###
 
@@ -32,7 +52,7 @@ The event object is passed as the `_event` temporary variable which can be used 
 |------------|------------|
 | `_event.target` | A reference to the element which triggered the event |
 | `_event.target.value` | The value of the target element mostly useful to get `<input>`'s value |
-| `_event.type` | The type of event (`change`, `click`, `keypress`...), useful if multiple types are used |
+| `_event.type` | The type of event (`change`, `click`, `keypress`...) |
 
 **Beware!**
 
@@ -108,7 +128,7 @@ The world's worst numpad :
 <div id='display'>You dialed : </div>
 
 <<nobr>>
-<<listen 'div' style 'display: grid; grid-template-columns: 1fr 1fr 1fr'>>
+<<listen type 'div' style 'display: grid; grid-template-columns: 1fr 1fr 1fr'>>
 
 	<<for _i=1; _i lt 10;_i++>>
 		<button>_i</button>
