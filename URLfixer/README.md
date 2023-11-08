@@ -40,6 +40,7 @@ window.defaultFilePath = {
 };
 ```
 
+**This solution might not work with OneDrive folders.**
 
 Note : An online directory can always be used (the code will default to it if no local path has been supplied), it is wasteful, however, to download remote files when they are/should be on your computer already.
 
