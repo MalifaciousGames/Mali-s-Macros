@@ -24,6 +24,15 @@ A configurable event listener in macro form. Mainly used to run code when an inp
 
 ***
 
+
+## The 'hover' macro ##
+
+Displays a tooltip on mouse hover, among other things.
+
+[The 'hover' macro](hover-macro)
+
+***
+
 ## JS-free settings API ##
 
 Lets you use the built-in Settings API without JavaScript knowledge.
