@@ -9,9 +9,8 @@ While each macro comes with a minified copy of this bundle, you only ever need <
 
 ### Concerned macros ###
 
-The macros that need the bundle are: 
+The only macro that still needs the bundle is: 
 
-* `<<hover>>`
 * `<<vanish>>`
 
 All of these come with a minified version of the bundle in their JS file.
