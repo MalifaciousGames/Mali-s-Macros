@@ -31,7 +31,7 @@
 				}
 
 				this.updateData.val = newVal;
-				this.setTextContent(newVal);
+				this.setTextContent(stringFrom(newVal));
 			}
 
 			disconnectedCallback() {
