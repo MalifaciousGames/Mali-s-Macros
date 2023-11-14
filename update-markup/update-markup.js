@@ -1,83 +1,64 @@
 /* Update wrapper markup. */
 (() => {
-	const registry = { next : 0 };
-	let isCooldown = false;
+    let isCooldown = false;
+    const shadowHandler = Wikifier.helpers.shadowHandler || Wikifier.helpers.createShadowSetterCallback; //version check
 
-	customElements.define(
-		'update-wrapper',
-		class extends HTMLElement {
-			constructor() {
-				super();
+    customElements.define(
+        'update-wrapper',
+        class extends HTMLElement {
+            constructor() {
+                super();
 
-				const shadow = this.attachShadow({ mode: 'open' });
-				const view   = document.createElement('span');
-				shadow.appendChild(view);
-			}
+                const shadow = this.attachShadow({
+                    mode: 'open'
+                });
+                const view = document.createElement('span');
+                shadow.appendChild(view);
+            }
 
-			connectedCallback() {
-				const id  = this.getAttribute('data-id');
-				const raw = registry[id];
-				const val = State.getVar(raw);
+            connectedCallback() {
+                this.setTextContent();
+            }
 
-				this.updateData = { id, raw, val };
-				this.setTextContent(val);
-			}
+            update() {
+                const newVal = stringFrom(this.getShadowValue());
+                if (newVal === this.previousValue) {
+                    return;
+                }
+                this.previousValue = newVal;
+                this.setTextContent();
+            }
 
-			update() {
-				const newVal = State.getVar(this.updateData.raw);
+            setTextContent(val) {
+                this.shadowRoot.querySelector('span').textContent = val ?? stringFrom(this.getShadowValue());
+            }
+        }
+    );
 
-				if (newVal === this.updateData.val) {
-					return;
-				}
+    const updateWrappers = () => $('update-wrapper').each((_, el) => el.update());
 
-				this.updateData.val = newVal;
-				this.setTextContent(stringFrom(newVal));
-			}
+    Wikifier.Parser.add({
+        name: 'updateMarkup',
+        match: '{{(?:.*?}})',
 
-			disconnectedCallback() {
-				delete registry[this.updateData.id];
-			}
+        handler(w) {
+            const raw = w.matchText.slice(2, -2).trim(),
+                $wrp = $(`<update-wrapper>`).get(0);
+            $wrp.getShadowValue = shadowHandler(`State.getVar("${raw}")`);
+            w.output.append($wrp);
+        }
+    });
 
-			setTextContent(val) {
-				this.shadowRoot.querySelector('span').textContent = val;
-			}
-		}
-	);
+    $(document).on('change click drop refreshUpdateContainers', () => {
+        if (isCooldown) {
+            return;
+        }
 
-	const processUpdateMarkup = text => {
-		return text.replace(/{{(?:.*?}})/g, match => {
-			const id = registry.next++;
-			registry[id] = match.slice(2, -2).trim();
-			return `<update-wrapper data-id="${id}"></update-wrapper>`;
-		});
-	};
+        updateWrappers();
+        isCooldown = true;
+        setTimeout(() => isCooldown = false, 40);
+    });
 
-	const updateWrappers = () => $('update-wrapper').each((_, el) => el.update());
-
-	const attachOnProcess = () => {
-		if (Config.passages.onProcess) {
-			const userFn = Config.passages.onProcess;
-			Config.passages.onProcess = p => processUpdateMarkup(userFn(p));
-		}
-		else {
-			Config.passages.onProcess = p => processUpdateMarkup(p.text);
-		}
-	};
-
-	$(document).on('change click drop refreshUpdateContainers', () => {
-		if (isCooldown) {
-			return;
-		}
-
-		updateWrappers();
-		isCooldown = true;
-		setTimeout(() => isCooldown = false, 40);
-	});
-
-	// Automatically attach a `Config.passages.onProcess` handler
-	// while attempting to avoid clobbering a user supplied one.
-	$(document).one(':passageinit', attachOnProcess);
-
-	// Exports.
-	setup.updateWrappers = updateWrappers;
+    // Exports.
+    setup.updateWrappers = updateWrappers;
 })();
