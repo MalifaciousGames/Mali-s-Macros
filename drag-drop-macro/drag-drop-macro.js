@@ -364,7 +364,7 @@ Macro.add('drag', {
             parent = $el.parent();
 
           	if (e.type === 'touchstart') {
-              	if (e.target.onclick || $._data(e.target, 'events').click) {//A clickable element inside the drag elem
+              	if (e.target.onclick || $._data(e.target, 'events')?.click) {//A clickable element inside the drag elem
                   	e.stopPropagation();
                 	return;
                 }
