@@ -105,10 +105,11 @@
 
             //Exclusive choices
             if (attributes.hasOwnProperty('choice')) {
-                const cID = attributes.choice;
-                postClick.push(e => $(`[data-choice=${cID}]`).not($link).remove());
-
-                $link.attr('data-choice', cID);
+                const choiceGroups = getAsArray(attributes.choice);
+                postClick.push(e => choiceGroups.forEach(c => $('[data-choice]').not($link).trigger(':choiceCheck', c)));
+                $link.attr('data-choice', true).on(':choiceCheck', (e,c) => {
+                	if (choiceGroups.includes(c)) $link.remove();
+                });
 
                 delete attributes.choice;
             };
