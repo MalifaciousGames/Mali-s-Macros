@@ -67,6 +67,7 @@ A single `<<a>>` element can support all of the output options, these run in alp
 ```
 
 ### Goto attribute ###
+Accepts : `'string' / [[bracket link]]`
 
 The `goto` attribute lets you specify a passage to forward the player to. It works in the exact same fashion as the default `<<link>>` syntax.
 
@@ -76,6 +77,7 @@ The `goto` attribute lets you specify a passage to forward the player to. It wor
 ```
 
 ### Key attribute ###
+Accepts : `number / 'string'(comma-separated) / [array]`
 
 The `key` attribute is used to bind one or more keys to an element. When one of the given keys is pressed, the element behaves as if it had been clicked.
 
@@ -109,8 +111,11 @@ Generating buttons bound to number keys using the `e.code` syntax:
 ```
 
 ### Condition/disabled attribute ###
+Accepts : `'Twinescript expression' / function() / any`
 
-The `condition` and `disabled` attributes are evaluated attributes which decide if a link is shown or enabled. If they value is a quoted expression, it is evaluated after each click, if the resulting value is truthy, the element is either removed or disabled.
+The `condition` and `disabled` attributes are evaluated attributes which decide if a link is shown or enabled. Whenever a link is clicked, every link with the `condition/disabled` attribute check there own conditions and show/hide or enable/disable themselves.
+
+The condition can be anything, strings are treated as Twinescript expressions, functions are called for their return values, other data types are just tested for truthiness.
 
 ```html
 <<set $hasItem = true>>
@@ -125,8 +130,9 @@ The `condition` and `disabled` attributes are evaluated attributes which decide 
 ```
 
 ### Choice attribute ###
+Accepts : `number / 'string'(comma-separated) / [array]`
 
-The `choice` attribute creates groups of links, if one of them is clicked, all the others will be removed from the page. 
+The `choice` attribute creates groups of links, if one of them is clicked, all the others will be removed from the page. A single link can belong to multiple choice groups by supplying a comma-separated string or an array.
 
 ```html
 <<adel "Option 1" choice 'opt'>>
@@ -143,8 +149,9 @@ The `choice` attribute creates groups of links, if one of them is clicked, all t
 This feature doesn't have its own memory so it should be used in conjunction with the condition attribute if you want choices to remain hidden after navigating back to a passage.
 
 ### Trigger attribute ###
+Accepts : `number / 'string'(comma-separated) / [array]`
 
-The `trigger` attribute is used to trigger events at document level. It is meant to be used in conjunction with the [`<<on>>` macro](../on-macro). Events can be supplied as a commas separated string, a valid event object or an array of strings or objects.
+The `trigger` attribute is used to trigger one or multiple events at document level. It is meant to be used in conjunction with the [`<<on>>` macro](../on-macro). Events can be supplied as a commas separated string, a valid event object or an array of strings or objects.
 
 ```html
 <<set $var = 45>>
@@ -159,6 +166,7 @@ The `trigger` attribute is used to trigger events at document level. It is meant
 ```
 
 ### Count attribute ###
+Accepts : `number`
 
 The `count` attribute enables you to set a maximum amount of clicks before the link disappears. 
 
