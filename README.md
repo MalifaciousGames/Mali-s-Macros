@@ -112,29 +112,11 @@ A quick script which fixes relative URLs when launching from Twine.
 
 ***
 
-## Style passages in Twine 2 ##
+## `style` and `script` passages in Twine 2 ##
 
-The Twine 2 version of Sugarcube doesn't natively allow for stylesheet passages, causing the main stylesheet to become extremely crowded, making it hard to navigate and edit.
-Copying the code below in your story Javascript lets you use the `style` tag to create CSS passages. 
+Two short scripts that let you use `script` and `style` tags as the default JS and CSS tab tend to become very crowded in Twine 2.
 
-```js
-$(document).ready(() => {
-	const stylePassages = Story.lookup("tags", "style"), styleElem = $("<style id='style-passages' type='text/css'>");
-	stylePassages.forEach(psg => {
-		styleElem.append(Scripting.evalTwineScript('`'+psg.text+'`'));
-	});
-	styleElem.appendTo('head');
-});
-```
-
-Template literals can be used to evaluate javascript variables like so : 
-
-```css
-:root {
-  --mainColor: ${settings.mainColor ?? 'White'};
-  --fontSize: ${settings.fontSize ?? '16'}px;
-}
-```
+[Special tags](special-tags.md)
 
 ***
 
