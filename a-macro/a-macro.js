@@ -1,168 +1,211 @@
-/* Mali's <<a>> macro for Sugarcube */
+;(() => {
+    const keyListeners = [];
 
-Macro.add(['a','adel','but','butdel'], {
-	isAsync : true,
-	tags    : ['rep','prep','app','diag'],
-  
-  	argsToObj : function(args) {
-    		let argObject = {}, i = 0;
-    		while(i < args.length){
-          		const arg = args[i];
-        		if (Array.isArray(arg)) {//An array, splice into position
-            			args.splice(i--, 1, ...arg);
-            		} else if (typeof arg === 'object') {//Merge objects!
-            			Object.assign(argObject, arg);
-            		} else {//Following pairs
-              			const val = args[i+=1];
-              			if (val === undefined){throw new Error('Uneven number of arguments.')};
-            			argObject[arg.toLowerCase()] = val;
-            		}
-          		i++;
-        	}
-      		return argObject;
-    	},
-  	activeKeys : [],
-	handler() {
-      
-		//Parse arguments and payloads into objects
-		const type = this.name[0] === 'b' ? 'button' : 'link', attributes = this.self.argsToObj(this.args.slice(1)), payloads = {};
-		
-		//Payload object only includes content for child tags
-      	this.payload.slice(1).forEach(pay => {
-			payloads[pay.name] = pay;
-		});
-		
-      	//Condition property, processed early to save on processing if not fulfilled
-      	if (attributes.hasOwnProperty('condition')) {
-          	var cond = attributes.condition;
-        	delete attributes.condition;
-          	if (!cond || !Scripting.evalTwineScript(cond)){
-            	return false;
+    $(document).on('keyup.macro-a', e => {
+        keyListeners.filter(i => i.key === e.key || i.key === e.code).forEach(i => i.elem.trigger('click'));
+    }).on(':passageinit', e => {
+        keyListeners.forEach(i => {
+            if (!$.contains(document.body, i.elem[0])) keyListeners.delete(i);
+        });
+    });
+
+    const sugEquivalents = {
+        prep: 'prepend',
+        app: 'append',
+        rep: 'replace'
+    };
+    const parseArgs = args => {
+        let obj = {}, i = 0;
+
+        while (i < args.length) {
+            const arg = args[i];
+            if (typeof arg === 'object') {
+                Array.isArray(arg) ? args.splice(i--, 1, ...arg) : Object.assign(obj, arg);
+            } else {
+                const val = args[i += 1];
+                if (val === undefined) {
+                    throw new Error('Uneven number of arguments.');
+                } else if (typeof arg !== 'string') {
+                    throw new Error(`Attribute key must be a string, reading: '${arg}'.`);
+                };
+                obj[arg.toLowerCase()] = val;
             }
-        };
-		
-      	let oldThis, deleteSelf = this.name.includes('del'), count = 0;
-      
-      	//Process bracket syntax
-      	if (typeof this.args[0] === 'object'){
-          	var {text : txt, link : passage, source : src} = this.args[0];
-        } else {
-        	var txt = this.args[0];
-          	if (attributes.hasOwnProperty('goto')) {
-            		var passage = attributes.goto;
-              		delete attributes.goto;
-            	};
-		if (typeof passage === 'object'){passage = passage.link};//<<a '...' goto [[passage]]>>
+            i++;
         }
-      
-      	//Create link element with proper text or image
-      	const link = $(`<${type === 'button'? type : 'a'}>`)
-        	.wikiWithOptions({ profile : 'core' }, src ? `<img src='${src}' class='link-image'>` : txt)
-        	.attr({'data-passage': passage, 'data-count' : count});
-      
-      	//Disabled property
-      	if (attributes.hasOwnProperty('disabled')) {
-          	var dis = attributes.disabled;
-          	link.ariaDisabled(Scripting.evalTwineScript(dis));
-        	delete attributes.disabled;
-        };
-      
-      
-      	// Trigger, can be comma-separated string, event object or array of events...
-      	if (attributes.hasOwnProperty('trigger')) {
-		var trig = clone(attributes.trigger);
-          	delete attributes.trigger;
-          	trig = (typeof trig === 'string') ? trig.split(',').map(v => v.trim()) : [trig];
-	};
-      	
-      	//Max number of clicks has been given!
-     	if (attributes.hasOwnProperty('count')) {
-          	var maxCount = attributes.count;
-          	if (typeof maxCount !== 'number' || maxCount < 1) {
-            		return this.error(`The 'count' attribute must be a number greater than 1, reading : ${count}.`);
-            	}
-        	delete attributes.count;
-        }; 
-      
-	//Mutually exclusive links!
-      	if (attributes.hasOwnProperty('choice')){
-		var choiceID = attributes.choice;
-          	link.attr('data-choice', choiceID);
-          	delete attributes.choice;
-	};
-      
-      	// Catch key property
-	if (attributes.hasOwnProperty('key')){
-		var keyArray = attributes.key;
-          	if (typeof keyArray === 'string') {keyArray = keyArray.split(',')};
+        return obj;
+    };
 
-          	const acKeys = this.self.activeKeys;
-          	if (!acKeys.length) {//Initiate new global listener
-            		$(document).keyup('macro-a', (e) => {
-                		const validLinks = acKeys.filter(obj => obj.keys.includesAny(e.key, e.code));
-    				validLinks.forEach(o => {o.link.click()});
-                	});
-            	} else {//Do a cleaning pass once this.output is in DOM! Do it when new link is added so the length of activeKeys is always 1 (and another listener doesn't get added).
-            		setTimeout(() => {
-                		acKeys.forEach(o => {
-                			if (!$.contains(document.body, o.link[0])) {acKeys.delete(o)};
-                		})
-                	}, Engine.minDomActionDelay);
-		}
-          	acKeys.push({keys : keyArray, link : link});
-	};
-      
-        // Apply non-processed attributes to the link
-      	link.attr(attributes).addClass(`macro-${this.name} link-${attributes.href ? 'external' : 'internal'}`);
-      
-      	// Apply proper classes based on passage availability!
-      	if (passage) {
-		if (Config.addVisitedLinkClass && State.hasPlayed(passage)) {
-			link.addClass('link-visited');
-		} else if (!Story.has(passage)) {
-			link.addClass('link-broken');
-		}
-        };
+    const getReturnValue = exp => {
+        const ty = typeof exp;
+        if (ty === 'string') return Scripting.evalTwineScript(exp);
+        if (ty === 'function') return exp.call();
+        return exp;
+    };
 
-      	link.ariaClick( //Options object
-		{namespace : '.macros', role : type, one : (deleteSelf || passage) ? true : false},
-        	this.createShadowWrapper((e) => {
-		link.attr('data-count', count+=1);//Increment click counter
-                try {
-                      	oldThis = State.temporary.this;
-                  	State.temporary.this = {event : e, self : link, count : count};//Init _this variable
-                      
-                      	$.wiki(this.payload[0].contents);
-                  	$.each(payloads, (k,pay) => {
-                        	const target = pay.args[0] ? $(pay.args[0]) : $(e.target).parent(), trans = pay.args.includesAny('transition','t8n'), attrObject = pay.args.find(a => typeof a === 'object' && !a instanceof jQuery) ?? {};
-                          	let result;
-                          	switch(k) {
-              			case 'rep': result = target.attr(attrObject).empty().wiki(pay.contents); break;
-              			case 'prep': result = $('<span>').attr(attrObject).addClass(`macro-${k}-insert`).wiki(pay.contents).prependTo(target); break; 
-              			case 'app': result = $('<span>').attr(attrObject).addClass(`macro-${k}-insert`).wiki(pay.contents).appendTo(target); break;
-              			case 'diag': Dialog.setup(pay.args[0] ?? '', pay.args[1] ?? '');
-                			result = Dialog.wiki(pay.contents).open();
-                                break;
-           			}
-                        	if (result && trans) {$(result).fadeOut(0).fadeIn(400)};
-                        });
-                      	trig?.forEach(e => $(document).trigger(e));//Trigger events!
-                      
-                    } finally {//Clean _this value after use
-                    	oldThis !== undefined ? State.temporary.this = oldThis : delete State.temporary.this;
-                    }
-                }, () => {
-                  	if (choiceID) {//Delete other choice contenders
-                    		$(`[data-choice*=${choiceID}]`).not(link).remove();
-                    	}
-                	if (passage){
-                    	Engine.play(passage);
-                    } else if (count === maxCount || deleteSelf || (cond && !Scripting.evalTwineScript(cond))) {
-                    	link.remove();
-                    } else if (dis){
-                    	link.ariaDisabled(Scripting.evalTwineScript(dis));
-                    }
+    const processEvents = events => {
+        if (typeof events === 'string') return events.split(',').map(v => v.trim());
+        if (!Array.isArray(events)) return [events];
+        return clone(events);
+    };
+
+    Macro.add(['a', 'adel', 'but', 'butdel'], {
+        isAsync: true,
+        tags: ['rep', 'prep', 'app', 'diag'],
+        handler() {
+
+            let [linkText, ...attributes] = this.args, [main, ...payloads] = this.payload,
+                passage, img,
+                onClick = [e => $.wiki(main.contents)], postClick = [], selfCheck = [],
+                deleteSelf = this.name.includes('del'),
+                count = 0;
+		
+            attributes = parseArgs(attributes);
+
+            const type = this.name[0] === 'b' ? 'button' : 'link', $link = $(`<${type === 'button'? type : 'a'}>`);
+
+            //Process bracket syntax
+            if (typeof linkText === 'object') ({text: linkText, link: passage, source: img} = linkText);
+
+            //Handle passage argument
+            if (attributes.hasOwnProperty('goto')) {
+                passage = typeof attributes.goto === 'object' ? attributes.goto.link : attributes.goto;
+                delete attributes.goto;
+            }
+
+            if (passage) {
+                postClick.push(e => Engine.play(passage));
+
+                $link.attr('data-passage', passage);
+
+                if (Config.addVisitedLinkClass && State.hasPlayed(passage)) {
+                    $link.addClass('link-visited');
+                } else if (!Story.has(passage)) {
+                    $link.addClass('link-broken');
                 }
-            )).appendTo(this.output);
-	}
-});
+            };
+
+            //Trigger callback
+            if (attributes.hasOwnProperty('trigger')) {
+                const events = processEvents(attributes.trigger);
+
+                postClick.push(e => events.forEach(ev => $(document).trigger(ev)));
+
+                delete attributes.trigger;
+            };
+
+            //Max clicks
+            if (attributes.hasOwnProperty('count')) {
+                const max = attributes.count - 1;
+
+                postClick.push(e => count === max ? $link.remove() : $link.attr('data-count', count += 1));
+                $link.attr('data-count', count);
+
+                delete attributes.count;
+            };
+
+            //Exclusive choices
+            if (attributes.hasOwnProperty('choice')) {
+                const cID = attributes.choice;
+                postClick.push(e => $(`[data-choice=${cID}]`).not($link).remove());
+
+                $link.attr('data-choice', cID);
+
+                delete attributes.choice;
+            };
+
+            //Key bindings
+            if (attributes.hasOwnProperty('key')) {
+                const keys = processEvents(attributes.key);
+                keys.forEach(k => keyListeners.push({
+                    key: k,
+                    elem: $link
+                }));
+
+                delete attributes.key;
+            };
+
+            //The 2 selfCheck attributes
+            if (attributes.hasOwnProperty('condition')) {
+                const exp = clone(attributes.condition);
+                delete attributes.condition;
+
+                selfCheck.push(e => $link[getReturnValue(exp) ? 'show' : 'hide']());
+            }
+
+            if (attributes.hasOwnProperty('disabled')) {
+                const exp = clone(attributes.disabled);
+                delete attributes.disabled;
+
+                selfCheck.push(e => $link.ariaDisabled(getReturnValue(exp)));
+            }
+
+            if (selfCheck.length) {
+                selfCheck.forEach(c => c.call());
+                $link.attr('data-checkself', true).on(':checkSelf', e => selfCheck.forEach(c => c.call()));
+            }
+
+            //Add payload callbacks
+            payloads.forEach(pay => {
+                let callback;
+
+                if (pay.name === 'diag') {
+                    callback = e => {
+                        Dialog.setup(pay.args[0] || '', pay.args[1] || '');
+                        Dialog.wiki(pay.contents).open();
+                    }
+                    onClick.push(callback);
+                    return;
+                }
+
+                const attr = pay.args.find(a => typeof a === 'object' && !(a instanceof jQuery)) || {},
+                    t8n = pay.args.includesAny('transition', 't8n');
+
+                callback = e => {
+                    const $trg = pay.args[0] ? $(pay.args[0]) : $link.parent(), cName = sugEquivalents[pay.name];
+
+                    if (pay.name === 'rep') $trg.empty();
+                    const $insert = $('<span>').attr(attr).addClass(`macro-${cName}-insert`).wiki(pay.contents);
+                    $trg[pay.name === 'prep' ? 'prepend' : 'append']($insert);
+
+                    if (t8n) { //Rely on built-in t8n classes for consistency
+                        $insert.addClass(`macro-${cName}-in`);
+                        setTimeout(() => $insert.removeClass(`macro-${cName}-in`), 40);
+                    };
+                };
+                onClick.push(callback)
+            });
+
+            if (deleteSelf) postClick.push(e => $link.remove());
+
+            $link
+                .wikiWithOptions({
+                    profile: 'core'
+                }, img ? `<img src='${img}' class='link-image'>` : linkText)
+                .attr(attributes)
+                .addClass(`macro-${this.name} link-${attributes.href ? 'external' : 'internal'}`);
+
+            $link.ariaClick({
+                    namespace: '.macros',
+                    role: type,
+                    one: !!passage || deleteSelf
+                },
+                this.createShadowWrapper(
+                    e => {
+                        const oldThis = State.temporary.this;
+                        State.temporary.this = {event: e, self: $link, count};
+                        try {
+                            onClick.forEach(callback => callback.call(null, e));
+                        } finally {
+                            State.temporary.this = oldThis;
+                        }
+                    },
+                    e => {
+                        postClick.forEach(callback => callback.call(null, e));
+                        setTimeout(() => $('[data-checkself]').trigger(':checkSelf', 40));
+                    }
+                )
+            );
+            this.output.appendChild($link.get(0));
+        }
+    });
+})();
