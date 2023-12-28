@@ -1,10 +1,26 @@
 # Macros #
 
-## The 'a' Macro ##
+## The 'a' macro ##
 
-Links and buttons that take any HTML attributes, has built-in keybindings support and multiple output options.
+Create highly customizable links and buttons that take any HTML attributes, have built-in key bindings support and multiple output options.
 
 [The 'a' macro](a-macro)
+
+***
+
+## The 'arrowbox' macro ##
+
+A hybrid input element similar to SugarCube's `<<cycle>>` but which can be cycled in either directions by clicking, scrolling or using the arrow keys.
+
+[The 'arrowbox' macro](arrowbox-macro)
+
+***
+
+## The 'checkvars' macro ##
+
+This macro prints the active variables (State variables and temporary, `settings` and `setup`) to a dialog. The new version also lets you edit their values for testing.
+
+[The 'checkvars' macro](checkvars-macro)
 
 ***
 
@@ -16,44 +32,33 @@ The `drag` and `drop` macros let you create and manage draggable elements in Sug
 
 ***
 
-## The 'listen' macro ##
-
-A configurable event listener in macro form. Mainly used to run code when an input element is modified.
-
-[The 'listen' macro](listen-macro)
-
-***
-
-
 ## The 'hover' macro ##
 
-Displays a tooltip on mouse hover, among other things.
+Displays a tooltip, run code and/or replace content on hover.
 
 [The 'hover' macro](hover-macro)
 
 ***
 
-## JS-free settings API ##
+## The 'input' macro ##
 
-Lets you use the built-in Settings API without JavaScript knowledge.
-
-[The settings macro](sc-settings)
+**Deprecated, use an html `<input>` + `<<listen>>` instead!**
 
 ***
 
-## The 'on' and 'trigger' macros ##
+## The 'KeyControl' API and macro set ##
 
-This pair of macros make up an event-based refresh system. They are useful as a way to update displays but also for running asynchronous code.
+The `KeyControl` API lets you create and handle custom shortcuts. The API itself is format-agnostic, a set of SugarCube macros is included to interact with it.
 
-[The 'on' and 'trigger' macro set](on-macro)
+[KeyControl API and macro set](keycontrol-macros)
 
 ***
 
-## The 'vanish' macros ##
+## The 'listen' macro ##
 
-Creates custom containers that can be made to vanish/appear based on a timed delay or triggered events.
+A configurable event listener in macro form. Mainly used to run code when an input element is modified.
 
-[The 'vanish' macro set](vanish-macro)
+[The 'listen' macro](listen-macro)
 
 ***
 
@@ -65,63 +70,32 @@ Lets you easily log data to the console, set up time trackers to monitor code ex
 
 ***
 
-## The 'checkvars' macro ##
+## The 'on' and 'trigger' macros ##
 
-This macro prints the active variables (State variables and temporary, `settings` and `setup`) to a dialog. The new version also lets you edit their values for testing.
+This pair of macros make up an event-based refresh system. They are useful as a way to update displays but also for running asynchronous code.
 
-['checkvars' macro](checkvars)
-
-***
-
-## The 'times' macro ##
-
-Sometimes you just want to run code x times without using the full loop syntax... this macro does exactly that.
-
-### Syntax ###
-
-```html
-<<times number ['iterationVariable']>> ...code to run x times... <</times>>
-```
-
-By default, the iteration value is `_i`, this can be changed by supplying a quoted variable as second argument.
-
-```html
-<<times 5 '_var'>>
-	_var : <<= setup.item.name>>
-	<<set $inventory.push(setup.item)>>
-<</times>>
-```
+[The 'on' and 'trigger' macro set](on-macro)
 
 ***
 
-# Scripts #
+## JS-free settings API ##
 
-## The update markup ##
+Lets you use the built-in Settings API without JavaScript knowledge.
 
-This special syntax lets you automatically display variable changes : `{{$myVar}}`.
-
-[Update markup](update-markup)
+[The settings macro](sc-settings)
 
 ***
 
-## URL fixer for Twine ##
+## The 'toggle' macro ##
 
-A quick script which fixes relative URLs when launching from Twine.
-
-[The URL fixer](URLfixer)
+**Deprecated, use `<<cycle>>` + `<<listen 'click'>>` instead!**
 
 ***
 
-## `style` and `script` passages in Twine 2 ##
+## The 'vanish' macros ##
 
-Two short scripts that let you use `script` and `style` tags as the default JS and CSS tab tend to become very crowded in Twine 2.
+Creates custom containers that can be made to vanish/appear based on a timed delay or triggered events.
 
-[Special tags](special-tags.md)
+[The 'vanish' macro set](vanish-macro)
 
 ***
-
-## Legacy macros ##
-
-`<<input>>` and `<<inputbox>>` => Should use an `<input>` element inside the `<<listen>>` macro instead : [Input macros](input-macros).
-
-The `<<toggle>>` macro, customizable counterpart to SC's `<<cycle>>`. Most of these functionalities can be acchieved with a `<<cycle>>` inside a `<<listen>>` container : [The 'toggle' macro](toggle-macro).
