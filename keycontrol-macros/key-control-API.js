@@ -65,13 +65,14 @@ window.KeyControl = class KeyControl {
 	}
 
 	createInput() {
-		return $(`<input id='${this.id}' class='keyInput' readonly>`).val(this.displayVal).on('keydown', e => {
+		const $inp = $(`<input id='${this.id}' class='keyInput' readonly>`).val(this.displayVal).on('keydown', e => {
 			e.preventDefault();
 			e.stopPropagation();
 
 			this.setKey(e);
 			$inp.val(this.displayVal);
 		});
+		return $inp;
 	}
 
 	createInputContext() {
@@ -103,7 +104,9 @@ window.KeyControl = class KeyControl {
 	enable() { return this.active = true }
 
 	static active = [];
+	static coolDown = false;
 	static run(e) {
+		this.coolDown = true;
 		this.active.filter(l => l.active).forEach(l => l.invoke(e));
 	};
 	static add(id, def) {
@@ -127,6 +130,12 @@ window.KeyControl = class KeyControl {
 	}
 };
 
-$(document).on('keydown.KeyControlAPI', e => KeyControl.run(e));
+$(document).on('keydown.KeyControlAPI', e => {
+	if (KeyControl.coolDown) return;
+	KeyControl.run(e);
+});
+
+$(document).on('keyup.KeyControlAPI', e => KeyControl.coolDown = false);
+
 
 /* End of the API */
