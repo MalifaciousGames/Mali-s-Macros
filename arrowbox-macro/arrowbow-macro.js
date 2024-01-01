@@ -1,3 +1,5 @@
+/* Mali's <<arrowbox>> macro */
+
 Macro.add('arrowbox', {
 
   //CONFIG OPTIONS

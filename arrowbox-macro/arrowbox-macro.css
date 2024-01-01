@@ -1,3 +1,5 @@
+/* Mali's <<arrowbox>> macro */
+
 .macro-arrowbox {
   display: inline-flex;
   align-items: center;
