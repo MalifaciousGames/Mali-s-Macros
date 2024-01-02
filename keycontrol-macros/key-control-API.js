@@ -21,6 +21,15 @@ window.KeyControl = class KeyControl {
 		if (this.special != null && !Array.isArray(this.special)) throw new Error('Improper special key, must be either a string or an array!');
 		if (this.special?.some(k => !['ctrl', 'alt', 'shift'].includes(k))) throw new Error('Special keys can only be: ctrl, shift or alt.');
 
+		this.default = { key: this.key, special: this.special };
+		//try to fetch key values from memory
+		const fromMem = this.keysFromMemory();
+		if (fromMem) {
+			for (const k in fromMem) {
+				this[k] = fromMem[k];
+			}
+		}
+
 		//condition
 		if (this.condition != null && typeof this.condition !== 'function') throw new Error('Improper condition type, must be a function.');
 
@@ -28,7 +37,7 @@ window.KeyControl = class KeyControl {
 		if (typeof this.callback !== 'function') throw new Error('Improper callback type, must be a function.');
 
 		this.active ??= true;
-		this.default = { key: this.key, special: this.special };
+
 		this.setDisplay();
 
 		this.constructor.active.push(this);
@@ -48,12 +57,14 @@ window.KeyControl = class KeyControl {
 		if (spcKey) this.special.pushUnique(spcKey);
 
 		this.key = [e.key];
+		this.keysToMemory();
 		this.setDisplay();
 	}
 
 	reset() {
 		this.key = this.default.key;
 		this.special = this.default.special;
+		localStorage.removeItem(this.getMemoryId());
 		this.setDisplay();
 	}
 
@@ -77,11 +88,11 @@ window.KeyControl = class KeyControl {
 
 	createInputContext() {
 		//label
-		const $label = $(`<label for='${this.id}' class='keyLabel'>`).append(`<span class='keyName'>${this.name ?? this.id} : </span>`);
+		const $label = $(`<label for='${this.id}' class='keyLabel' style='display: flex;justify-content: space-between;'>`).append(`<span class='keyName'>${this.name ?? this.id} : </span>`);
 		if (this.desc) $label.append(`<span class='keyDesc'>${this.desc}</span>`);
 
 		//input elem
-		this.createInput().appendTo($label);
+		const $inp = this.createInput().appendTo($label);
 
 		//reset button
 		$(`<button class='keyReset'>Reset to default</button>`).attr({
@@ -95,6 +106,21 @@ window.KeyControl = class KeyControl {
 		return $label;
 	}
 
+	getMemoryId() {
+		const tw = $('tw-storydata')[0];
+		return tw.getAttribute('name') + ':' + tw.getAttribute('ifid') + ':' + this.id;
+	}
+
+	keysFromMemory() {
+		const keys = localStorage.getItem(this.getMemoryId());
+		return keys ? JSON.parse(keys) : null;
+	}
+
+	keysToMemory() {
+		const kObj = { key: this.key, special: this.special };
+		localStorage.setItem(this.getMemoryId(), JSON.stringify(kObj));
+	}
+
 	delete() {
 		const act = this.constructor.active, i = act.findIndex(k => k === this);
 		act.splice(i, 1);
@@ -106,7 +132,6 @@ window.KeyControl = class KeyControl {
 	static active = [];
 	static coolDown = false;
 	static run(e) {
-		this.coolDown = true;
 		this.active.filter(l => l.active).forEach(l => l.invoke(e));
 	};
 	static add(id, def) {
@@ -118,24 +143,23 @@ window.KeyControl = class KeyControl {
 	static remove(id) {
 		this.get(id).delete();
 	};
+	
 	static createInputPanel() {
 		const $grd = $(`<ul class='keyInputPanel' style='display:grid'>`);
 
 		if (this.active.length) {
-			this.active.forEach(kb => $grd.append(kb.createInput()));
+			this.active.forEach(kb => $grd.append(kb.createInputContext()));
 		} else {
 			$grd.append(`<span>No active key bindings.</span>`);
 		}
 		return $grd;
+	};
+	static openInputDialog() {
+		Dialog.setup('Input panel', 'keyInputDialog');
+		Dialog.append(this.createInputPanel()).open();
 	}
 };
 
-$(document).on('keydown.KeyControlAPI', e => {
-	if (KeyControl.coolDown) return;
-	KeyControl.run(e);
-});
-
-$(document).on('keyup.KeyControlAPI', e => KeyControl.coolDown = false);
-
+$(document).on('keydown.KeyControlAPI', e => KeyControl.run(e));
 
 /* End of the API */

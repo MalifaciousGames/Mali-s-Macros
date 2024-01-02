@@ -1,4 +1,5 @@
 /* Macro set for the Sugarcube story format */
+
 Macro.add('bindkey', {
     tags: ['condition', 'special', 'desc'],
     handler() {
@@ -36,8 +37,6 @@ Macro.add('bindkey', {
     }
 });
 
-//<<keyinput id true>>
-
 Macro.add(['keysettings', 'keyinput'], {
     handler() {
         if (!KeyControl) return this.error('This macro cannot be used without the KeyControl API.');
@@ -50,8 +49,6 @@ Macro.add(['keysettings', 'keyinput'], {
         $(this.output).append(kb[this.args[1] ? 'createInput' : 'createInputContext']());
     }
 });
-
-//<<keybinding 'toggle/disable/enable/delete/reset' 'id1'/[array of ids] 'id2' ...>>
 
 Macro.add('keyedit', {
     handler() {
