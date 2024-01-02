@@ -99,7 +99,8 @@ new KeyControl('ID', {
 #### Instance methods ####
 
 - `<KeyControl>.invoke(keydownEvent)` : Run the `callback` if the keydown event fit the key parameters and the `condition` returns truthy.
-- `<KeyControl>.setKey(keydownEvent [, specialKey])` : Set a shortcut's key parameter based on keydown event. The `specialKey` argument lets you force a special key - `<KeyControl>.reset()` : Reset a shortcut's key parameters to it initialized default.
+- `<KeyControl>.setKey(keydownEvent [, specialKey])` : Set a shortcut's key parameter based on keydown event. The `specialKey` argument lets you force a special key.
+- `<KeyControl>.reset()` : Reset a shortcut's key parameters to it initialized default.
 - `<KeyControl>.setDisplay()` : Updates the shortcut's visual representation : `ctrl + a`.
 - `<KeyControl>.createInput()` : Returns a special key-setting input element.
 - `<KeyControl>.createInputContext()` : Returns the shortcut's key-setting context : Name, description, input and reset button.
