@@ -132,6 +132,10 @@ window.KeyControl = class KeyControl {
 	static active = [];
 	static coolDown = false;
 	static run(e) {
+		if (this.coolDown) return;
+
+		this.coolDown = true;
+		setTimeout(()=>{this.coolDown = false}, 150);
 		this.active.filter(l => l.active).forEach(l => l.invoke(e));
 	};
 	static add(id, def) {
