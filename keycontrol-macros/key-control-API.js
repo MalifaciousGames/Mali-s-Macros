@@ -76,34 +76,42 @@ window.KeyControl = class KeyControl {
 	}
 
 	createInput() {
-		const $inp = $(`<input id='${this.id}' class='keyInput' readonly>`).val(this.displayVal).on('keydown', e => {
+		this.input = $(`<input readonly>`).attr({
+			id: this.id,
+			class: 'keyInput',
+			placeholder: 'Enter key binding'
+		}).val(this.displayVal);
+
+		this.input.on('keydown', e => {
+			if (e.key === 'Tab') return;
 			e.preventDefault();
 			e.stopPropagation();
 
 			this.setKey(e);
-			$inp.val(this.displayVal);
-		});
-		return $inp;
+			this.input.val(this.displayVal);
+		}).on('focus', _ => this.input.val(''))
+			.on('focusout', _ => this.input.val(this.displayVal));
+
+		return this.input;
 	}
 
-	createInputContext() {
-		//label
-		const $label = $(`<label for='${this.id}' class='keyLabel' style='display: flex;justify-content: space-between;'>`).append(`<span class='keyName'>${this.name ?? this.id} : </span>`);
-		if (this.desc) $label.append(`<span class='keyDesc'>${this.desc}</span>`);
-
-		//input elem
-		const $inp = this.createInput().appendTo($label);
-
-		//reset button
-		$(`<button class='keyReset'>Reset to default</button>`).attr({
+	createResetButton() {
+		return $(`<button class='keyReset'>Reset to default</button>`).attr({
 			'aria-label': 'Reset to default value',
 			role: 'button'
 		}).on('click', _ => {
 			this.reset();
-			$inp.val(this.displayVal);
-		}).appendTo($label);
+			this.input.val(this.displayVal);
+		});
+	}
 
-		return $label;
+	createInputContext() {
+		const $wrp = $(`<div class='keyWrapper'>`).append(`<span class='keyName'>${this.name ?? this.id}</span>`);
+
+		this.createInput().appendTo($wrp);
+		this.createResetButton().appendTo($wrp);
+
+		return $wrp;
 	}
 
 	getMemoryId() {
@@ -135,7 +143,7 @@ window.KeyControl = class KeyControl {
 		if (this.coolDown) return;
 
 		this.coolDown = true;
-		setTimeout(()=>{this.coolDown = false}, 150);
+		setTimeout(() => { this.coolDown = false }, 200);
 		this.active.filter(l => l.active).forEach(l => l.invoke(e));
 	};
 	static add(id, def) {
@@ -147,9 +155,8 @@ window.KeyControl = class KeyControl {
 	static remove(id) {
 		this.get(id).delete();
 	};
-	
 	static createInputPanel() {
-		const $grd = $(`<ul class='keyInputPanel' style='display:grid'>`);
+		const $grd = $(`<div class='keyInputPanel'>`);
 
 		if (this.active.length) {
 			this.active.forEach(kb => $grd.append(kb.createInputContext()));
@@ -160,10 +167,23 @@ window.KeyControl = class KeyControl {
 	};
 	static openInputDialog() {
 		Dialog.setup('Input panel', 'keyInputDialog');
-		Dialog.append(this.createInputPanel()).open();
+		return Dialog.append(this.createInputPanel()).open();
 	}
 };
 
 $(document).on('keydown.KeyControlAPI', e => KeyControl.run(e));
+
+$('#style-story').before(`<style id='KeyControlStyling'>
+div.keyInputPanel {
+  display:grid;
+}
+
+div.keyWrapper {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 1em;
+  padding: .5em;
+}
+</style>`);
 
 /* End of the API */

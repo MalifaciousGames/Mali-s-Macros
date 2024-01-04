@@ -73,7 +73,11 @@ By default, this macro displays the shortcut's name, description, the setter inp
 
 ### `<<keysettings>>` ###
 
-The `<<keysettings>>` macro displays an input elements for each registered shortcut. It is equivalent to calling `<<keyedit>>` for every registered shortcut:
+The `<<keysettings>>` macro displays an input elements for each registered shortcut. It is equivalent to calling `<<keyedit>>` for every registered shortcut.
+
+### `<<keydialog>>` ###
+
+Similar to `<<keysettings>>` but displays the input panel in a dialog element instead.
 
 ***
 
@@ -91,8 +95,7 @@ new KeyControl('ID', {
     callback : <function>,
     active : <boolean>,
     once : <boolean>,
-    name : 'Display name',
-    desc : 'Description...'
+    name : 'Display name'
 });
 ```
 
@@ -103,7 +106,8 @@ new KeyControl('ID', {
 - `<KeyControl>.reset()` : Reset a shortcut's key parameters to it initialized default.
 - `<KeyControl>.setDisplay()` : Updates the shortcut's visual representation : `ctrl + a`.
 - `<KeyControl>.createInput()` : Returns a special key-setting input element.
-- `<KeyControl>.createInputContext()` : Returns the shortcut's key-setting context : Name, description, input and reset button.
+- `<KeyControl>.createResetButton()` : Returns a button that resets the shortcut's input keys to their initialized default.
+- `<KeyControl>.createInputContext()` : Returns the shortcut's key-setting context : Name, input and reset button.
 - `<KeyControl>.disable/enable/toggle()` : Alters the shortcut's `active` property, letting users enable or disable shortcuts.
 - `<KeyControl>.delete()` : Removes a shortcut altogether.
 - `<KeyControl>.getMemoryId()` : Returns the shortcut's unique `localStorage` id.

@@ -37,18 +37,25 @@ Macro.add('bindkey', {
     }
 });
 
-Macro.add(['keysettings', 'keyinput'], {
+//<<keyinput id raw(boolean)>>
+
+Macro.add(['keyinput','keysettings','keydialog'], {
     handler() {
         if (!KeyControl) return this.error('This macro cannot be used without the KeyControl API.');
-
-        if (this.name === 'keysettings') return $(this.output).append(KeyControl.createInputPanel());
-
+      
+      	switch (this.name) {
+          	case 'keydialog': return KeyControl.openInputDialog();
+        	case 'keysettings': return $(this.output).append(KeyControl.createInputPanel());
+        }
+      
         if (!this.args.length) return this.error('No supplied ID!');
         const kb = KeyControl.get(this.args[0]);
 
         $(this.output).append(kb[this.args[1] ? 'createInput' : 'createInputContext']());
     }
 });
+
+//<<keybinding 'toggle/disable/enable/delete/reset' 'id1'/[array of ids] 'id2' ...>>
 
 Macro.add('keyedit', {
     handler() {
