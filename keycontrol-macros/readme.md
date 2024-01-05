@@ -59,7 +59,7 @@ Most commands are self-explanatory. `reset` restores the shortcut's key value to
 The `<<keyinput>>` provides the player with the ability to input their own key combinations for existing shortcuts.
 
 ```html
-<<keyedit 'ID' inputOnly(boolean)>>
+<<keyinput 'ID' inputOnly(boolean)>>
 ```
 
 By default, this macro displays the shortcut's name, description, the setter input and a "Reset to default" button. If the second argument is truthy, it only displays the input element, leaving greater freedom to the creator to alter the presentation.
