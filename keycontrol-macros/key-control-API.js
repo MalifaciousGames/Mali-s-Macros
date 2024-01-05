@@ -150,7 +150,9 @@ window.KeyControl = class KeyControl {
 		return new this(id, def);
 	};
 	static get(id) {
-		return this.active.find(l => l.id === id) ?? new Error(`No listener found for the ${id} id.`);
+		const l = this.active.find(l => l.id === id);
+		if (!l) throw Error(`No listener found for the ${id} id.`);
+		return l;
 	};
 	static remove(id) {
 		this.get(id).delete();
@@ -166,6 +168,7 @@ window.KeyControl = class KeyControl {
 		return $grd;
 	};
 	static openInputDialog() {
+		if (!Dialog) throw new Error(`KeyControl.openInputDialog() can only be used with the Sugarcube story format.`);
 		Dialog.setup('Input panel', 'keyInputDialog');
 		return Dialog.append(this.createInputPanel()).open();
 	}
@@ -174,16 +177,8 @@ window.KeyControl = class KeyControl {
 $(document).on('keydown.KeyControlAPI', e => KeyControl.run(e));
 
 $('#style-story').before(`<style id='KeyControlStyling'>
-div.keyInputPanel {
-  display:grid;
-}
-
-div.keyWrapper {
-  display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
-  gap: 1em;
-  padding: .5em;
-}
+.keyInputPanel {display:grid;}
+.keyWrapper {display: grid;grid-template-columns: 1fr 2fr 1fr;gap: 1em;padding: .5em;}
 </style>`);
 
 /* End of the API */
