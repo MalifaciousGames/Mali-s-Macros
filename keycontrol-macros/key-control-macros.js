@@ -1,17 +1,18 @@
 /* Macro set for the Sugarcube story format */
 
 Macro.add('bindkey', {
-    tags: ['condition', 'special', 'desc'],
+    tags: ['condition', 'special'],
     handler() {
         if (!KeyControl) return this.error('This macro cannot be used without the KeyControl API.');
         if (this.args.length < 2) return this.error('Macro requires at least two arguments: an id and a input key.');
 
-        let [id, keys] = this.args, def = {};
+        let [id, keys, name] = this.args, def = {};
 
         if (typeof keys === 'object' && !Array.isArray(keys)) {//second arg is a plain object serving as a definition
             def = keys;
         }
 
+        def.name ??= name ?? null;
         def.once ??= this.args.includes('once');
         def.key ??= keys;
         def.callback ??= _ => $.wiki(this.payload[0].contents.trim());
@@ -19,13 +20,6 @@ Macro.add('bindkey', {
         //condition
         const cond = this.payload.find(p => p.name === 'condition');
         if (cond) def.condition ??= _ => Scripting.evalTwineScript(cond.args[0] ?? cond.contents.trim());
-
-        //name + description
-        const desc = this.payload.find(p => p.name === 'desc');
-        if (desc) {
-            def.desc ??= desc.contents;
-            if (desc.args[0]) def.name ??= desc.args[0];
-        }
 
         //special keys
         const specKeys = this.payload.find(p => p.name === 'special');

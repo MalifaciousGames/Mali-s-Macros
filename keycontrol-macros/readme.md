@@ -9,11 +9,10 @@ This API and macro set lets you easily create and manage custom key bindings. Wh
 New key controls are defined using the `<<bindkey>>` macro, main shortcuts are ideally defined in the `StoryInit` special passage.
 
 ```html
-<<bindkey 'ID' 'key1 key2...'/['key1','key2',...] ['once']>>
+<<bindkey 'ID' 'key1 key2...'/['key1','key2',...] ['display name'] ['once']>>
     ...Sugarcube code to call when the key is pressed...
     [<<condition 'Twinescript expression'>>]
     [<<special 'crtl/shift/alt'>>]
-    [<<desc 'Display name'>> Description displayed in <<keyinput>>]
 <</bindkey>>
 ```
 
@@ -40,12 +39,6 @@ Only let players fast travel if they aren't in a combat passage:
 
 The `<<special>>` tag only three arguments : `ctrl`, `alt` and `shift`. 
 Keep in mind that `shift` with change `e.key` values to their upper case version while it won't change the `e.code`.
-
-#### `<<desc>>` ####
-
-This tag is only useful if you consider using the `<<keyinput>>` macro and let player input their own key values.
-Its first argument is a display name (`<<keyinput>>` will default to the `ID` if none is supplied).
-The tag's contents will be displayed as an optional description.
 
 ***
 
