@@ -1,31 +1,49 @@
-/* Mali's SimpleVideo macros for Sugarcube */
-
 Macro.add('video', {
     tags: ['onEnd', 'onStart', 'onPlay', 'onPause'],
-    payToList: {
+    eventPayload: {
         onEnd: ':videoended',
         onStart: ':videostart',
         onPlay: ':videoplay',
         onPause: ':videopaused'
     },
+    count: 0,
     handler() {
+        const [src, ...options] = this.args, config = options.find(o => typeof o === 'object');
+        const { playlists: pl, videos: vids } = SimpleVideo;
+        let $wr, vid;
 
-        const [src, ...options] = this.args,
-            config = options.find(o => typeof o === 'object') ?? {},
-            events = this.self.payToList;
+        if (pl[src]) {
+            //Existing playlist
+            vid = pl[src];
+            $wr = vid.wrapper;
 
-        options.filter(o => typeof o === 'string').forEach(o => config[o] = true);
+        } else {
+            if (vids[src]) {
+                //Existing video
+                vid = vids[src];
+            } else {
+                //Define new video
+                vid = new SimpleVideo.Video(`macro-${this.name}-${this.count++}`, src);
+            }
+            $wr = $(`<div>`).append(vid.elem);
+        }
 
-        this.playlist = SimpleVideo.registry.playlists[src]?.setConfig(config) ?? new SimpleVideo.Playlist(config, src);
+        //Apply macro-level config
+        vid.config.set(config);
 
-        const $wr = this.playlist.wrapper;
+        $wr.addClass(`macro-${this.name}`);
+
+        //Used by children to access the video!
+        this.media = { wrapper: $wr, vid };
 
         this.payload.forEach((p, i) => {
             if (!i) return $wr.wiki(p.contents);
-            $wr.on(events[p.name], e => $.wiki(p.contents));
+            $wr.on(this.self.eventPayload[p.name], e => $.wiki(p.contents));
         });
 
-        $(this.output).append($wr);
+        if (vid.config.autoplay) vid.play();
+
+        $wr.appendTo(this.output);
     }
 });
 
@@ -33,38 +51,58 @@ Macro.add(['mute', 'pause', 'play', 'volume', 'speed', 'videoConfig', 'fullscree
     handler() {
 
         //Traverse the parent chain to find the relevant playlist
-        let playlist, parent = this.parent;
-        while (!playlist && parent) {
-            playlist = parent?.playlist;
+        let media, parent = this.parent;
+        while (!media && parent) {
+            media = parent?.media;
             parent = parent.parent;
         };
 
-        const n = this.name, active = playlist.active[0];
-
-        if (!playlist) return this.error(`<<${this.name}>> macro only works inside a <<video>> block.`);
+        if (!media) return this.error(`<<${this.name}>> macro only works inside a <<video>> block.`);
+        const n = this.name, { vid, wrapper } = media;
 
         switch (this.name) {
-            case 'fullscreen':
-                return playlist.wrapper[0].requestFullscreen();
-            case 'videoConfig':
-                return playlist.setConfig(this.args[0]);
+            case 'mute': return vid.toggleConfig('muted');
+            case 'pause': return vid.pause();
             case 'play':
-                if (this.args[0]) {
-                    playlist.cycle(this.args[0] === 'next' ? 1 : -1);
-                } else {
-                    active.play();
-                }
-                break;
-            case 'pause':
-                return active[active.paused ? 'play' : 'pause']();
-            case 'mute':
-                return active.muted = !active.muted;
-            case 'volume':
-                let newVol = this.args[0];
-                if (typeof this.args[0] === 'string') {
-                    newVol = Math.clamp(0, active.volume + (this.args[0] === '-' ? -.1 : .1), 1);
-                }
-                playlist.setConfig({ volume: newVol })
+                if (this.args[0] === 'prev') return vid.prev();
+                if (this.args[0] === 'next') return vid.next();
+                return vid.play();
+            case 'fullscreen': return wrapper[0].requestFullscreen();
+            case 'prev': return vid.prev();
+            case 'next': return vid.next();
+        };
+
+        //volume/speed should receive special treatment
+        /*
+         <<speed number>> => set to
+        <<speed +/->> => +/- .1
+    
+    
+    */
+
+        /*switch (this.name) {
+      case 'fullscreen':
+            playlist.wrapper[0].requestFullscreen();
+        break;
+      case 'videoConfig':
+        playlist.setConfig(this.args[0]);
+        break;
+      case 'play':
+        
+        if (this.args[0]) {
+            playlist.cycle(this.args[0] === 'next' ? 1 : -1);
+        } else {
+            active.play();
         }
+        break;
+      case 'volume':
+        let newVol = this.args[0];
+        if (typeof this.args[0] === 'string') {
+            newVol = Math.clamp(0, active.volume + (this.args[0] === '-' ? -.1 : .1), 1);
+        }
+        playlist.setConfig({volume : newVol})
+        break;
+    }*/
+
     }
 });

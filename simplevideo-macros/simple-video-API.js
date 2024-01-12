@@ -1,119 +1,131 @@
-/* Mali's SimpleVideo API */
-
 window.SimpleVideo = {
+    Config: class Config {
+        constructor(def, media) {
+            Object.assign(this, def);
 
-    registry: {
-        media: {},
-        playlists: {}
-    },
+            this.controls ??= true;
+            this.loop ??= false;
+            this.autoplay ??= false;
 
-    initVid(src) {
-        return $('<video>').prop({
-            src: src,
-            class: 'SimpleVideo',
-            autoplay: false
-        }).on('error', function (e) {
-            const errorView = $('<div>').attr({
-                class: 'error-view videoError'
-            }).text(`The url "${src}" could not be loaded.`);
+            //make media non-iterable!
+            Object.defineProperty(this, 'media', { value: media });
 
-            $(this).replaceWith(errorView);
-
-        });
-    },
-    register(id, src, config) {
-        if (Array.isArray(src)) {//is a whole playlist
-            return this.registry.playlists[id] = new this.Playlist(config, src);
+            this.set(this);
         }
-        this.registry.media[id] = this.initVid(src);
+        set(key, val) {
+            //plain config object
+            if (typeof key === 'object') {
+                for (const k in key) this.set(k, key[k]);
+                return;
+            }
+
+            if (key === 'speed') key = 'playbackRate';
+
+            if (this.media instanceof Array) {
+                //spread config to the child videos
+                this.media.forEach(v => v.config.set(key, val))
+            } else {
+                //apply to video
+                if (['autoplay', 'start', 'loop'].includes(key)) return;
+                this.media.prop(key, val);
+            }
+            this[key] = val;
+        }
     },
-    Playlist: class Playlist extends Array {
-        constructor(config, list) {
+    Video: class Video {
+        constructor(id, src, config, playlistID) {
+            const vids = SimpleVideo.videos;
 
-            if (typeof list === 'string') {
-                list = list.split(' ');
-            }
+            if (typeof id !== 'string' || !id) throw new Error(`Improper video id, reading : '${id}'`);
+            if (vids[id]) throw new Error(`Another video already exists for the '${id}' id`);
 
-            super(...list.map(vid => SimpleVideo.registry.media[vid] ?? SimpleVideo.initVid(vid)));
+            this.id = id;
 
-            this.isPlaying = false;
-            this.config = {};
-            this.setConfig(config);
+            this.elem = $('<video>').prop({ src, class: 'SimpleVideo', id });
 
-            this.change(0);
+            this.config = new SimpleVideo.Config(config, this.elem);
 
-            if (this.autoplay) {//do ony init
-                this.play();
-            }
+            if (playlistID) this.playlist = playlistID;
 
-            if (this.counter) {
-                //build counter elem
-            }
-            this.wrapper = $('<div>').attr({ class: `SimpleVideo-wrapper` }).append(this.active);
+            vids[id] = this;
         }
-        add(vid) {
-            const $vid = SimpleVideo.registry.media[vid] ?? SimpleVideo.initVid(vid);
-            $vid.prop(this.config); //pass playlist config
-            this.push($vid);
-        }
-        setConfig(config) {
-            if (config) {
-                //Separate autoplay from other options to stop the video from all playing in the background
-                for (const k in config) {
-                    k === 'autoplay' || k === 'counter' || k === 'loop' ? this[k] = true : this.config[k] = config[k];
-                }
-            }
-
-            this.forEach(v => v.prop(this.config));
+        makeActive() {
+            this.elem
+                .on('ended', function () { $(this).trigger(':videoended') })
+                .on('play', function () { $(this).trigger(':videoplay') })
+                .on('pause', function () { $(this).trigger(':videopaused') });
             return this;
         }
-        change(i, play) {
+        play() { this.elem[0].play() }
+        pause() { this.elem[0].pause() }
 
-            const next = this.at(this.activeID = i);
+        mute() { this.config.set('muted', true) }
+        unmute() { this.config.set('muted', false) }
 
-            if (this.active) {
-                this.active.replaceWith(next);
-            }
+        toggleConfig(key) { this.config.set(key, !this.config[key]) }
 
-            this.active = next;
-
-            next.on('ended', e => {
-                this.isPlaying = false;
-                this.trigger(':videoended');
-                this.cycle(1);
-            })
-                .on('play', e => {
-                    this.trigger(this.isPlaying ? ':videoplay' : ':videostart')
-                    this.isPlaying = true;
-                })
-                .on('pause', e => this.trigger(':videopaused'));
-
-            if (play || this.autoplay) next[0].play();
+        destroy() {
+            delete SimpleVideo.videos[this.id];
         }
-        trigger(ev) {//trigger special events on the wrapper
-            const event = { type: ev, wrapper: this.wrapper[0], video: this.active[0] };
-            this.wrapper.trigger(event);
+    },
+    Playlist: class Playlist extends Array {
+        constructor(id, list, config) {
+
+            const { playlists: pl, videos: vids } = SimpleVideo, toInherit = ['mute', 'unmute', 'toggleConfig'];
+
+            if (typeof id !== 'string' || !id) throw new Error(`Improper playlist id, reading : '${id}'`);
+            if (pl[id]) throw new Error(`Another playlist already exists for the '${id}' id`);
+
+            if (typeof list === 'string') list = list.split(' ');
+            list = list.map((v, i) => vids[v] ? vids[v].toPlaylist(id, config) : new SimpleVideo.Video(id + '-' + i, v, config, id));
+
+            super(...list);
+
+            this.id = id;
+
+            this.config = new SimpleVideo.Config(config, this);
+            this.activeID = this.config.start ?? 0;
+
+            toInherit.forEach(f => this[f] = SimpleVideo.Video.prototype[f]);
+
+            this.active = this[this.activeID].makeActive();
+            this.wrapper = $('<div>').attr({ class: `playlist-wrapper` }).append(this.active.elem);
+
+            this.wrapper.on(':videoended', e => this.next());
+
+            pl[id] = this;
         }
-        cycle(i) {
-            let newActive = this.activeID + i;
 
-            if (this.loop) {
-                newActive %= this.length;
-            }
-
-            if (!this.at(newActive)) return false;
-
-            this.change(newActive);
-        }
         play(i) {
-            if (i != null) {
-                if (!this[i]) return false;
-                this.change(i);
+            if (typeof i === 'number') {
+
+                if (!this[i] && !this.config.loop) return;
+                if (!this[i]) i = i < 0 ? this.length - 1 : i % this.length;
+
+                const next = this[i].makeActive();
+
+                this.active.elem.replaceWith(next.elem);
+                this.active = next;
+                this.activeID = i;
             }
-
-            this.active[0].play();
+            this.active.play();
         }
-    }
-};
+        pause() { this.active.pause() }
 
-/* End of the SimpleVideo API */
+        playRandom() { this.play(Math.floor(this.length * Math.random())) }
+        next() { this.play(this.activeID + 1) }
+        prev() { this.play(this.activeID - 1) }
+
+        add(vid) {
+            this.push(vid);
+            //apply playlist config to child vid
+            vid.config.set(this.config);
+        }
+        destroy() {
+            delete SimpleVideo.playlists[this.id];
+            this.forEach(v => v.destroy());
+        }
+    },
+    videos: {},
+    playlists: {}
+};

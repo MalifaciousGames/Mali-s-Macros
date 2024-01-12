@@ -105,7 +105,7 @@
 
             //Exclusive choices
             if (attributes.hasOwnProperty('choice')) {
-                const choiceGroups = getAsArray(attributes.choice);
+                const choiceGroups = processEvents(attributes.choice);
                 postClick.push(e => choiceGroups.forEach(c => $('[data-choice]').not($link).trigger(':choiceCheck', c)));
                 $link.attr('data-choice', true).on(':choiceCheck', (e,c) => {
                 	if (choiceGroups.includes(c)) $link.remove();
