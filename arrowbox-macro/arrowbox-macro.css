@@ -21,6 +21,7 @@
 .macro-arrowbox > :first-child, .macro-arrowbox > :last-child {
   line-height: 1em;
   padding: .2em;
+  z-index: 1;
 }
 .macro-arrowbox:focus, .macro-arrowbox:hover {
   outline: 1px solid #444;
@@ -39,7 +40,6 @@
 .arrowbox-arrow-up {top: -1em}
 .arrowbox-arrow-down {bottom: -1em}
 .anim-wrapper {
-  z-index: -1;
   position: relative;
   animation-duration: .4s;
 }
