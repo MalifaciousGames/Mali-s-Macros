@@ -1,5 +1,7 @@
+/* Mali's <<a>> macro for Sugarcube */
+
 ;(() => {
-    const keyListeners = [];
+    const keyListeners = [], defaultT8n = false;
 
     $(document).on('keyup.macro-a', e => {
         keyListeners.filter(i => i.key === e.key || i.key === e.code).forEach(i => i.elem.trigger('click'));
@@ -50,7 +52,7 @@
 
     Macro.add(['a', 'adel', 'but', 'butdel'], {
         isAsync: true,
-        tags: ['rep', 'prep', 'app', 'diag'],
+        tags: ['rep', 'prep', 'app', 'diag', 'after', 'before'],
         handler() {
 
             let [linkText, ...attributes] = this.args, [main, ...payloads] = this.payload,
@@ -58,13 +60,13 @@
                 onClick = [e => $.wiki(main.contents)], postClick = [], selfCheck = [],
                 deleteSelf = this.name.includes('del'),
                 count = 0;
-		
+
             attributes = parseArgs(attributes);
 
-            const type = this.name[0] === 'b' ? 'button' : 'link', $link = $(`<${type === 'button'? type : 'a'}>`);
+            const type = this.name[0] === 'b' ? 'button' : 'link', $link = $(`<${type === 'button' ? type : 'a'}>`);
 
             //Process bracket syntax
-            if (typeof linkText === 'object') ({text: linkText, link: passage, source: img} = linkText);
+            if (typeof linkText === 'object') ({ text: linkText, link: passage, source: img } = linkText);
 
             //Handle passage argument
             if (attributes.hasOwnProperty('goto')) {
@@ -97,7 +99,7 @@
             if (attributes.hasOwnProperty('count')) {
                 const max = attributes.count - 1;
 
-                postClick.push(e => count === max ? $link.remove() : $link.attr('data-count', count += 1));
+                postClick.push(e => count === max ? $link.remove() : $link.attr('data-count', count));
                 $link.attr('data-count', count);
 
                 delete attributes.count;
@@ -107,8 +109,8 @@
             if (attributes.hasOwnProperty('choice')) {
                 const choiceGroups = processEvents(attributes.choice);
                 postClick.push(e => choiceGroups.forEach(c => $('[data-choice]').not($link).trigger(':choiceCheck', c)));
-                $link.attr('data-choice', true).on(':choiceCheck', (e,c) => {
-                	if (choiceGroups.includes(c)) $link.remove();
+                $link.attr('data-choice', true).on(':choiceCheck', (e, c) => {
+                    if (choiceGroups.includes(c)) $link.remove();
                 });
 
                 delete attributes.choice;
@@ -150,28 +152,33 @@
                 let callback;
 
                 if (pay.name === 'diag') {
-                    callback = e => {
+                    callback = _ => {
                         Dialog.setup(pay.args[0] || '', pay.args[1] || '');
                         Dialog.wiki(pay.contents).open();
                     }
-                    onClick.push(callback);
-                    return;
+                    return onClick.push(callback);
                 }
 
                 const attr = pay.args.find(a => typeof a === 'object' && !(a instanceof jQuery)) || {},
-                    t8n = pay.args.includesAny('transition', 't8n');
+                    t8n = pay.args.includesAny('transition', 't8n') || defaultT8n;
 
-                callback = e => {
-                    const $trg = pay.args[0] ? $(pay.args[0]) : $link.parent(), cName = sugEquivalents[pay.name];
+                callback = _ => {
+                    let $trg = pay.args[0] ? $(pay.args[0]) : (['before', 'after'].includes(pay.name) ? $link : $link.parent()),
+                        cName = sugEquivalents[pay.name] ?? pay.name;
 
-                    if (pay.name === 'rep') $trg.empty();
                     const $insert = $('<span>').attr(attr).addClass(`macro-${cName}-insert`).wiki(pay.contents);
-                    $trg[pay.name === 'prep' ? 'prepend' : 'append']($insert);
 
-                    if (t8n) { //Rely on built-in t8n classes for consistency
+                    switch (pay.name) {
+                        case 'prep': $trg.prepend($insert); break;
+                        case 'rep': $trg.empty();
+                        case 'app': $trg.append($insert); break;
+                        default: $trg[pay.name]($insert);
+                    }
+
+                    if (t8n) {
                         $insert.addClass(`macro-${cName}-in`);
-                        setTimeout(() => $insert.removeClass(`macro-${cName}-in`), 40);
-                    };
+                        setTimeout(_ => $insert.removeClass(`macro-${cName}-in`), Engine.minDomActionDelay);
+                    }
                 };
                 onClick.push(callback)
             });
@@ -186,14 +193,14 @@
                 .addClass(`macro-${this.name} link-${attributes.href ? 'external' : 'internal'}`);
 
             $link.ariaClick({
-                    namespace: '.macros',
-                    role: type,
-                    one: !!passage || deleteSelf
-                },
+                namespace: '.macros',
+                role: type,
+                one: !!passage || deleteSelf
+            },
                 this.createShadowWrapper(
                     e => {
                         const oldThis = State.temporary.this;
-                        State.temporary.this = {event: e, self: $link, count};
+                        State.temporary.this = { event: e, self: $link, count };
                         try {
                             onClick.forEach(callback => callback.call(null, e));
                         } finally {
@@ -201,6 +208,7 @@
                         }
                     },
                     e => {
+                        count++;
                         postClick.forEach(callback => callback.call(null, e));
                         setTimeout(() => $('[data-checkself]').trigger(':checkSelf', 40));
                     }
