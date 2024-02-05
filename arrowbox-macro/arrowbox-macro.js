@@ -1,4 +1,4 @@
-/* Mali's <<arrowbox>> macro */
+/* Mali's arrowbox macro */
 
 Macro.add('arrowbox', {
 
