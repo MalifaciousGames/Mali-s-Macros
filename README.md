@@ -86,6 +86,27 @@ Lets you use the built-in Settings API without JavaScript knowledge.
 
 ***
 
+## Template macro ##
+
+Create [Sugarcube templates](https://www.motoslave.net/sugarcube/2/docs/#template-api) with a macro rather than in JS.
+
+#### Syntax
+```html
+<<template 'templateName' ['alternativeName' ...]>>
+   ...contents to display when the template is called...
+<</template>>
+```
+
+#### Code
+```js
+Macro.add('template', {
+   tags : null,
+   handler() {Template.add(this.args, this.payload[0].contents)}
+});
+```
+
+***
+
 ## The 'toggle' macro ##
 
 **Deprecated, use `<<cycle>>` + `<<listen 'click'>>` instead!**
