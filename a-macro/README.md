@@ -17,9 +17,12 @@ This macro supports HTML arguments as objects, arrays or simple pairs. ([Read mo
 <<a "Link text" [attribute value...]>>
 
 	[...content to run silently...]
+   
 	[<<rep [selector] [{attributes}] [t8n]>> ...new content...]
 	[<<prep [selector] [{attributes}] [t8n]>> ...content to prepend...]
 	[<<app [selector] [{attributes}] [t8n]>> ...content to append...]
+   [<<after [selector] [{attributes}] [t8n]>> ...content to add after the target...]
+   [<<before [selector] [{attributes}] [t8n]>> ...content to add before the target...]
 	[<<diag ['Title'] ['styles'] [t8n]>> ...content to display in dialog...]
 
 <</a>>
@@ -42,9 +45,13 @@ The 'a' macro comes with three built-in output options:
 | Replace | `<<rep>>` | Selector | Attribute object | 'transition/t8n'
 | Prepend | `<<prep>>`| Selector | Attribute object | 'transition/t8n'
 | Append | `<<app>>` | Selector |  Attribute object | 'transition/t8n'
+| After | `<<after>>`| Selector | Attribute object | 'transition/t8n'
+| Before | `<<before>>` | Selector |  Attribute object | 'transition/t8n'
 | Dialog | `<<diag>>` | Dialog title | CSS styles for dialog body | 'transition/t8n'
 
-If the selector's value is falsy (empty string, 0, false...), the link will default to its immediate parent and append to/prepend to/replace that instead.
+If the selector's value is falsy (empty string, 0, false...):
+- `replace`, `append` and `prepend` will default to the link's immediate parent
+- `after` and `before` with add content before/after the link itself
 
 ```html
 <div id='box'>Contents</div>
