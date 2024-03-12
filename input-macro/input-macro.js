@@ -69,15 +69,21 @@
             clamp: { min: Number.MIN_SAFE_INTEGER, max: Number.MAX_SAFE_INTEGER },
             label: '', //label text
             sanitize: false,
+            goto: null,
+            variable: null,
             id: `macro-${this.name}-${count++}` //an inner id system to bind datalist
          }, attr = parseArgs(this.args);
 
-         //decide on input type
-         if (this.name.includes('-')) {
-            config.type = this.name.slice(6);
-         } else if (attr.hasOwnProperty('type')) {
-            config.type = attr.type;
-         }
+         //commit special attributes to config and remove them
+         ['type', 'goto', 'label', 'sanitize', 'variable'].forEach(a => {
+            if (attr.hasOwnProperty(a)) {
+               config[a] = attr[a];
+               delete attr[a];
+            }
+         });
+
+         //macro name overrides type
+         if (this.name.includes('-')) config.type = this.name.slice(6);
 
          config.preset = this.self.types[config.type];
 
@@ -86,26 +92,16 @@
             tabindex: 0
          });
 
-         if (attr.hasOwnProperty('label')) {
-            config.label = attr.label;
-            delete attr.label;
+         //set value to variable if any
+         if (config.variable) {
+            if (typeof config.variable !== 'string') return this.error(`Variable parameter must be a quoted variable, reading ${config.variable}`);
+            const v = State.getVar(config.variable);
+            if (v != null && config.type !== 'file') $input.val(v);
          }
 
          //min/max
          if (attr.hasOwnProperty('min')) config.clamp.min = attr.min;
          if (attr.hasOwnProperty('max')) config.clamp.max = attr.max;
-
-         if (attr.hasOwnProperty('variable')) {
-            if (typeof attr.variable !== 'string') return this.error(`Variable parameter must be a quoted variable, reading ${attr.variable}`);
-            const v = State.getVar(config.boundVar = attr.variable);
-            if (v != null && config.type !== 'file') $input.val(v);
-            delete attr.variable;
-         }
-
-         if (attr.hasOwnProperty('sanitize')) {
-            config.sanitize = true;
-            delete attr.sanitize;
-         }
 
          const $wrp = $('<label>').attr({
             class: 'macro-input-label'
@@ -144,7 +140,7 @@
             if (valueMatch && valueMatch.override != null) $input[0].value = value = valueMatch.override;
 
             //set variable if necessary
-            if (config.boundVar) State.setVar(config.boundVar, value);
+            if (config.variable) State.setVar(config.variable, value);
 
             //add variable shadowing
             oldThis = State.temporary.this;
@@ -162,6 +158,14 @@
          },
             () => State.temporary.this = oldThis
          ));
+
+         //do the on-enter navigation... I really hate this mechanic...
+         $input.on('keypress', e => {
+            if (e.which === 13 && config.goto != null) {
+               //get passage from link markup
+               Engine.play(typeof config.goto === 'object' ? config.goto.link : config.goto);
+            }
+         });
 
          $wrp.appendTo(this.output);
       }

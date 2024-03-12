@@ -45,6 +45,7 @@ When using `<<input>>` without a bespoke `type`, it defaults to `text`.
 | `max` | Sets a number input's max value | Number.MAX_SAFE_INTEGER | number, range
 | `min` | Sets a number input's min value | Number.MIN_SAFE_INTEGER | number, range
 | `sanitize` | Disables Sugarcube markup in the return string | false | all that return strings 
+| `goto` | Sets a passage to navigate to when pressing `enter`. <br> Accepts link markup or a passage name string | None | any input you can type in
 
 Any non-special attribute is supply added to the resulting input element.
 
