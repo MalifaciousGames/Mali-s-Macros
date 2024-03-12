@@ -40,9 +40,11 @@ Displays a tooltip, run code and/or replace content on hover.
 
 ***
 
-## The 'input' macro ##
+## The 'input' macro set##
 
-**Deprecated, use an html `<input>` + `<<listen>>` instead!**
+Highly customizable input elements which can run code when a given value is entered, among other things.
+
+[The 'input' macro set](input-macro)
 
 ***
 

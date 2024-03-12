@@ -1,4 +1,4 @@
-/* Mali's input macro */
+/* Mali's input macro set */
 
 ((count = 0) => {
 
@@ -49,7 +49,8 @@
       text: { list: true },
       time: { list: true },
       url: { list: true }
-   }, validNames = Object.keys(validTypes).map(k => 'input-' + k);
+   },
+      validNames = Object.keys(validTypes).map(k => 'input-' + k);
 
    Macro.add(['input', ...validNames], {
       tags: ['onvalue', 'default', 'optionsfrom'],
@@ -106,7 +107,7 @@
          }
 
          // min/max, fetch them but don't delete them
-         ['min','max'].map(a => attr.hasOwnProperty(a) ? config.clamp[a] = attr[a] : null);
+         ['min', 'max'].map(a => attr.hasOwnProperty(a) ? config.clamp[a] = attr[a] : null);
 
          const $wrp = $('<label>').attr({
             class: 'macro-input-label'
@@ -177,3 +178,5 @@
    });
 
 })();
+
+/* End of the input macro set */
