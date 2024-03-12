@@ -12,7 +12,7 @@ This macro set creates custom input elements.
 <</input>>
 ```
 
-This macro accepts HTML attributes as well as a few custom ones. Check out possible types and attributes on [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input).
+This macro accepts [HTML attributes](../htmlarguments.md) as well as a few custom ones. Check out possible types and attributes on [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input).
 
 ### Types
 
@@ -88,7 +88,8 @@ By default, all input elements are wrapped in a `<label>`. If the `<<optionsfrom
 
 ### Examples
 
-- Setting a player character's name :
+**Setting a player character's name**
+
 ```html
 <<input-text variable '$name' label 'Player name : ' sanitize true>>
    <<replace '#proceed'>>
@@ -101,10 +102,13 @@ By default, all input elements are wrapped in a `<label>`. If the `<<optionsfrom
 ```
 Here, we use `sanitize` so the player cannot input Sugarcube code that would run whenever their name is printed.
 
-- A simple password check :
+***
+
+**A simple password check**
+
 ```html
 <<input-password label 'Enter password : '>>
-<<onvalue 'valid'>>
+<<onvalue 'superPassword'>>
    <<goto [[nextPassage]]>>
 <<default>>
    <<replace '#psw'>>INVALID PASSWORD!<</replace>>
@@ -113,7 +117,10 @@ Here, we use `sanitize` so the player cannot input Sugarcube code that would run
 <span id='psw'/>
 ```
 
-- Navigate to any story passage :
+***
+
+**Navigate to any story passage**
+
 ```html
 <<input-text label 'Desired passage : '>>
 
