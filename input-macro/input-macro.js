@@ -33,8 +33,7 @@
          if (type !== validType) return this.error(`A ${config.type} input cannot return ${val} (${type}).`);
          check = v => v === val;
       }
-
-      config.values.push({ check, payload: p.contents.trim(), override });
+      config.on.push({ check, payload: p.contents.trim(), override });
    };
 
    const validTypes = {
@@ -64,7 +63,8 @@
 
          const config = {
             type: 'text',
-            values: [], //the possible values we check for
+            on: [], //the possible values we check for
+            value: null,
             any: this.payload[0].contents.trim(),
             clamp: { min: Number.MIN_SAFE_INTEGER, max: Number.MAX_SAFE_INTEGER },
             label: '', //label text
@@ -75,7 +75,7 @@
          }, attr = parseArgs(this.args);
 
          //commit special attributes to config and remove them
-         ['type', 'goto', 'label', 'sanitize', 'variable'].forEach(a => {
+         ['type', 'value', 'goto', 'label', 'sanitize', 'variable'].forEach(a => {
             if (attr.hasOwnProperty(a)) {
                config[a] = attr[a];
                delete attr[a];
@@ -89,19 +89,24 @@
 
          const $input = $('<input>').attr({
             type: config.type,
+            value: config.value,
             tabindex: 0
          });
 
          //set value to variable if any
          if (config.variable) {
             if (typeof config.variable !== 'string') return this.error(`Variable parameter must be a quoted variable, reading ${config.variable}`);
+
+            //if a value is supplied, set the variable to it
+            if (config.value) State.setVar(config.variable, config.value);
+
+            //set input value to match variable
             const v = State.getVar(config.variable);
             if (v != null && config.type !== 'file') $input.val(v);
          }
 
-         //min/max
-         if (attr.hasOwnProperty('min')) config.clamp.min = attr.min;
-         if (attr.hasOwnProperty('max')) config.clamp.max = attr.max;
+         // min/max, fetch them but don't delete them
+         ['min','max'].map(a => attr.hasOwnProperty(a) ? config.clamp[a] = attr[a] : null);
 
          const $wrp = $('<label>').attr({
             class: 'macro-input-label'
@@ -127,14 +132,14 @@
                   break;
 
                case 'default':
-                  config.values.default = p.contents.trim();
+                  config.on.default = p.contents.trim();
             }
          });
 
          let oldThis;
          $input.on('change', this.createShadowWrapper(() => {
             let value = enforceType($input[0], config);
-            const valueMatch = config.values.find(p => p.check(value)); //find matching case if any
+            const valueMatch = config.on.find(p => p.check(value)); //find matching case if any
 
             //do override if any
             if (valueMatch && valueMatch.override != null) $input[0].value = value = valueMatch.override;
@@ -149,8 +154,8 @@
 
             if (valueMatch) {
                $.wiki(valueMatch.payload);
-            } else if (config.values.default) {
-               $.wiki(config.values.default);
+            } else if (config.on.default) {
+               $.wiki(config.on.default);
             }
 
             $.wiki(config.any);

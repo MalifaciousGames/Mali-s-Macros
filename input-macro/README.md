@@ -33,21 +33,24 @@ The desired input type can be set either by supplying a `type` attribute or by u
 | `input-time` | `string` | true
 | `input-url` | `string` | true
 
-When using `<<input>>` without a bespoke `type`, it defaults to `text`. 
+When using `<<input>>` without a bespoke `type`, it defaults to `text`.
 
 ### Special attributes
 
 | Attribute name | Usage | Default value | Input type
 |:------------:|:------------:|:------------:|:------------:|
-| `type` | Sets the input type if using `<<input>>`, see above | `text` | -
+| `goto` | Sets a passage to navigate to when pressing `enter`. <br> Accepts link markup or a passage name string | None | any input you can type in
 | `label` | Sets the input's label text | Empty string | all
-| `variable` | Binds an input to a variable, similar to what Sugarcube's macros do by default | None | all
 | `max` | Sets a number input's max value | Number.MAX_SAFE_INTEGER | number, range
 | `min` | Sets a number input's min value | Number.MIN_SAFE_INTEGER | number, range
 | `sanitize` | Disables Sugarcube markup in the return string | false | all that return strings 
-| `goto` | Sets a passage to navigate to when pressing `enter`. <br> Accepts link markup or a passage name string | None | any input you can type in
+| `type` | Sets `<<input>>`'s type. Does nothing for the `<<input-type>>` variations | `text` | -
+| `value` | The input's starting value. <br> If `variable` is used, the bound variable is set accordingly | None | all but `file`
+| `variable` | Binds an input to a variable, similar to what Sugarcube's macros do by default | None | all
 
-Any non-special attribute is supply added to the resulting input element.
+Any non-special attribute is added to the resulting input element.
+
+Unlike their Sugarcube counterparts, these macros only initialize their attached variable if a `value` attribute is provided.
 
 ### Tags
 
@@ -83,3 +86,45 @@ By default, all input elements are wrapped in a `<label>`. If the `<<optionsfrom
 </label>
 ```
 
+### Examples
+
+- Setting a player character's name :
+```html
+<<input-text variable '$name' label 'Player name : ' sanitize true>>
+   <<replace '#proceed'>>
+      Welcome $name !
+      [[Proceed|nextPassage]]
+   <</replace>>
+<</input-text>>
+
+<span id='proceed'/>
+```
+Here, we use `sanitize` so the player cannot input Sugarcube code that would run whenever their name is printed.
+
+- A simple password check :
+```html
+<<input-password label 'Enter password : '>>
+<<onvalue 'valid'>>
+   <<goto [[nextPassage]]>>
+<<default>>
+   <<replace '#psw'>>INVALID PASSWORD!<</replace>>
+<</input-password>>
+
+<span id='psw'/>
+```
+
+- Navigate to any story passage :
+```html
+<<input-text label 'Desired passage : '>>
+
+   <<if Story.has(_this.value)>>
+      /* Passage exists */
+      <<goto _this.value>>
+   <<else>>
+      <<run UI.alert(`No passage found for ${_this.value} !`)>>
+   <</if>>
+
+<<optionsfrom Story.lookup(p => p).map(p => p.title)>>
+<</input-text>>
+```
+This is more of a debugging tool but we could use an array of fast-travel locations which the player gradually unlocks.
