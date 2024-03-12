@@ -40,7 +40,7 @@ Displays a tooltip, run code and/or replace content on hover.
 
 ***
 
-## The 'input' macro set##
+## The 'input' macro set
 
 Highly customizable input elements which can run code when a given value is entered, among other things.
 
