@@ -130,7 +130,7 @@
                 delete attributes.key;
             };
 
-            //The 2 selfCheck attributes
+            //SelfCheck attributes
             if (attributes.hasOwnProperty('condition')) {
                 const exp = clone(attributes.condition);
                 delete attributes.condition;
@@ -145,13 +145,11 @@
                 selfCheck.push(e => $link.ariaDisabled(getReturnValue(exp)));
             }
 
-            if (selfCheck.length) {
-                //initial check
-                selfCheck.forEach(c => c.call());
+            if (attributes.hasOwnProperty('changer')) {
+                const exp = clone(attributes.changer);
+                delete attributes.changer;
 
-                $link.attr('data-checkself', true).on(':checkSelf', this.createShadowWrapper(
-                    () => selfCheck.forEach(c => c.call())
-                ));
+                selfCheck.push(e => $link.empty().wiki(typeof exp === 'function' ? exp() : exp));
             }
 
             //Add payload callbacks
@@ -199,6 +197,15 @@
                 .attr(attributes)
                 .addClass(`macro-${this.name} link-${attributes.href ? 'external' : 'internal'}`);
 
+            if (selfCheck.length) {
+                //initial check
+                selfCheck.forEach(c => c.call());
+
+                $link.attr('data-checkself', true).on(':checkSelf', this.createShadowWrapper(
+                    () => selfCheck.forEach(c => c.call())
+                ));
+            }
+
             $link.ariaClick({
                 namespace: '.macros',
                 role: type,
@@ -207,7 +214,6 @@
                 this.createShadowWrapper(
                     e => {
                         //main payload
-                        log('main : ', this);
                         const oldThis = State.temporary.this;
                         State.temporary.this = { event: e, self: $link, count };
                         try {
