@@ -1,6 +1,6 @@
 /* Mali's <<a>> macro for Sugarcube */
 
-;(() => {
+; (() => {
     const keyListeners = [], defaultT8n = false;
 
     $(document).on('keyup.macro-a', e => {
@@ -14,7 +14,9 @@
     const sugEquivalents = {
         prep: 'prepend',
         app: 'append',
-        rep: 'replace'
+        rep: 'replace',
+        after: 'append',
+        before: 'append'
     };
     const parseArgs = args => {
         let obj = {}, i = 0;
@@ -55,7 +57,8 @@
         tags: ['rep', 'prep', 'app', 'diag', 'after', 'before'],
         handler() {
 
-            let [linkText, ...attributes] = this.args, [main, ...payloads] = this.payload,
+            let [linkText, ...attributes] = this.args,
+                [main, ...payloads] = this.payload,
                 passage, img,
                 onClick = [e => $.wiki(main.contents)], postClick = [], selfCheck = [],
                 deleteSelf = this.name.includes('del'),
@@ -143,8 +146,12 @@
             }
 
             if (selfCheck.length) {
+                //initial check
                 selfCheck.forEach(c => c.call());
-                $link.attr('data-checkself', true).on(':checkSelf', e => selfCheck.forEach(c => c.call()));
+
+                $link.attr('data-checkself', true).on(':checkSelf', this.createShadowWrapper(
+                    () => selfCheck.forEach(c => c.call())
+                ));
             }
 
             //Add payload callbacks
@@ -164,7 +171,7 @@
 
                 callback = _ => {
                     let $trg = pay.args[0] ? $(pay.args[0]) : (['before', 'after'].includes(pay.name) ? $link : $link.parent()),
-                        cName = sugEquivalents[pay.name] ?? pay.name;
+                        cName = sugEquivalents[pay.name];
 
                     const $insert = $('<span>').attr(attr).addClass(`macro-${cName}-insert`).wiki(pay.contents);
 
@@ -199,6 +206,8 @@
             },
                 this.createShadowWrapper(
                     e => {
+                        //main payload
+                        log('main : ', this);
                         const oldThis = State.temporary.this;
                         State.temporary.this = { event: e, self: $link, count };
                         try {
@@ -206,8 +215,7 @@
                         } finally {
                             State.temporary.this = oldThis;
                         }
-                    },
-                    e => {
+                    }, e => {
                         count++;
                         postClick.forEach(callback => callback.call(null, e));
                         setTimeout(() => $('[data-checkself]').trigger(':checkSelf', 40));
@@ -218,3 +226,5 @@
         }
     });
 })();
+
+/* End of <<a>> macro */
