@@ -7,6 +7,8 @@
 
    const enforceType = (input, { clamp, preset, sanitize }) => {
       switch (preset.type) {
+         case 'boolean':
+            return input.checked;
          case 'file':
             return input.files;
          case 'number':
@@ -38,11 +40,13 @@
 
    const validTypes = {
       color: {},
+      checkbox: { type: 'boolean' },
       date: { type: 'date' },
       email: { list: true },
       file: { type: 'file' },
       number: { type: 'number', list: true },
       password: { list: true },
+      radio: {},
       range: { type: 'number' },
       search: { list: true },
       tel: { list: true },
@@ -86,7 +90,7 @@
          //macro name overrides type
          if (this.name.includes('-')) config.type = this.name.slice(6);
 
-         config.preset = this.self.types[config.type];
+         config.preset = this.self.types[config.type] ?? this.self.types.text;
 
          const $input = $('<input>').attr({
             type: config.type,
@@ -103,7 +107,12 @@
 
             //set input value to match variable
             const v = State.getVar(config.variable);
-            if (v != null && config.type !== 'file') $input.val(v);
+
+            if (config.type === 'checkbox') {
+               $input[0].checked = !!v;
+            } else if (v != null && config.type !== 'file') {
+               $input[0].value = v;
+            }
          }
 
          // min/max, fetch them but don't delete them
