@@ -158,8 +158,6 @@ By default, all input elements are wrapped in a `<label>`. If the `<<optionsfrom
 ```
 Here, we use `sanitize` so the player cannot input Sugarcube code that would run whenever their name is printed.
 
-***
-
 **A simple password check**
 
 ```html
@@ -172,8 +170,6 @@ Here, we use `sanitize` so the player cannot input Sugarcube code that would run
 
 <span id='psw'/>
 ```
-
-***
 
 **Navigate to any story passage**
 

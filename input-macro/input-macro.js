@@ -38,6 +38,18 @@
       config.on.push({ check, payload: p.contents.trim(), override });
    };
 
+   function addOptions($trg, collection, selectVal) {
+      let col = {};
+
+      (collection instanceof Array || collection instanceof Set) ? collection.forEach(v => col[v] = v) : col = collection;
+
+      for (const k in col) {
+         const sl = col[k] === selectVal ? 'selected' : '',
+            safeVal = Util.escape(col[k]); //Util.escape converts to string on its end
+         $trg.append(`<option value='${safeVal}' ${sl}>${k}</option>`);
+      }
+   };
+
    const validTypes = {
       area: { elem: 'textarea', attr: { spellcheck: false } },
       color: {},
@@ -77,7 +89,7 @@
             sanitize: false,
             goto: null,
             variable: null,
-            id: `macro-${this.name}-${count++}` //an inner id system to bind datalist
+            listID: `list-${count++}` //an inner id system to bind datalist
          }, attr = parseArgs(this.args);
 
          //commit special attributes to config and remove them
@@ -142,21 +154,17 @@
 
                   if (!config.preset.list) return this.error(`${config.type} input cannot have an <<optionsfrom>> argument.`);
 
-                  let collection = Scripting.evalJavaScript(`(${p.args.full})`), list;
+                  let collection = Scripting.evalJavaScript(`(${p.args.full})`);
 
                   //Build list if needed
                   if (config.preset.list === 'onSelf') {
-                     list = $input;
+                     //<select> elem, append options to it + try to select value
+                     addOptions($input, collection, config.value);
                   } else {
-                     list = $(`<datalist id='${config.id}-list'>`).appendTo($wrp);
-                     $input.attr({ list: config.id + '-list' });
-                  }
+                     const $list = $(`<datalist id='${config.listID}'>`).appendTo($wrp);
+                     $input.attr({ list: config.listID });
 
-                  //append options from collection
-                  if (collection instanceof Array || collection instanceof Set) {
-                     collection.forEach(v => list.append(`<option value='${v}'>${v}</option>`));
-                  } else {
-                     for (const k in collection) list.append(`<option value='${collection[k]}'>${k}</option>`);
+                     addOptions($list, collection);
                   }
 
                   break;
