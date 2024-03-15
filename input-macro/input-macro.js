@@ -39,6 +39,7 @@
    };
 
    const validTypes = {
+      area: { elem: 'textarea', attr: { spellcheck: false } },
       color: {},
       checkbox: { type: 'boolean' },
       date: { type: 'date' },
@@ -46,9 +47,9 @@
       file: { type: 'file' },
       number: { type: 'number', list: true },
       password: { list: true },
-      radio: {},
       range: { type: 'number' },
       search: { list: true },
+      select: { elem: 'select', list: 'onSelf' },
       tel: { list: true },
       text: { list: true },
       time: { list: true },
@@ -90,13 +91,19 @@
          //macro name overrides type
          if (this.name.includes('-')) config.type = this.name.slice(6);
 
-         config.preset = this.self.types[config.type] ?? this.self.types.text;
+         config.preset = this.self.types[config.type] ?? {};
 
-         const $input = $('<input>').attr({
-            type: config.type,
-            value: config.value,
-            tabindex: 0
-         });
+         let $input;
+
+         if (config.preset.elem) {//elem is actually not an input...
+            $input = $(document.createElement(config.preset.elem)).attr({ tabindex: 0 });
+         } else {//is <input>
+            $input = $('<input>').attr({
+               type: config.type,
+               value: config.value,
+               tabindex: 0
+            });
+         }
 
          //set value to variable if any
          if (config.variable) {
@@ -122,7 +129,9 @@
             class: 'macro-input-label'
          }).text(config.label);
 
-         $input.attr(attr)
+         $input
+            .attr(config.preset.attr ?? {})
+            .attr(attr)
             .addClass('macro-input')
             .appendTo($wrp);
 
@@ -133,12 +142,23 @@
 
                   if (!config.preset.list) return this.error(`${config.type} input cannot have an <<optionsfrom>> argument.`);
 
-                  const collection = Scripting.evalJavaScript(`(${p.args.full})`);
-                  const list = $(`<datalist id='${config.id}-list'>`).appendTo($wrp);
+                  let collection = Scripting.evalJavaScript(`(${p.args.full})`), list;
 
-                  for (const v of collection) list.append(`<option value='${v}'>`);
+                  //Build list if needed
+                  if (config.preset.list === 'onSelf') {
+                     list = $input;
+                  } else {
+                     list = $(`<datalist id='${config.id}-list'>`).appendTo($wrp);
+                     $input.attr({ list: config.id + '-list' });
+                  }
 
-                  $input.attr({ list: config.id + '-list' });
+                  //append options from collection
+                  if (collection instanceof Array || collection instanceof Set) {
+                     collection.forEach(v => list.append(`<option value='${v}'>${v}</option>`));
+                  } else {
+                     for (const k in collection) list.append(`<option value='${collection[k]}'>${k}</option>`);
+                  }
+
                   break;
 
                case 'default':

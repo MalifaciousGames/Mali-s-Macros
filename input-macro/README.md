@@ -1,6 +1,6 @@
 ## The 'input' macro set
 
-This macro set creates custom input elements.
+This macro set lets user create custom input elements which can run arbitrary code when their value changes.
 
 ```html
 <<input [...attributes...]>>
@@ -14,12 +14,16 @@ This macro set creates custom input elements.
 
 This macro accepts [HTML attributes](../htmlarguments.md) as well as a few custom ones. Check out possible types and attributes on [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input).
 
+***
+
 ### Types
 
 The desired input type can be set either by supplying a `type` attribute or by using one of the bespoke type aliases :
 
 | Macro name | Return value | Accepts `<<optionsfrom>>` |
 |:------------:|:------------:|:------------:|
+| `input-area`[^1] | `string` | false
+| `input-checkbox` | `boolean` | false
 | `input-color` | `string` <br> (hexadecimal color code) | false
 | `input-date` | [Date object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) | true
 | `input-email` | `string` | true
@@ -28,12 +32,19 @@ The desired input type can be set either by supplying a `type` attribute or by u
 | `input-password` | `string` | true
 | `input-range` | `number` | false
 | `input-search` | `string` | true
+| `input-select`[^1] | `string` | required
 | `input-tel` | `string` | true
 | `input-text` | `string` | true
 | `input-time` | `string` | true
 | `input-url` | `string` | true
 
-When using `<<input>>` without a bespoke `type`, it defaults to `text`.
+When using `<<input>>` without a `type` attribute, it defaults to `text`.
+
+Some valid input [types](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) are not part of the built-in presets, like `radio`, `button`... This is either because Sugarcube already offers better alternatives, or their use did not fit well into the macro's structure. You can still create them by using `<<input type 'desired type'>>`, but you will need to do the processing yourself to get the desired effect/data out of them.
+
+[^1]: `input-area` and `input-select` are not real `input` types. They create, respectively, a `<textarea>` and a `<select>` element. They are still accessible via the `type` attribute however.
+
+***
 
 ### Special attributes
 
@@ -52,8 +63,11 @@ Any non-special attribute is added to the resulting input element.
 
 Unlike their Sugarcube counterparts, these macros only initialize their attached variable if a `value` attribute is provided.
 
+***
+
 ### Tags
 
+#### `<<onvalue>>`
 `<<onvalue>>` checks the input's current value against its first argument, if it matches, it executes the attached code. This first argument can be:
 - a primitive whose type matches the input's return value
 - a callback
@@ -61,11 +75,47 @@ Unlike their Sugarcube counterparts, these macros only initialize their attached
 - a date object for `date` inputs
 The second argument is an override which will be set as the input's value instead of the matched result.
 
-`<<default>>` lets you supply code to run when no matching `<<onvalue>>` has been found.
+```html
+<<input>>
 
-Code in the main macro call runs whenever the input changes, after the `<<onvalue/default>>` payload if there is one.
+   <<replace '#result'>>_result<</replace>>
 
-`<<optionsfrom>>` is used to provide auto-complete suggestions. It accepts any iterate object.
+<<onvalue 'Mark'>>
+   /* With a string */
+   <<set _result = 'Oh, hi Mark!'>>
+<<onvalue `name => name.toLowerCase().startsWith('z')`>>
+   /* With a callback */
+   <<set _result = 'Come on, your name can\'t start with a z!'>>
+<<onvalue `/[jJ]+[oO]+[hH]+[nN]+/`>>
+   /* With a regular expression */
+   <<set _result = 'Hey, John! Welcome!'>>
+<<default>>
+   /* If the value wasn't matched, run this */
+   <<set _result = 'Welcome '+ _this.value>>
+<</input>>
+
+<span id='result'/>
+```
+
+Code in the main macro call runs whenever the input changes, after `<<onvalue/default>>`. This is why we can afford to set `_result`, then use `<<replace>>` to print it to passage.
+
+#### `<<optionsfrom>>`
+
+`<<optionsfrom>>` is used to provide:
+- auto-complete suggestions
+- selectable options for `input-select`
+
+It works in the exact same fashion as in [vanilla Sugarcube macros](https://www.motoslave.net/sugarcube/2/docs/#macros-macro-listbox).
+
+```html
+<<input-url>>
+   /* Open url in new tab */
+   <<run open(_this.value)>>
+<<optionsfrom ['https://twinery.org','https://github.com/tmedwards/sugarcube-2/tree/master','https://developer.mozilla.org','https://github.com/MalifaciousGames/Mali-s-Macros']>>
+<</input-url>>
+```
+
+***
 
 ### _this special variable
 
@@ -74,6 +124,8 @@ The `_this` variable is a shadowed variable available to all of the macro's call
 - input : the input element
 - wrapper : the input's wrapping `<label>` element
 - config : the input's inner `config` object
+
+***
 
 ### HTML output
 
@@ -85,6 +137,10 @@ By default, all input elements are wrapped in a `<label>`. If the `<<optionsfrom
    [<datalist>...</datalist>]
 </label>
 ```
+
+`input-select` is an exception, it generates a `<select>` element with the `<option>` added directly to it. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select) for more details.
+
+***
 
 ### Examples
 
