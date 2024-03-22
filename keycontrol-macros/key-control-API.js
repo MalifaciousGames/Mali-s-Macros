@@ -44,6 +44,7 @@ window.KeyControl = class KeyControl {
 	}
 
 	invoke(e) {
+
 		if (!this.key.find(k => k === e.key || k === e.code)) return;
 		if (this.special && !this.special.every(k => e[k + 'Key'])) return;
 		if (this.condition && !this.condition.call(this, e)) return;
@@ -140,6 +141,10 @@ window.KeyControl = class KeyControl {
 	static active = [];
 	static coolDown = false;
 	static run(e) {
+
+		if (['INPUT','TEXTAREA'].includes(e.target.nodeName)) return;
+		if (e.target.attributes.hasOwnProperty('contenteditable')) return;
+
 		if (this.coolDown) return;
 
 		this.coolDown = true;

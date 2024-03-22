@@ -1,0 +1,4 @@
+//slotToFile macro and utility functions
+//download a specific save slot as a save file
+
+(()=>{function e(){const[t,a]=(new Date).toJSON(),[s,o,r]=a.match(/(.+)T(.+)(?=\.)/);return o+"-"+r}function t(t){let a,s;if("auto"===t){if(!Config.saves.autosave)throw new Error("Autosave is disabled for this story.");if(!Save.autosave.has())return UI.alert("No autosave available.");a=Save.autosave.get(),s=`${Story.domId}-${e()}.save`}else{if("number"!=typeof t)throw new Error(`Slot parameter must be a number between 0 and ${Save.slots.length}.`);if(!Save.slots.has(t))return UI.alert(`No save slot at ${t}.`);a=Save.slots.get(t),s=`${Story.domId}-slot${t}-${e()}.save`}a=JSON.stringify(a),saveAs(new Blob([LZString.compressToBase64(a)],{type:"text/plain;charset=UTF-8"}),Util.sanitizeFilename(s))}Macro.add("slotToFile",{handler(){t(this.args[0])}}),setup.saveUtils={getTimeStamp:e,slotToFile:t}})();

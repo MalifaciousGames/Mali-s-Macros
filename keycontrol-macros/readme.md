@@ -20,6 +20,7 @@ New key controls are defined using the `<<bindkey>>` macro, main shortcuts are i
 
 - The `ID` is a unique identifier used to access the shortcut object. Shortcuts are toggled, displayed and deleted based on this `ID`.
 - One or multiple keys can be supplied as a space-separated string or an array. Both `event.code` and `event.key` are accepted as valid syntaxes values.
+- An optional display name, displayed in `<<keyedit>>` macros.
 - The `once` optional keyword can be used to create a single use shortcut. 
 
 #### `<<condition>>` ####
@@ -47,7 +48,7 @@ Keep in mind that `shift` with often change `e.key` values to their upper case v
 The `<<keyedit>>` macro is used to modify existing shortcut objects. The first argument is a command, subsequent ones are the IDs of the affected shortcuts.
 
 ```html
-<<keyedit 'toggle/disable/enable/delete/reset' 'id1'...>>
+<<keyedit 'toggle/disable/enable/delete/reset' 'ID'...>>
 ```
 
 Most commands are self-explanatory. `reset` restores the shortcut's key value to its initialized default.
@@ -94,7 +95,7 @@ new KeyControl('ID', {
 
 #### Instance methods ####
 
-- `<KeyControl>.invoke(keydownEvent)` : Run the `callback` if the keydown event fit the key parameters and the `condition` returns truthy.
+- `<KeyControl>.invoke(keydownEvent)` : Run the `callback` if the keydown event fits the key parameters and `condition` returns truthy.
 - `<KeyControl>.setKey(keydownEvent [, specialKey])` : Set a shortcut's key parameter based on keydown event. The `specialKey` argument lets you force a special key.
 - `<KeyControl>.reset()` : Reset a shortcut's key parameters to it initialized default.
 - `<KeyControl>.setDisplay()` : Updates the shortcut's visual representation : `ctrl + a`.
@@ -111,8 +112,8 @@ new KeyControl('ID', {
 
 - `KeyControl.active` : An array containing all registered shortcuts (active or paused).
 - `KeyControl.run()` : Try to  `KeyControl.active`.
-- `KeyControl.get(id)` : Returns the shortcut object for the given id. 
-- `KeyControl.add(id, {definition})` : Register a new shortcut. Equivalent to `new KeyControl(id, {definition})`.
-- `KeyControl.remove(id)` : Removes the shortcut with the given ID. Equivalent to `KeyControl.get(id).delete()`.
+- `KeyControl.get(ID)` : Returns the shortcut object for the given id. 
+- `KeyControl.add(ID, {definition})` : Register a new shortcut. Equivalent to `new KeyControl(id, {definition})`.
+- `KeyControl.remove(ID)` : Removes the shortcut with the given ID. Equivalent to `KeyControl.get(id).delete()`.
 - `KeyControl.createInputPanel()` : Returns an input panel element, where each active shortcut is displayed.
 - `KeyControl.openInputDialog()` : Opens a the Sugarcube dialog element where the shortcuts input panel is displayed.
