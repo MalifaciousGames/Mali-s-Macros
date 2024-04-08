@@ -171,6 +171,22 @@ Here, we use `sanitize` so the player cannot input Sugarcube code that would run
 <span id='psw'/>
 ```
 
+**Pseudo messenger app**
+
+```html
+<div id='chat'></div>
+
+<<input sanitize true placeholder 'Your message here.'>>
+<<default>>
+   /* On any input, append a new message to the chat element */
+	<<append '#chat'>>
+      <div class='message'>_this.value</div>
+   <</append>>
+   /* Empty the input field */
+   <<run _this.input.value = ''>>
+<</input>>
+```
+
 **Navigate to any story passage**
 
 ```html
