@@ -137,7 +137,6 @@
             hover: getTag.call(this, settings.area.tags[0]),
             overlay: getTag.call(this, settings.area.tags[1]),
          };
-         console.log(config);
 
          //process coords
 
