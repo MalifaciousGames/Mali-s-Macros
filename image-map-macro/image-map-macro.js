@@ -237,4 +237,4 @@
 
 })();
 
-/* End of Mali's <<image-map>> macro set */
+/* End of the <<image-map>> macro set */
