@@ -1,0 +1,57 @@
+.image-map-wrapper {
+  position: relative;
+  width: fit-content;
+  height: fit-content;
+}
+
+.image-map-wrapper img[usemap] {
+  width: inherit;
+  height: inherit;
+}
+
+/* map layers */
+img.image-map-layer {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+}
+
+/* overlays and hover elements */
+
+area[disabled] {
+  cursor: not-allowed;
+}
+
+.area-hover,
+.area-overlay {
+  position: absolute;
+  pointer-events: none;
+}
+
+.area-hover.circle,
+.area-overlay.circle {
+  border-radius: 100%;
+}
+
+.area-hover {
+  display: none;
+  /* only shows on hover*/
+  z-index: 15;
+  background-color: #ff00004a;
+}
+
+.area-hover.disabled {
+  filter: grayscale(1);
+}
+
+.area-overlay {
+  z-index: 10;
+}
+
+.area-hover img,
+.area-overlay img {
+  width: 100%;
+}
