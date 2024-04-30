@@ -1,3 +1,7 @@
+area[disabled] {
+  cursor: not-allowed;
+}
+
 .image-map-wrapper {
   position: relative;
   width: fit-content;
@@ -20,19 +24,16 @@ img.image-map-layer {
 }
 
 /* overlays and hover elements */
-
-area[disabled] {
-  cursor: not-allowed;
-}
-
 .area-hover,
-.area-overlay {
+.area-overlay,
+.point-marker {
   position: absolute;
   pointer-events: none;
 }
 
 .area-hover.circle,
-.area-overlay.circle {
+.area-overlay.circle,
+.point-marker {
   border-radius: 100%;
 }
 
@@ -54,4 +55,17 @@ area[disabled] {
 .area-hover img,
 .area-overlay img {
   width: 100%;
+}
+
+.point-marker {
+  background-color: #bf0000;
+  outline: 2px solid #bf0000;
+  outline-offset: 3px;
+  box-shadow: 0 0 5px 5px black;
+}
+
+/* .hover is added in JS, it is not the :hover pseudo-class */
+.point-marker.hover {
+  background-color: red;
+  outline-color: red;
 }

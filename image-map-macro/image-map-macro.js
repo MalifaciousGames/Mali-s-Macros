@@ -17,7 +17,7 @@
    };
 
    // arg parser and tag getter, minified
-   const parseArgs=r=>{let e={},t=0;for(;t<r.length;){const n=r[t];if("object"==typeof n)Array.isArray(n)?r.splice(t--,1,...n):Object.assign(e,n);else{const s=r[t+=1];if(void 0===s)throw new Error("Uneven number of arguments.");if("string"!=typeof n)throw new Error(`Attribute key must be a string, reading: '${n}'.`);e[n.toLowerCase()]=s}t++}return e},getTag=function(r){const e=this.payload.find((e=>e.name===r));return e&&(e.attr=parseArgs(e.args)),e};
+   const parseArgs = r => { let e = {}, t = 0; for (; t < r.length;) { const n = r[t]; if ("object" == typeof n) Array.isArray(n) ? r.splice(t--, 1, ...n) : Object.assign(e, n); else { const s = r[t += 1]; if (void 0 === s) throw new Error("Uneven number of arguments."); if ("string" != typeof n) throw new Error(`Attribute key must be a string, reading: '${n}'.`); e[n.toLowerCase()] = s } t++ } return e }, getTag = function (r) { const e = this.payload.find((e => e.name === r)); return e && (e.attr = parseArgs(e.args)), e };
 
    const coordsToCSS = (coords) => {
       //ratio has been applied!
@@ -136,15 +136,22 @@
             payload: this.payload[0].contents.trim(),
             hover: getTag.call(this, settings.area.tags[0]),
             overlay: getTag.call(this, settings.area.tags[1]),
+            isPoint: false
          };
 
          //process coords
 
          if (typeof config.coords === 'string') config.coords = config.coords.split(',');
-         config.coords = config.coords.map((n, i) => Number(n));
+         config.coords = config.coords.map(n => Number(n));
 
          switch (config.coords.length) {
-            case 0: case 1: case 2: return this.error(`Improper number of coordinates!`);
+            case 0: case 1: return this.error(`Improper number of coordinates!`);
+            // a point
+            case 2:
+               config.shape = 'point';
+               config.isPoint = true;
+               config.coords.push(5);
+               break;
             case 3: config.shape = 'circle'; break;
             case 4: config.shape = 'rect'; break;
             default: config.shape = 'poly';
@@ -155,7 +162,7 @@
 
          // <area> elem
          const $area = $('<area>').attr(config.attr).attr({
-            shape: config.shape,
+            shape: config.isPoint ? 'circle' : config.shape,
             coords: this.args[0]
          }).appendTo(map);
 
@@ -167,15 +174,15 @@
 
             // size the elems
             const css = coordsToCSS(adjCoords);
-            if (config.hover.elem) config.hover.elem.css(css);
-            if (config.overlay.elem) config.overlay.elem.css(css);
+            config.hover?.elem.css(css);
+            config.overlay?.elem.css(css);
+            config.ptMarker?.css(css);
 
             // prevent propagation
             return false;
          });
 
          // click listener, run body contents
-
          $area.ariaClick(this.createShadowWrapper(() => {
 
             $.wiki(config.payload);
@@ -190,6 +197,19 @@
             }
 
          }));
+
+         // point takes precedence
+         if (config.isPoint) {
+            config.ptMarker = $('<div class="point-marker">').appendTo(wrapper);
+
+            $area.on('mouseover focus',
+               () => config.ptMarker.addClass('hover')
+            ).on('mouseout focusout',
+               () => config.ptMarker.removeClass('hover')
+            );
+
+            config.hover = config.overlay = null;
+         }
 
          // hover highlight
          if (config.hover) {
