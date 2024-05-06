@@ -220,6 +220,7 @@
                .attr(config.hover.attr)
                .wiki(config.hover.contents)
                .addClass('area-hover ' + config.shape + (config.attr.disabled ? ' disabled' : ''))
+               .hide()
                .appendTo(wrapper);
 
             // hover/focus handlers
