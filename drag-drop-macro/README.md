@@ -1,4 +1,4 @@
-Interactive demo on my [website](https://malifaciousgames.neocities.org/#drag-and-drop-set)
+Interactive demo on my [website](https://malifaciousgames.neocities.org/#drag-drop-macro)
 
 Both `<<drag>>` and `<<drop>>` support [HTML arguments](../htmlarguments.md).
 
