@@ -12,7 +12,7 @@ This macro is used to disable one or multiple elements for a given period of tim
 
 The first argument sets the cooldown duration, it accepts numbers in milliseconds or a time string like : `2s`, `.5min`, `500ms`. The shortest possible time is 40ms, it also serves as a default if no value is supplied.
 
-By default, the cooldown is applied only to the element that has been clicked. If the second argument is truthy every element inside the macro's body will be affected.
+By default, the cooldown is applied only to the element that has been clicked. If the second argument is truthy, every element inside the macro's body will be affected.
 
 ### Valid click targets
 

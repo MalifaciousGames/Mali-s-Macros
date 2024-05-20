@@ -120,9 +120,14 @@ Generating buttons bound to number keys using the `e.code` syntax:
 ### Condition/disabled attribute ###
 Accepts : `'Twinescript expression' / function() / any`
 
-The `condition` and `disabled` attributes are evaluated attributes which decide if a link is shown or enabled. Whenever a link is clicked, every link with the `condition/disabled` attribute check there own conditions and show/hide or enable/disable themselves.
+The `condition` and `disabled` attributes are evaluated attributes which decide if a link is shown/hidden or enabled/disabled.
 
-The condition can be anything, strings are treated as Twinescript expressions, functions are called for their return values, other data types are just tested for truthiness.
+Whenever any link of this macro set is clicked, other links with a `condition/disabled` attribute re-evaluate their own conditions and behave accordingly.
+
+Conditions can be of any type:
+- strings are treated as Twinescript expressions
+- functions are called for their return values
+- other data types are just tested for truthiness
 
 ```html
 <<set $hasItem = true>>

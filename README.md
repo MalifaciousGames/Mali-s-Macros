@@ -24,6 +24,14 @@ This macro prints the active variables (State variables and temporary, `settings
 
 ***
 
+## The 'cooldown' macro ##
+
+Disable clickable elements for a given time after click.
+
+[The 'cooldown' macro](cooldown-macro)
+
+***
+
 ## The 'drag' and 'drop' macro set ##
 
 The `drag` and `drop` macros let you create and manage draggable elements in Sugarcube.
@@ -37,6 +45,14 @@ The `drag` and `drop` macros let you create and manage draggable elements in Sug
 Displays a tooltip, run code and/or replace content on hover.
 
 [The 'hover' macro](hover-macro)
+
+***
+
+## The 'image-map' macro set
+
+This macro set lets users create scalable, Sugarcube-compatible image maps.
+
+[The 'image-map' macro set](image-map-macro)
 
 ***
 
@@ -112,13 +128,3 @@ Macro.add('template', {
 ## The 'toggle' macro ##
 
 **Deprecated, use `<<cycle>>` + `<<listen 'click'>>` instead!**
-
-***
-
-## The 'vanish' macros ##
-
-Creates custom containers that can be made to vanish/appear based on a timed delay or triggered events.
-
-[The 'vanish' macro set](vanish-macro)
-
-***
