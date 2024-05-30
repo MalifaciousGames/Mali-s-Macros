@@ -1,0 +1,77 @@
+/* This makes it so settings changers look consistent between settings dialog and passage */
+
+.macro-setting {
+   display: grid;
+   width: fit-content;
+   gap: 1em;
+
+   .setting-body {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+   }
+
+   input[type="text"] {
+      min-width: 10em
+   }
+
+   p.setting-desc {
+      font-size: 87.5%;
+      margin: 0;
+      width: 100%;
+   }
+
+   button {
+      color: #eee;
+      background-color: transparent;
+      border: 1px solid #444;
+      padding: .4em;
+      width: fit-content;
+   }
+
+   button.enabled {
+      background-color: #282;
+      border-color: #4a4;
+   }
+
+   button:not(.enabled):hover {
+      border: 1px solid #eee
+   }
+
+   button::after {
+      content: var(--toggleOff);
+   }
+
+   button.enabled::after {
+      content: var(--toggleOn);
+   }
+
+   button::after {
+      font-family: var(--scFont) !important;
+      font-style: normal;
+      font-weight: 400;
+      font-variant: normal;
+      line-height: 1;
+      speak: never;
+      text-rendering: auto;
+      text-transform: none;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      margin-left: .35em;
+   }
+
+}
+
+html[data-outlines] {
+   .macro-setting {
+      button.enabled:focus {
+         background-color: #282;
+         border-color: #4a4;
+      }
+
+      button:not(.enabled):focus {
+         background-color: transparent;
+         border: 1px solid #eee;
+      }
+   }
+}

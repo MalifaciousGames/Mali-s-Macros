@@ -96,11 +96,13 @@ This pair of macros make up an event-based refresh system. They are useful as a 
 
 ***
 
-## JS-free settings API ##
+## JS-free settings API
 
-Lets you use the built-in Settings API without JavaScript knowledge.
+This macro set lets you :
+- create settings without JavaScript knowledge
+- easily modify settings outside of the settings dialog
 
-[The settings macro](sc-settings)
+[The settings macros](settings-macros)
 
 ***
 
