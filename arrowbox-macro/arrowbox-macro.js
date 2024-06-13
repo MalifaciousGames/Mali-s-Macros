@@ -147,7 +147,7 @@ Macro.add('arrowbox', {
         changeValue(options[selectIndex], true, d);
       }).attr('tabindex', config.centerInput ? '0' : '-1');
 
-      receiver.on('keydown', (e) => {
+      receiver.on('keydown', e => {
         const fittinScheme = config.centerInput ? e.ctrlKey : true;
         if (coolDownOk && fittinScheme && e.key === configDir.key) {
           //Trigger a click event on the button so any modification can be listener for using 'click'
@@ -170,13 +170,17 @@ Macro.add('arrowbox', {
     }
 
     //Scroll cycle on the wrapper (mode doesn't matter)
-    wrapper.on('wheel', (e) => {
-      if (coolDownOk) { arrows[e.originalEvent.deltaY < 0 ? 1 : 0].click() }
+    wrapper.on('wheel', e => {
+      if (coolDownOk) arrows[e.originalEvent.deltaY < 0 ? 1 : 0].click();
+      e.preventDefault();
     });
 
     changeValue(config.startValue);
     arrowSanity();
-    if (config.autofocus) { setTimeout(() => wrapper.focus(), 200) }
+    if (config.autofocus) setTimeout(() => wrapper.focus(), 200);
+
     $(this.output).append(wrapper);
   }
 });
+
+/* End of arrowbox macro */
