@@ -14,4 +14,3 @@ This macro supports html arguments ([Read more.](../htmlarguments.md))
 [<<tip [direction]>> ...tooltip content...]
 <</hover>>
 ```
-

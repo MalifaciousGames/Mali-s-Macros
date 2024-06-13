@@ -1,0 +1,25 @@
+/* Mali's smooth details css */
+
+@keyframes details-reveal {
+   0% {opacity: 0}
+   to {opacity: revert}
+}
+
+details[open] {
+   :not(summary) {animation: details-reveal .3s ease-in-out;}
+   summary::before {rotate: 90deg;}
+}
+
+summary::before {
+   content: '🠞';
+   display: inline-block;
+   padding-inline: .2rem;
+   transition: .3s;
+}
+
+summary {
+   cursor: pointer;
+   width: fit-content;
+}
+
+summary:hover {text-decoration: underline}

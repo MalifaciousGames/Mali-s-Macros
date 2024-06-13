@@ -23,7 +23,7 @@ This macro supports HTML arguments as objects, arrays or simple pairs. ([Read mo
 	[<<app [selector] [{attributes}] [t8n]>> ...content to append...]
    [<<after [selector] [{attributes}] [t8n]>> ...content to add after the target...]
    [<<before [selector] [{attributes}] [t8n]>> ...content to add before the target...]
-	[<<diag ['Title'] ['styles'] [t8n]>> ...content to display in dialog...]
+	[<<diag ['Title'] ['styles']>> ...content to display in dialog...]
 
 <</a>>
 ```
@@ -51,7 +51,7 @@ The 'a' macro comes with three built-in output options:
 
 If the selector's value is falsy (empty string, 0, false...):
 - `replace`, `append` and `prepend` will default to the link's immediate parent
-- `after` and `before` with add content before/after the link itself
+- `after` and `before` will add content before/after the link itself
 
 ```html
 <div id='box'>Contents</div>
@@ -63,15 +63,19 @@ If the selector's value is falsy (empty string, 0, false...):
 <</a>>
 ```
 
-A single `<<a>>` element can support all of the output options, these run in alphabetical order: `app => diag => prep => rep`.
+A single `<<a>>` element can support all of the output options at once.
 
 ```html
 <<but 'Button'>>
-	<<app '#someID'>> ...something to append...
-	<<prep '.someClass'>> ...something to prepend...
-	<<rep '#id1, #id2'>> ...new content!...
+	<<app>> ...something to append...
+	<<prep>> ...something to prepend...
+	<<rep>> ...new content!...
+	<<after>> ...something to insert after...
+	<<before>> ...something to insert before...
 <</but>>
 ```
+
+These run in the order they are supplied to the macro.
 
 ### Goto attribute ###
 Accepts : `'string' / [[bracket link]]`
@@ -187,7 +191,7 @@ The `count` attribute enables you to set a maximum amount of clicks before the l
 	<<rep '#left'>> <<= 3-_this.count>>
 <</but>>
 
-Clicks left: <span id='left'>3</span>
+Clicks left: <span id='left'/>
 ```
 
 ### _this variable ###
