@@ -5,7 +5,7 @@
    width: fit-content;
 }
 
-.achievements-view h2 {
+.achievements-view>h2 {
    margin: 0;
    text-align: center;
    background-color: #222;
@@ -45,12 +45,12 @@
 /* notification */
 
 #notification-container {
-	position: fixed;
-	right: 0;
-	top: 0;
-	display: grid;
-	z-index: 500;
-	justify-items: end;
+   position: fixed;
+   right: 0;
+   top: 0;
+   display: grid;
+   z-index: 500;
+   justify-items: end;
 }
 
 .achiev-notif {

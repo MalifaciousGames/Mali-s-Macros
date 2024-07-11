@@ -37,7 +37,7 @@ The display element generates the following `html` structure:
 
 ### Achievements screen
 
-The `<<achievements-display [asDialog]>>` macros prints all of the defined achievements side by side, if its first argument is true it will output them in a `Dialog` instead of printing to passage.
+The `<<achievements-display [asDialog]>>` macro prints all of the defined achievements side by side, if its first argument is true it will output them in a `Dialog` instead of printing to passage.
 
 ### API documentation
 
@@ -74,5 +74,5 @@ new Achievement(id, {
 
 #### Exporting saves and achievements
 
-Saves that are imported to disk save a copy of the achievements object in their metadata, under the assumption that they might be loaded from another URL which will not have access to the same `localStorage`. When a save is loaded, it will restore the achievements of no competing object exists in memory.
-As such, while achievements are not State-dependent the action of transferring save files should also transfer previous achievements.
+Saves that are imported to disk save a copy of the achievements object in their metadata, under the assumption that they might be loaded from another URL which will not have access to the same `localStorage`. When a save is loaded, it will restore the achievements if no competing object exists in memory.
+As such, while achievements are not State-dependent the action of transferring save files should also transfer previously earned achievements.
