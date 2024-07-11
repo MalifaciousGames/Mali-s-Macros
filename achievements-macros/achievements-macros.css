@@ -1,0 +1,82 @@
+/* display all */
+
+.achievements-view {
+   border: 2px solid #444;
+   width: fit-content;
+}
+
+.achievements-view h2 {
+   margin: 0;
+   text-align: center;
+   background-color: #222;
+   border-bottom: 2px solid #444;
+}
+
+.achiev-view-inner {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 1rem;
+   padding: 1rem;
+}
+
+/* individual styling */
+
+.achievement {
+   display: flex;
+   flex-direction: column;
+   border: 2px solid #444;
+   width: fit-content;
+}
+
+.achiev-name {
+   background-color: #222;
+   padding: .25rem 1rem;
+   border-bottom: 2px solid #444;
+}
+
+.achiev-inner {
+   padding: 1rem;
+}
+
+.locked .achiev-inner {
+   color: #444;
+}
+
+/* notification */
+
+#notification-container {
+	position: fixed;
+	right: 0;
+	top: 0;
+	display: grid;
+	z-index: 500;
+	justify-items: end;
+}
+
+.achiev-notif {
+   border: 2px solid #444;
+   padding: 1rem 5rem;
+   background-color: #222;
+   width: fit-content;
+   margin: .5rem 1rem;
+   transition: .3s;
+   animation: achiev-notif 4s ease-in-out;
+}
+
+@keyframes achiev-notif {
+   0% {
+      opacity: 0;
+   }
+
+   15% {
+      opacity: 1;
+   }
+
+   85% {
+      opacity: 1;
+   }
+
+   to {
+      opacity: 0;
+   }
+}
