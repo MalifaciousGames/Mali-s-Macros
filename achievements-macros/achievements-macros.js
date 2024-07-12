@@ -4,6 +4,10 @@
    let toSlug;
    try { toSlug = createSlug } catch { toSlug = Util.slugify };
 
+   const anim = steps => {
+      for (const k in steps) setTimeout(steps[k], k);
+   };
+
    //const toSlug = createSlug ?? Util.slugify;
 
    window.Achievement = class Achievement {
@@ -17,8 +21,8 @@
                unlocked: id // name defaults to un-slugified id
             },
             view: {
-               unlocked: `Achievement unlocked.`,
-               locked: `Achievement locked.`
+               locked: `Achievement locked.`,
+               unlocked: `Achievement unlocked.`
             }
          }, def);
 
@@ -56,15 +60,19 @@
 
       notify() {
 
-         $('<span>')
+         const $ntf = $('<span>')
             .attr({
-               class: `achiev-notif ${this.id} ${this.class || ''}`
+               class: `achiev-hidden achiev-notif ${this.id} ${this.class || ''}`
             })
             .wiki(this.message)
-            .on('animationend', function () {
-               this.remove();
-            })
             .appendTo(Achievement.notifBox);
+         
+         anim({
+            0 : () => $ntf.removeClass('achiev-hidden'),
+            3000 : () => $ntf.addClass('achiev-hidden'),
+            4000 : () => $ntf.remove()
+         });
+
       }
 
       static memID = 'achievements-API';

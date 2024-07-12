@@ -40,7 +40,6 @@
 					case 'onAny': case 'onInit': case 'onChange':
 
 						function cb() {
-							log(this);
 
 							const oldThis = State.temporary.this;
 							State.temporary.this = this;
@@ -83,15 +82,16 @@
 			if (this.args.length > 1) def.default = this.args[1];
 
 			Setting[this.name](id, def);
-
 			reg.push(id);
 		}
 	});
 
 	// run init handlers on next passage nav
-	$(document).one(':passageinit', () => {
+	$(document).one(':storyready', () => {
 		reg.forEach(id => {
 			const def = Setting.get(id), value = settings[id] ?? def.default;
+
+			settings[id] = value;
 			def.onInit?.call(Object.assign({ value }, def));
 		});
 	});
