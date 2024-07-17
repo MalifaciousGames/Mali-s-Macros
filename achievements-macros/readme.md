@@ -66,11 +66,12 @@ new Achievement(id, {
 
 #### Static methods
 
+- `Achievement.check(...ids)` : Checks if any of the supplied `ids` correspond to an unlocked achievement.
+- `Achievement.clearAll()` : Erase the state of every achievement.
+- `Achievement.displayAll(asDialog)` : Returns a display element containing every registered achievement. If `asDialog` is true, display them in a `Dialog` instead.
 - `Achievement.each(callback)` : A function which iterates over each registered achievement, the callback is called with the achievement's instance and state as arguments.
 - `Achievement.get(id)` : Returns the achievement instance for a given `id`.
-- `Achievement.clearAll()` : Erase the state of every achievement.
 - `Achievement.unlockAll()` : Unlocks every registered achievement.
-- `Achievement.displayAll(asDialog)` : Returns a display element containing every registered achievement. If `asDialog` is true, display them in a `Dialog` instead.
 
 #### Exporting saves and achievements
 

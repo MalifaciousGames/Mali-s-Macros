@@ -13,6 +13,8 @@
    window.Achievement = class Achievement {
       constructor(id, def) {
 
+         if (typeof id !== 'string') throw new Error(`Invalid Achievement declaration, ID needs to be a string, is a ${typeof id} instead.`);
+
          this.id = toSlug(id);
 
          Object.assign(this, {
@@ -89,7 +91,6 @@
       };
       static get(id) { return this.definitions[toSlug(id)] };
 
-
       static commit() { memorize(this.memID, this.state) }
 
       static clearAll() {
@@ -99,6 +100,10 @@
 
       static unlockAll() {
          this.each(def => def.unlock());
+      }
+
+      static check(...ids) {
+         return ids.some(id => this.state[toSlug(id)]);
       }
 
       static displayAll(inDialog) {
