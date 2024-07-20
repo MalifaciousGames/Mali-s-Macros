@@ -110,11 +110,12 @@ Macro.add('hover', {
           	callbacks.out.push(hideTip); 
         }
 
-      	$wrap.on('mouseenter focus', e => {
-          	if (active) return;
-          	active = true;
-          	callbacks.in.forEach(f => f.call());
-        }).on('mouseleave focusout', e => {
+      	$wrap.on('mouseenter focus', this.shadowHandler(
+                e => {
+                  if (active) return;
+                  active = true;
+                  callbacks.in.forEach(f => f.call());
+        })).on('mouseleave focusout', e => {
           	active = false;
         	callbacks.out.forEach(f => f.call());
         }).wiki(inner).addClass(`macro-${this.name}`).appendTo($(this.output));
