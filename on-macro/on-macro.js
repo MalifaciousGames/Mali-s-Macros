@@ -1,81 +1,109 @@
-/* Maliface's <<on>> macro 
-Syntax : 
-	<<on 'event1 [, event2...]' [elementType] [t8n] [hidden] [{attributes object}]>>
-		..code to run/refresh...
-	<</on>>
-*/
+/* Maliface's <<on/once>> and <<trigger>> macros */
 
-//Clean unused listeners
-$(document).on(':passageend', () => {
-	let events = Macro.get('on').activeListeners, i = events.length;
-	while (i--) {
-		const e = events[i];
-		//Check if update wrapper is still on the page
-		if (!$(`[data-id='${e.split('.').last()}']`).length) {
-			$(document).off(events.delete(e)[0]);
+(() => {
+
+	const listeners = [];
+
+	// {element, listener id, type}
+	$(document).on(':passageend', () => {
+
+		let i = listeners.length - 1;
+		while (i >= 0) {
+			const { element, id, type } = listeners[i];
+
+			if (!element.isConnected) {
+				$(document).off(type + '.' + id);
+				listeners.splice(i, 1);
+			}
+			i--;
 		}
-	};
-});
+	});
 
-Macro.add('on', {
-	isAsync: true,
-	tags: null,
-	activeListeners: [],
-	counter: 0,
+	let count = 0;
 
-	handler() {
-		if (!this.args[0]) {
-			return this.error(`Missing event type.`);
-		} else if (typeof this.args[0] !== 'string') {
-			return this.error(`Event name must be a string, reading: ${typeof this.args[0]}.`);
-		};
+	Macro.add(['on', 'once'], {
+		isAsync: true,
+		tags: null,
+		handler() {
 
-		const def = this.self, id = def.counter++, payload = this.payload[0].contents,
-			wrapper = $(document.createElement(this.args[1] || 'span')).attr('data-id', `macro-on-${id}`), attributes = this.args.find(o => typeof o === 'object'),
-			events = this.args[0].split(',').map(e => `${e.trim()}.macro-on-${id}`),
-			t8n = this.args.includesAny('t8n', 'transition'), startHidden = this.args.includesAny('startHidden', 'hidden');
+			if (!this.args[0]) return this.error(`Missing event type.`);
 
-		if (attributes) { wrapper.attr(attributes) };
-		if (!startHidden) { wrapper.wiki(payload) };
+			let triggers = this.args.shift(), transition, attributes, type, hidden;
 
-		// Apply listener for each event name
-		events.forEach(event => {
-			def.activeListeners.push(event);
-			$(document).on(event, this.createShadowWrapper((e) => {
-				const oldE = State.temporary.event;
-				State.temporary.event = e;
-				try {
-					wrapper.empty().wiki(payload)
-					if (t8n) { wrapper.fadeOut(0).fadeIn(400) }
-				} finally {
-					oldE === undefined ? delete State.temporary.event : State.temporary.event = oldE;
+			if (typeof triggers === 'string') triggers = triggers.trim().split(/\s|,/g);
+
+			while (this.args.length) {
+				const cur = this.args.pop();
+
+				if (typeof cur === 'object') { attributes = cur; continue }
+
+				switch (cur) {
+					case 'hidden': case 'startsHidden': hidden = true; continue;
+					case 'transition': case 't8n': transition = true; continue;
+					default: type = cur;
 				}
-			}));
-		});
-		wrapper.addClass(`macro-${this.name}`).appendTo(this.output);
-	}
-});
+			}
 
-// Triggers custom events
+			// wrapper
+			const $wrp = $(`<${type || 'span'}>`)
+				.attr({ 'aria-live': 'polite' })
+				.attr(attributes ?? {}) // try to find attribute object
+				.addClass('macro-' + this.name);
 
-Macro.add('trigger', {
-	handler() {
+			if (!hidden) $wrp.wiki(this.payload[0].contents);
 
-		let trig = this.args[0];
+			// define callback
+			const callback = event => {
 
-		if (!['string', 'object'].includes(typeof trig)) {
-			return this.error(`Invalid event type, reading :'${typeof trig}'.`);
+				if (!$wrp[0].isConnected) return;
+
+				State.temporary.event = event;
+				this.addShadow('_event');
+
+				$wrp
+					.empty()
+					.wiki(this.payload[0].contents);
+
+				if (transition) $wrp.fadeOut(0).fadeIn(400);
+
+			}, shadowWrapper = this.shadowHandler ?? this.createShadowWrapper;
+
+			for (const trigger of triggers) {
+
+				const eventPointer = {
+					element: $wrp[0],
+					type: trigger,
+					id: 'm-on-' + count++ // the id is unique
+				};
+
+				// attach listener
+				$(document)[this.name === 'once' ? 'one' : 'on'](
+					trigger + '.' + eventPointer.id,
+					shadowWrapper.call(this, callback)
+				);
+
+				// still push the pointer for "one" events so they don't trigger after their wrapper is gone
+				listeners.push(eventPointer);
+			}
+
+			$wrp.appendTo(this.output);
+
 		}
+	});
 
-		if (typeof trig === 'string') { //Comma-separated string of events
-			trig = trig.split(',').map(event => event.trim());
-		} else if (typeof trig === 'object' && !Array.isArray(trig)) { //A single event object
-			trig = [trig];
-		}//Do nothing if trig is already an array, it's fine
+	Macro.add('trigger', {
+		handler() {
 
-		// Triggers each event supplied
-		trig.forEach(event => {
-			$(this.args[1] ?? document).trigger(event);
-		});
-	}
-});
+			let events = this.args[0],
+				target = this.args[1] ?? document;
+
+			if (typeof events === 'string') events = events.trim().split(/\s|,/g);
+			if (!Array.isArray(events)) events = [events]; // assume plain object
+
+			for (const ev of events) $(target).trigger(ev);
+		}
+	});
+
+})();
+
+/* End of <<on/once>> and <<trigger>> */
