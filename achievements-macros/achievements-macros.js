@@ -68,11 +68,11 @@
             })
             .wiki(this.message)
             .appendTo(Achievement.notifBox);
-         
+
          anim({
-            0 : () => $ntf.removeClass('achiev-hidden'),
-            3000 : () => $ntf.addClass('achiev-hidden'),
-            4000 : () => $ntf.remove()
+            0: () => $ntf.removeClass('achiev-hidden'),
+            3000: () => $ntf.addClass('achiev-hidden'),
+            4000: () => $ntf.remove()
          });
 
       }
@@ -123,6 +123,19 @@
       };
 
       static notifBox = $('<div>').attr({ id: 'notification-container' }).appendTo('body');
+
+      get unlocked() {
+         const unl = [];
+
+         for (const k in this.state) {
+            if (this.state[k]) unl.push(k);
+         }
+         return unl;
+      }
+      
+      get defined() {
+         return Object.keys(this.defined);
+      }
 
    };
 

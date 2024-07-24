@@ -73,6 +73,11 @@ new Achievement(id, {
 - `Achievement.get(id)` : Returns the achievement instance for a given `id`.
 - `Achievement.unlockAll()` : Unlocks every registered achievement.
 
+#### Getters
+
+- `Achievement.unlocked` : Returns an array containing the `ids` of all currently unlocked achievements.
+- `Achievement.defined` : Returns an array containing the `ids` of all achievements definitions.
+
 #### Exporting saves and achievements
 
 Saves that are imported to disk save a copy of the achievements object in their metadata, under the assumption that they might be loaded from another URL which will not have access to the same `localStorage`. When a save is loaded, it will restore the achievements if no competing object exists in memory.
