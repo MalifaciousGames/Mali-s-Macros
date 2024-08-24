@@ -8,8 +8,6 @@
       for (const k in steps) setTimeout(steps[k], k);
    };
 
-   //const toSlug = createSlug ?? Util.slugify;
-
    window.Achievement = class Achievement {
       constructor(id, def) {
 
@@ -58,6 +56,11 @@
             })
             .append(`<span class='achiev-name'>${locked ? this.name.locked : this.name.unlocked}</span>`)
             .wiki(`<span class='achiev-inner'>${locked ? this.view.locked : this.view.unlocked}</span>`);
+      }
+
+      toDialog() {
+         Dialog.setup();
+         Dialog.append(this.display()).open();
       }
 
       notify() {
@@ -132,7 +135,7 @@
          }
          return unl;
       }
-      
+
       get defined() {
          return Object.keys(this.defined);
       }
@@ -179,6 +182,7 @@
          command = command.toLowerCase();
          switch (command) {
             case 'display': return def.display().appendTo(this.output);
+            case 'dialog': return def.toDialog();
             case 'unlock': case 'lock': return def[command]();
             default: return this.error(`"${command}" is not a valid command.`);
          }
@@ -186,9 +190,10 @@
       }
    });
 
-   Macro.add('achievements-display', {
+   Macro.add(['achievements-display','achievements-dialog'], {
       handler() {
-         if (this.args[0] === 'dialog') return Achievement.displayAll(true);
+         if (this.args[0] || this.names.includes('dialog')) return Achievement.displayAll(true);
+
          Achievement.displayAll().appendTo(this.output);
       }
    });

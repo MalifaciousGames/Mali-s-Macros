@@ -18,9 +18,10 @@ Achievements should be defined in `StoryInit` or in an `init`-tagged passage usi
 
 ### Achievement interactions
 
-The `<<<achievement>>` macro lets you interact with a given achievement instance based on its id: `<<achievement id command>>`.
+The `<<achievement>>` macro lets you interact with a given achievement instance based on its id: `<<achievement id command>>`.
 
 Valid commands are:
+- `dialog` : Displays the achievement in a `Dialog` element.
 - `display` (default) : Prints an element representing the achievement's current state.
 - `unlock` : Unlocks the achievement, causing a notification to pop up.
 - `lock` : Locks the achievement, only useful to revert a previous unlock.
@@ -38,6 +39,32 @@ The display element generates the following `html` structure:
 ### Achievements screen
 
 The `<<achievements-display [asDialog]>>` macro prints all of the defined achievements side by side, if its first argument is true it will output them in a `Dialog` instead of printing to passage.
+
+
+### Example
+
+Defining the achievement in `StoryInit` :
+```html
+<<set $steps = 0>>
+
+<<new-achievement steps '10k steps'>>
+   You have walked 10 000 total steps!
+<<locked '10k steps'>>
+   <<= 10000-$steps>> steps left.
+<</new-achievement>>
+```
+
+Interactive element in a passage:
+```html
+<<link 'Walk...'>>
+   <<set $steps += 100>>
+
+   <<if $steps > 9999>>
+      /* unlock only works on previously locked achievements, no need to check in the if statement */
+      <<achievement steps unlock>>
+   <</if>>
+<</link>>
+```
 
 ### API documentation
 
@@ -63,12 +90,13 @@ new Achievement(id, {
 - `<Achievement>.lock()` : Locks a given achievement.
 - `<Achievement>.display()` : Returns an achievement's display element in a jQuery wrapper.
 - `<Achievement>.notify()` : Displays the unlock notification for a given achievement.
+- `<Achievement>.toDialog()` : Opens a `Dialog` element containing the displayed achievement.
 
 #### Static methods
 
 - `Achievement.check(...ids)` : Checks if any of the supplied `ids` correspond to an unlocked achievement.
 - `Achievement.clearAll()` : Erase the state of every achievement.
-- `Achievement.displayAll(asDialog)` : Returns a display element containing every registered achievement. If `asDialog` is true, display them in a `Dialog` instead.
+- `Achievement.displayAll(asDialog)` : Returns a display element containing every registered achievement. If `asDialog` is truthy, display them in a `Dialog` instead.
 - `Achievement.each(callback)` : A function which iterates over each registered achievement, the callback is called with the achievement's instance and state as arguments.
 - `Achievement.get(id)` : Returns the achievement instance for a given `id`.
 - `Achievement.unlockAll()` : Unlocks every registered achievement.
