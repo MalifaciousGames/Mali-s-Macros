@@ -21,12 +21,16 @@ Macro.add(['details', 'dt'], {
       if (open) $det.attr('open', true);
 
       // toggle the setup variable on click
-      $det[0].addEventListener('click', function () {
+      $det[0].addEventListener('toggle', function () {
 
          // make name attribute work on Mozilla
-         if (name && Browser.isGecko) $(`details[name="${name}"]`).not(this).removeAttr('open');
+         if (name && Browser.isGecko && this.open) {
+            document.querySelectorAll(`details[name="${name}"]`).forEach(e => {
+               if (e !== this) e.open = false;
+            });
+         }
 
-         setup.openDetails[sum] = this.hasAttribute('open');
+         setup.openDetails[sum] = this.open;
 
       });
 
