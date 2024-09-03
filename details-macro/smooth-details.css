@@ -7,7 +7,7 @@
 
 details[open] {
    :not(summary) {animation: details-reveal .3s ease-in-out;}
-   summary::before {rotate: 90deg;}
+   >summary::before {rotate: 90deg;}
 }
 
 summary::before {
