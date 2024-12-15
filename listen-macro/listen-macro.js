@@ -23,9 +23,29 @@ Macro.add('listen', {
         }
         return argObject;
     },
+    documentEvents: [
+      `load`,
+      `DOMContentLoaded`, 
+      `readystatechange`,
+      ':dialogclosed',
+      ':dialogclosing',
+      ':dialogopened',
+      ':dialogopening',
+      ':passageinit',
+      ':passagestart',
+      ':passagerender',
+      ':passagedisplay',
+      ':passageend',
+      ':storyready',
+      ':enginerestart',
+      ':typingcomplete',
+      ':typingstart',
+      ':typingstop',
+    ],
     handler() {
         const payloads = {},
-            events = [],
+            documentEvents = [],
+            elementEvents = [],
             attr = this.self.argsToObj(this.args),
             st = State.temporary,
             $wr = $(`<${attr.type || 'span'}>`).wiki(this.payload[0].contents);
@@ -45,12 +65,15 @@ Macro.add('listen', {
             }
             ev.forEach(e => {
                 payloads[e] = tag.contents;
-                events.push(e);
+                if (this.self.documentEvents.includes(e)) {
+                  documentEvents.push(e);
+                } else {
+                  elementEvents.push(e);
+                }
             });
-
         });
 
-        $trg.on(events.join(' '), this.createShadowWrapper(e => {
+        const eventHandler = this.createShadowWrapper(e => {
             try {
                 oldEvent = st.event;
                 st.event = e.originalEvent ?? e;
@@ -59,7 +82,14 @@ Macro.add('listen', {
             } finally {
                 oldEvent !== undefined ? st.event = oldEvent : delete st.event;
             }
-        }));
+        });
+
+        if (elementEvents.length) {
+          $trg.on(elementEvents.join(' '), eventHandler);
+        }
+        if (documentEvents.length) {
+          $(document).on(documentEvents.join(' '), eventHandler);
+        }
         $wr.attr(attr).addClass(`macro-${this.name}`).appendTo(this.output);
     }
 });
