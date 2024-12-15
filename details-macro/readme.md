@@ -4,13 +4,25 @@ This macro is a simple wrapper for the [`<details>` html element](https://develo
 
 The [attached CSS](smooth-details.css) aims to make the animation smoother and apply an opacity transition to the inner container. Both the macro and CSS can be used without the other.
 
-### Syntax and HTML output ###
+### Syntaxes
 
+Simple summary:
 ```html
-<<details 'Summary' ['open'] [name]>>
+<<details 'Summary text' ['open'] [name]>>
    ...contents...
 <</details>>
 ```
+
+With a `<<summary>>` argument:
+```html
+<<details uniqueID ['open'] [name]>>
+   ...contents...
+<<summary>>
+   ...summary text...
+<</details>>
+```
+
+### HTML output
 
 The generated HTML structure looks like so:
 

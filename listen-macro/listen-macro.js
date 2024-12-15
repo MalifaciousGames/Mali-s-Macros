@@ -3,7 +3,8 @@
 Macro.add('listen', {
     tags: ['when'],
     isAsync: true,
-    argsToObj: function(args) {
+
+    argsToObj: function (args) {
         let argObject = {},
             i = 0;
         while (i < args.length) {
@@ -23,43 +24,63 @@ Macro.add('listen', {
         }
         return argObject;
     },
+
     handler() {
-        const payloads = {},
-            events = [],
-            attr = this.self.argsToObj(this.args),
-            st = State.temporary,
-            $wr = $(`<${attr.type || 'span'}>`).wiki(this.payload[0].contents);
+
+        const payloads = {}, attr = this.self.argsToObj(this.args);
+
+        // special arguments
+        const type = attr.type || 'span';
         delete attr.type;
 
-        let oldEvent, $trg = $wr;
+        const target = attr.filter || null;
+        delete attr.filter;
 
-        if (attr.hasOwnProperty('filter')) {
-            $trg = $wr.find(attr.filter);
-            delete attr.filter;
+        const initial = attr.initial;
+        delete attr.initial;
+
+        // process <<when>> tags into payload object
+        for (const tag of this.payload.slice(1)) {
+
+            let events = ['change'];
+
+            if (tag.args.length) {
+                events = tag.args.flat(Infinity).map(t => t.split(/\s|,/g)).flat().filter(t => t);
+            }
+
+            for (const ev of events) payloads[ev] = tag.contents;
         }
 
-        this.payload.slice(1).forEach(tag => {
-            let ev = ['change'];
-            if (tag.args.length) {
-                ev = tag.args.flat(Infinity).map(t => t.split(/\s|,/g)).flat().filter(t => t);
-            }
-            ev.forEach(e => {
-                payloads[e] = tag.contents;
-                events.push(e);
-            });
-
-        });
-
-        $trg.on(events.join(' '), this.createShadowWrapper(e => {
+        const callback = this.createShadowWrapper(e => {
             try {
-                oldEvent = st.event;
-                st.event = e.originalEvent ?? e;
+                State.temporary.event = e.originalEvent ?? e;
 
                 $.wiki(payloads[e.type]);
+
             } finally {
-                oldEvent !== undefined ? st.event = oldEvent : delete st.event;
+                delete State.temporary.event;
             }
-        }));
-        $wr.attr(attr).addClass(`macro-${this.name}`).appendTo(this.output);
+        });
+
+        // output wrapper element
+        $(`<${type}>`, attr)
+            .addClass(`macro-${this.name}`)
+            .wiki(this.payload[0].contents)
+            .on(Object.keys(payloads).join(' '), target, callback)
+            .appendTo(this.output);
+
+        // run the handlers on macro processing if desired 
+        if (typeof initial === 'string') {
+
+            // an event name
+            $.wiki(payloads[initial]);
+
+        } else if (initial === true) {
+
+            // a truthy value, run all
+            for (const tag of this.payload.slice(1)) $.wiki(tag.contents);
+
+        }
+
     }
 });
