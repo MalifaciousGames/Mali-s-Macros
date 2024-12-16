@@ -44,7 +44,11 @@ The `filter` argument is used to choose which elements can trigger the event. Th
 
 ### `initial` argument ###
 
-The `initial` argument enables you to execute a `<<when>>` payload when the macro is first processed. If the `initial` value is `true`, all `<<when>>` tags will run. If it is an event name, only attached `<<when>>` tag will be executed.
+The `initial` argument enables you to execute a `<<when>>` payload when the macro is first processed.
+
+This argument value can be:
+- an event name which will cause the attached payload to run : `initial 'click'` will run `<<when 'click'>> ...`
+- `true`, in which case all `<<when>>` tags will be executed
 
 ```html
 <<listen initial true>>
