@@ -1,56 +1,48 @@
-/* Mali's <<arrowbox>> macro */
+arrow-box {
+   display: inline-flex;
+   justify-content: space-between;
+   align-items: center;
+   gap: .25em;
+}
 
-.macro-arrowbox {
-  display: inline-flex;
-  align-items: center;
-  gap: .25em;
+arrow-box>option {
+   display: none;
 }
-.macro-arrowbox > input {
-  min-width: 3em;
-  text-align: center;
-  padding: 0;
-}
-.arrowbox-value {
-  border: 1px solid #444;
-  user-select: none;
-  padding: 0 .5em;
-}
-.macro-arrowbox:focus > .arrowbox-value {
-  border-color:seashell;
-}
-.macro-arrowbox > :first-child, .macro-arrowbox > :last-child {
-  line-height: 1em;
-  padding: .2em;
-  z-index: 1;
-}
-.macro-arrowbox:focus, .macro-arrowbox:hover {
-  outline: 1px solid #444;
-}
-.macro-arrowbox.vertical {
-  flex-direction: column;
-  gap: 0;
-  margin: 1em 0;
-  position: relative;
-}
-.macro-arrowbox.vertical > :first-child, .macro-arrowbox.vertical > :last-child {
-  position: absolute;
-  width: 100%;
-  line-height: .4em;
-}
-.arrowbox-arrow-up {top: -1em}
-.arrowbox-arrow-down {bottom: -1em}
-.anim-wrapper {
-  position: relative;
-  animation-duration: .4s;
-}
-@keyframes arrowbox-slideup {from {translate: 0 0;opacity: 1} to {translate: 0 2em;opacity: 0}}
-.anim-wrapper.slideup {animation-name: arrowbox-slideup}
 
-@keyframes arrowbox-slidedown {from {translate: 0 0;opacity: 1} to {translate: 0 -2em;opacity: 0}}
-.anim-wrapper.slidedown {animation-name: arrowbox-slidedown}
+arrow-box>button {
+   background-color: transparent;
+   color: #444;
+   font-weight: bold;
+   border: none;
+   padding: 0;
+   font-size: 1.25em;
+   cursor: pointer;
+   transition: .25s;
+}
 
-@keyframes arrowbox-slideleft {from {translate: 0 0;opacity: 1} to {translate: 2em 0;opacity: 0}}
-.anim-wrapper.slideleft {animation-name: arrowbox-slideleft}
+arrow-box>span {
+   border: 2px solid #444;
+   padding: .25em 1em;
+   text-align: center;
+   transition: .25s;
 
-@keyframes arrowbox-slideright {from {translate: 0 0;opacity: 1} to {translate: -2em 0;opacity: 0}}
-.anim-wrapper.slideright {animation-name: arrowbox-slideright}
+}
+
+arrow-box>button:hover,
+arrow-box:focus>button {
+   color: #920000;
+   background-color: transparent;
+}
+
+arrow-box:focus>span {
+   border-color: #920000;
+}
+
+/* vertical variation */
+arrow-box[vertical] {
+   flex-direction: column;
+}
+
+arrow-box[vertical]>button {
+   rotate: 90deg;
+}

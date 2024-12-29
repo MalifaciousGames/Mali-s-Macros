@@ -1,186 +1,337 @@
 /* Mali's arrowbox macro */
 
-Macro.add('arrowbox', {
+; (() => {
 
-  //CONFIG OPTIONS
-  arrows: {
-    up: { symbol: '🞁', key: 'ArrowUp' },
-    down: { symbol: '🞃', key: 'ArrowDown' },
-    left: { symbol: '🞀', key: 'ArrowLeft' },
-    right: { symbol: '🞂', key: 'ArrowRight' }
-  },
-  arrowElementType: 'button',
-  wrapperDesc: 'Arrow keys or scroll to cycle',
-  cycleCooldown: 400,
-  //END OF THE CONFIG OPTIONS, HERE BE DRAGONS
+   // custom element definition
+   window.ArrowBox = class extends HTMLElement {
 
-  tags: ['option', 'optionsfrom'],
-  skipArgs: ['optionsfrom'],
-  isAsync: true,
-  addOptions: function (a, b, selected) {
-    if (selected) { this.selected = this.length }
-    const entry = { label: a, value: b ?? a };
-    this.push(entry);
-  },
-  runAnimation: function (elem, animClass, callback) {
-    elem.addClass(animClass).one('animationend', () => {
-      elem.removeClass(animClass);
-      if (callback) { callback() };
-    });
-  },
-  handler() {
-    const varName = this.args[0].trim(), options = [], addOp = this.self.addOptions.bind(options), runAnim = this.self.runAnimation,
-      config = {
-        direction: this.args.find(a => a === 'horizontal' || a === 'vertical') ?? 'horizontal',
-        cycleWrap: this.args.includes('wrap'),
-        autofocus: this.args.includes('autofocus'),
-        animations: !this.args.includes('no-animations') || true,
-        centerInput: this.args.includes('type-in')
+      static config = {
+         symbols: {
+            prev: '<',
+            next: '>'
+         }
       };
 
-    //Process tags
-    this.payload.filter(p => p.name === 'option').forEach(pay => addOp(pay.args[0], pay.args[1], pay.args.includes('selected')));
-    this.payload.filter(p => p.name === 'optionsfrom').forEach(p => {
-      const strform = p.arguments.trim(), col = Scripting.evalTwineScript(strform[0] === '{' ? `(${strform})` : strform);
-      if (Array.isArray(col) || col instanceof Set) {
-        col.forEach(e => addOp(e));
-      } else if (col instanceof Map) {
-        col.forEach((v, k) => addOp(k, v));
-      } else if (typeof col === 'object') {
-        $.each(col, (k, v) => addOp(k, v));
-      } else {
-        return this.error(`The contents of the 'optionsfrom' tag should evaluate to a valid collection.`);
+      constructor() {
+         super();
+
+         const prevButton = document.createElement('button');
+         prevButton.innerHTML = this.constructor.config.symbols.prev;
+         prevButton.setAttribute('tabindex', -1);
+         prevButton.addEventListener('click', () => {
+            this.select(this.valueIndex - 1);
+         });
+
+         const nextButton = document.createElement('button');
+         nextButton.innerHTML = this.constructor.config.symbols.next;
+         nextButton.setAttribute('tabindex', -1);
+         nextButton.addEventListener('click', () => {
+            this.select(this.valueIndex + 1);
+         });
+
+         const innerField = document.createElement('span');
+
+         this.innerField = innerField;
+
+         // arrow keys
+         this.addEventListener('keyup', e => {
+            switch (e.key) {
+               case 'ArrowLeft': case 'ArrowUp': return this.select(this.valueIndex - 1);
+               case 'ArrowRight': case 'ArrowDown': return this.select(this.valueIndex + 1);
+            }
+         });
+
+         // scroll
+         this.addEventListener('wheel', e => {
+            this.select(this.valueIndex + (e.deltaY < 0 ? 1 : -1));
+            e.preventDefault();
+         });
+
+         this.valueIndex = 0;
+
+         // init tasks
+         requestAnimationFrame(() => {
+            this.append(prevButton, innerField, nextButton);
+
+            this.setAttribute('tabindex', 0);
+
+            const options = this.options;
+
+            // size inner field to longest available option
+            if (options.length) {
+               const longest = options.sort((a, b) => b.textContent.length - a.textContent.length)[0];
+               this.innerField.style['min-width'] = longest.textContent.length + 'ch';
+            }
+
+            if (this.value) return this.innerField.innerHTML = this.value;
+
+            let index = options.findIndex(o => o.selected);
+            if (index === -1) index = 0;
+            this.select(index);
+
+         });
       }
-    });
 
-    switch (options.length) {
-      case 0: return this.error(`The ${this.name} macro cannot be called without any options.`);
-      case 1: config.cycleWrap = false;
-    }
+      get options() {
+         const children = [...this.children];
 
-    let selectIndex = 0, coolDownOk = true;
+         // has a datalist id, fetch options from there too
+         if (this.fromList) {
+            const list = document.getElementById(this.fromList);
 
-    //Decide on default value and set it
-    if (options.hasOwnProperty('selected')) {
-      config.startValue = options[options.selected];
-      selectIndex = options.selected;
-    } else {
-      //Try to get current value
-      const curVal = State.getVar(varName);
-      if (curVal !== undefined && options.find(o => o.value === curVal)) {
-        config.startValue = options.find(o => o.value === curVal);
-        selectIndex = options.indexOf(config.startValue);
-      } else {
-        config.startValue = options[0];
+            if (list) children.push(...list.children);
+         }
+
+         return children.filter(c => c.tagName === 'OPTION' && !c.disabled);
       }
-    }
 
-    State.setVar(varName, config.startValue.value);
-
-    const dir = { horizontal: ['left', 'right'], vertical: ['up', 'down'] }, arrows = [],
-      wrapper = $('<form>').attr({
-        id: `${this.name}-${Util.slugify(varName)}`,
-        class: `macro-${this.name} ${config.direction}`,
-        title: (config.centerInput ? 'Crtl + ' : '') + this.self.wrapperDesc,
-        role: 'group',
-        tabindex: config.centerInput ? '-1' : '0'
-      }),
-      preview = $(`<${config.centerInput ? "input type='text'" : 'div'}>`).attr({
-        class: `${this.name}-value`,
-      }).appendTo(wrapper),
-      animWrapper = $('<div>').addClass('anim-wrapper').attr('aria-live', 'polite').appendTo(preview);
-
-
-    //Make sure the arrows are disabled or the values wrap properly
-    function arrowSanity() {
-      if (!config.cycleWrap) {
-        if (!selectIndex) {
-          arrows[0].ariaDisabled(true)
-        } else if (arrows[0].is(':disabled')) {
-          arrows[0].ariaDisabled(false)
-        }
-        if (selectIndex === options.length - 1) {
-          arrows[1].ariaDisabled(true)
-        } else if (arrows[1].is(':disabled')) {
-          arrows[1].ariaDisabled(false)
-        }
-      } else {
-        selectIndex %= options.length;
-        if (selectIndex < 0) { selectIndex = options.length - 1 }
+      get selected() {
+         return this.options[this.valueIndex];
       }
-    };
 
-    //Set variable and update display
-    const changeValue = (newVal, isClick, dir) => {
-      //Cooldown
-      coolDownOk = false;
-      setTimeout(() => { coolDownOk = true }, this.self.cycleCooldown);
+      select(index = this.valueIndex) {
 
-      if (config.centerInput) {
-        preview.val(newVal.label);
-        preview[0].style.width = String(newVal.label).length * .9 + 'ch';
-        if (isClick) { preview.focus() }
-      } else {
-        if (config.animations && dir) {
-          const animClass = `slide${dir}`;
-          runAnim(animWrapper, animClass, () => { animWrapper.empty().wiki(newVal.label) });
-        } else {
-          animWrapper.empty().wiki(newVal.label);
-        }
+         const options = this.options;
+
+         if (!options.length) return;
+
+         while (index < 0) index += options.length;
+         index = index % options.length;
+
+         const selected = this.options[index];
+
+         if (!selected) throw new Error('No option at index ' + index);
+
+         this.valueIndex = index;
+
+         this.setValue(selected.value ?? selected.textContent);
+         this.innerField.innerHTML = selected.textContent || selected.value;
+
       }
-      State.setVar(varName, newVal.value);
-    }
 
-    //Create the arrow buttons
-    dir[config.direction].forEach((d, i) => {
-      const configDir = this.self.arrows[d],
-        arrow = $(`<${this.self.arrowElementType}>`).append(configDir.symbol).attr({
-          class: `${this.name}-arrow-${d}`,
-          'data-key': configDir.key
-        }),
-        receiver = config.centerInput ? preview : wrapper;
+      setValue(val, withEvent = true) {
+         val = this.enforceType(val);
 
-      arrow.ariaClick({ namespace: '.macros', label: (i ? 'Next' : 'Previous'), 'aria-label': (i ? 'Next' : 'Previous'), role: 'button' }, () => {
-        receiver.focus();
-        selectIndex += i ? 1 : -1;
-        arrowSanity();
-        changeValue(options[selectIndex], true, d);
-      }).attr('tabindex', config.centerInput ? '0' : '-1');
+         this.value = val;
 
-      receiver.on('keydown', e => {
-        const fittinScheme = config.centerInput ? e.ctrlKey : true;
-        if (coolDownOk && fittinScheme && e.key === configDir.key) {
-          //Trigger a click event on the button so any modification can be listener for using 'click'
-          arrow.click();
-          e.preventDefault();
-          return false;
-        }
-      });
+         if (!withEvent) return;
 
-      arrows.push(arrow);
-      wrapper[i ? 'append' : 'prepend'](arrow);
-    });
+         const event = new CustomEvent(
+            'change',
+            {
+               detail: {
+                  value: this.value,
+                  index: this.valueIndex
+               }
+            }
+         );
 
-    //Add proper listener to the inner input
-    if (config.centerInput) {
-      preview.on('input', (e) => {
-        options[selectIndex] = { label: preview.val(), value: preview.val() };
-        changeValue(options[selectIndex]);
-      });
-    }
+         this.dispatchEvent(event);
+      }
 
-    //Scroll cycle on the wrapper (mode doesn't matter)
-    wrapper.on('wheel', e => {
-      if (coolDownOk) arrows[e.originalEvent.deltaY < 0 ? 1 : 0].click();
-      e.preventDefault();
-    });
+      makeEditable() {
 
-    changeValue(config.startValue);
-    arrowSanity();
-    if (config.autofocus) setTimeout(() => wrapper.focus(), 200);
+         this.editable = true;
 
-    $(this.output).append(wrapper);
-  }
-});
+         this.innerField.setAttribute('tabindex', 0);
+         this.innerField.setAttribute('contenteditable', true);
+         this.innerField.setAttribute('spellcheck', false);
 
-/* End of arrowbox macro */
+         this.innerField.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === 'Escape') {
+               this.focus();
+               this.setValue(this.innerField.textContent);
+               return false;
+            }
+
+            // prevent letters in number-only mode
+            if (this.type === 'number' && e.key.length === 1 && !/[0-9\._]/.test(e.key)) {
+               e.preventDefault();
+               return false;
+            }
+
+         }, true);
+
+         this.innerField.addEventListener('focusout', () => this.setValue(this.innerField.textContent));
+
+         this.innerField.addEventListener('keyup', e => {
+            e.stopImmediatePropagation();
+
+            const targetOption = this.selected, content = e.target.textContent;
+
+            if (targetOption) {
+               targetOption.value = targetOption.innerHTML = content;
+            } else {
+               // in case there are not option elements we write to value directly
+               this.setValue(content, false);
+            }
+
+            this.innerField.style['min-width'] = content.length + 'ch';
+         });
+
+      }
+
+      enforceType(value) {
+         if (!this.type || this.type === 'string') return value;
+
+         try {
+
+            switch (this.type) {
+               case 'number': return Number(value);
+               case 'json': return JSON.parse(value);
+               case 'eval': return eval(value);
+            }
+
+         } catch (e) {
+            // input coercion threw an exception, set to null instead
+            return null;
+         };
+
+      }
+      static observedAttributes = ['value', 'type', 'editable', 'list'];
+      attributeChangedCallback(name, o, value) {
+
+         switch (name) {
+            case 'value':
+               //find matching option
+               const found = this.options.findIndex(c => c.value === value || c.textContent === value);
+               return (found !== -1) ? this.select(found) : this.setValue(value);
+            case 'editable':
+               return (value === null) ? false : this.makeEditable();
+            case 'type':
+               return this.type = value?.toLowerCase();
+            case 'list':
+               this.fromList = value;
+         }
+
+      }
+
+   };
+
+   // registering custom element
+   customElements.define('arrow-box', window.ArrowBox);
+
+   /*
+   <<arrowbox variable "_var">>
+
+      run on change
+
+   <<option label value selected>>
+   <<optionsfrom collection>>
+   <</arrowbox>>
+   */
+
+   // args parser
+   const parseArgs = r => { let e = {}, t = 0; for (; t < r.length;) { const n = r[t]; if ("object" == typeof n) Array.isArray(n) ? r.splice(t--, 1, ...n) : Object.assign(e, n); else { const o = r[t += 1]; if (void 0 === o) throw new Error("Uneven number of arguments."); if ("string" != typeof n) throw new Error(`Attribute key must be a string, reading: '${n}'.`); e[n.toLowerCase()] = o } t++ } return e };
+
+   // macro part
+   Macro.add('arrowbox', {
+      tags: ['option', 'optionsfrom'],
+      skipArgs: ['optionsfrom'],
+      isAsync: true,
+      handler() {
+
+         const aBox = document.createElement('arrow-box'),
+            attr = parseArgs(this.args),
+            options = [];
+
+
+         // process payload
+         for (const p of this.payload) {
+
+            if (p.name === 'optionsfrom') {
+               let result, toEval = p.args.full.startsWith('{') ? `(${p.args.full})` : p.args.full;
+
+               try {
+                  result = Scripting.evalJavaScript(toEval);
+               } catch (e) {
+                  return this.error(`<<optionsfrom>> does not yield a valid collection.`);
+               }
+
+               if (typeof result !== 'object' || result === null) {
+                  return this.error(`<<optionsfrom>> does not yield a valid collection.`);
+               }
+
+               if (result instanceof Array || result instanceof Set) {
+                  for (const value of result) {
+                     options.push({
+                        label: value,
+                        value
+                     });
+                  }
+                  continue;
+               }
+
+               if (result instanceof Map) {
+                  for (const [label, value] of result) {
+                     options.push({ label, value });
+                  }
+                  continue;
+               }
+
+               // a POJO
+               for (const label in result) {
+                  options.push({ label, value: result[label] });
+               }
+               continue;
+            }
+
+            if (p.name === 'option') {
+               let selected = !!p.args.deleteAll('selected').length, [label, value] = p.args;
+
+               options.push({
+                  label,
+                  value: value ?? label,
+                  selected
+               });
+
+               continue;
+            }
+
+         }
+
+         // append the processed options
+         for (const option of options) {
+
+            $('<option>', {
+               text: option.label,
+               value: option.value,
+               selected: option.selected
+            }).appendTo(aBox);
+
+         }
+
+         // catching special arguments
+         {
+
+            // variable setter
+            if (Object.hasOwn(attr, 'variable')) {
+               let vName = attr.variable;
+
+               if (typeof vName !== 'string') return this.error(`Variable name must be a string, reading : ${vName} (${typeof vName})`);
+
+               aBox.addEventListener('change', e => State.setVar(vName, e.target.value));
+               delete attr.variable;
+            }
+
+            // .attr() handles value, type and editable
+         }
+
+         // attach change handler
+         if (this.payload[0].contents.trim().length) {
+
+            const changeHandler = this.shadowHandler(() => $.wiki(this.payload[0].contents));
+            aBox.addEventListener('change', changeHandler);
+         }
+
+         $(aBox)
+            .attr(attr)
+            .addClass('macro-' + this.name)
+            .appendTo(this.output);
+
+      }
+   });
+
+})();
+
+// End of arrowbox macro
