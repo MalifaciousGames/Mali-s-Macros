@@ -41,5 +41,3 @@ If this is not the case, the macro will try to infer its state based on its summ
 ### Name argument ###
 
 The first argument that is not `'open'` is treated as `<details>`'s `name` attribute. This is used to group multiple elements together so that opening one closes all the others, see more on [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details#name).
-
-This feature will work in any browser despite being [bugged in Firefox](https://bugzilla.mozilla.org/show_bug.cgi?id=1856460).

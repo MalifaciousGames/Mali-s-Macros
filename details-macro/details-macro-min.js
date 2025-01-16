@@ -1,0 +1,3 @@
+/* Mali's <<details>> macro */
+
+Macro.add(["details","dt"],{tags:["summary","sum"],handler(){setup.openDetails??={};let[t,...a]=this.args,s=String(t).trim(),e=!!setup.openDetails[s],n="";this.payload[1]&&(t=this.payload[1].contents),a.delete("open").length&&(e=!0),a.length&&(n=a[0]),$("<details>",{class:"macro-details","data-id":s,name:n,open:e}).wiki(`<summary>${t}</summary>`,`<span class='inner-details'>${this.payload[0].contents}</span>`).on("toggle",(function(){setup.openDetails[s]=this.open})).appendTo(this.output)}});
