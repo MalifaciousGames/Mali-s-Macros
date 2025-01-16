@@ -8,6 +8,14 @@ Create highly customizable links and buttons that take any HTML attributes, have
 
 ***
 
+## The achievements API and macros ##
+
+This API and associated macros let users create, display and save game achievements.
+
+[Achievements API and macros](achievements-macros)
+
+***
+
 ## The 'arrowbox' macro ##
 
 A hybrid input element similar to SugarCube's `<<cycle>>` but which can be cycled in either directions by clicking, scrolling or using the arrow keys.
@@ -32,11 +40,11 @@ Disable clickable elements for a given time after click.
 
 ***
 
-## The 'drag' and 'drop' macro set ##
+## The 'details' macro ##
 
-The `drag` and `drop` macros let you create and manage draggable elements in Sugarcube.
+A macro wrapper for the `<details>` HTML element which acts as a drop-down display.
 
-[The 'drag' and 'drop' macro set](drag-drop-macro)
+[The 'details' macro](details-macro)
 
 ***
 
@@ -80,11 +88,11 @@ A configurable event listener in macro form. Mainly used to run code when an inp
 
 ***
 
-## The 'log' macro ##
+## The 'live' macro ##
 
-Lets you easily log data to the console, set up time trackers to monitor code execution and measure byte sizes.
+This macros automatically updates its contents based on player interactions. Also available as a passage tag.
 
-['Log' macro](log-macro)
+[The 'live' macro](live-macro)
 
 ***
 
@@ -124,9 +132,3 @@ Macro.add('template', {
    handler() {Template.add(this.args, this.payload[0].contents)}
 });
 ```
-
-***
-
-## The 'toggle' macro ##
-
-**Deprecated, use `<<cycle>>` + `<<listen 'click'>>` instead!**
