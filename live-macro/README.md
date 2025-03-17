@@ -1,6 +1,6 @@
 ## The 'live' macro
 
-The `<<live>>` macro is a container that macro that automatically refreshes its contents:
+The `<<live>>` macro is a container that automatically refreshes its contents:
 - when a link or button is clicked
 - when an input value changes
 
