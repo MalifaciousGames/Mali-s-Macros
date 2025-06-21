@@ -127,7 +127,7 @@
 
       static notifBox = $('<div>').attr({ id: 'notification-container' }).appendTo('body');
 
-      get unlocked() {
+      static get unlocked() {
          const unl = [];
 
          for (const k in this.state) {
@@ -136,7 +136,7 @@
          return unl;
       }
 
-      get defined() {
+      static get defined() {
          return Object.keys(this.defined);
       }
 
@@ -190,7 +190,7 @@
       }
    });
 
-   Macro.add(['achievements-display','achievements-dialog'], {
+   Macro.add(['achievements-display', 'achievements-dialog'], {
       handler() {
          if (this.args[0] || this.names.includes('dialog')) return Achievement.displayAll(true);
 
