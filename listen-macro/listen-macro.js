@@ -57,7 +57,7 @@ Macro.add('listen', {
 
       // process events
       if (!def.events.length) {
-         def.events = this.self.defaultEvents;
+         def.events = this.self.config.defaultEvents;
       } else {
          def.events = def.events.flat(Infinity).map(t => t.split(/\s|,/g)).flat().filter(t => t);
       }
