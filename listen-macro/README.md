@@ -11,63 +11,54 @@ This macro supports HTML arguments ([Read more.](../htmlarguments.md)).
 
 ... inner contents ...
 
-<<when [eventType1[, eventType2]] [eventType3]>>
+<<when [eventType] [init] [silent] [...any number of event types...]>>
 
 ... code to run when an event of the given type is triggered ...
 
-[<<when [eventType4]>> ... ]
+[<<when ...>> ... another payload which may behave differently ... ]
 
 <</listen>>
 ```
-
-If no event type is supplied to the `<<when>>` tag, it will trigger on `change` events by default. See JS events for an [exhaustive list](https://developer.mozilla.org/en-US/docs/Web/Events#event_listing).
-
 
 ### `type` argument ###
 
-The `type` argument decides on which element the `<<listen>>` wrapper will be, a `span` by default.
-
-### `filter` argument ###
-
-The `filter` argument is used to choose which elements can trigger the event. This argument can be any valid jQuery selector (`element`, `.class`, `#id`, `[attribute]`...).
-
+The `type` argument decides on which element the `<<listen>>` wrapper will be, a `span` by default. `<<listen type "div" id "myID">>` generates the following HTML structure:
 ```html
-<<listen filter 'button'>>
-
-	<<button 'Trigger'>><</button>>
-	<<link "Don't trigger">><</link>>
-
-<<when 'click'>>
-	...payload to only trigger on button click...
-<</listen>>
+<div id="myID" class="macro-listen">
+   ...
+</div>
 ```
 
-### `initial` argument ###
+### `when` tags ###
 
-The `initial` argument enables you to execute a `<<when>>` payload when the macro is first processed.
+Each `<<when>>` tag accepts any number of event types as arguments, these can be:
+- single strings : `<<when 'click' 'change' 'keydown'>>`
+- space-separated : `<<when 'click change keydown'>>`
+- comma-separated : `<<when 'click, change, keydown'>>`
 
-This argument value can be:
-- an event name which will cause the attached payload to run : `initial 'click'` will run `<<when 'click'>> ...`
-- `true`, in which case all `<<when>>` tags will be executed
+If no event type is supplied to the `<<when>>` tag, it will trigger on `change` events by default. See JS events for an [exhaustive list](https://developer.mozilla.org/en-US/docs/Web/Events#event_listing).
+
+By default, each `<<when>>` tag receives an output element in which to display its contents with the following structure : `<span class="macro-listen-output" data-event="...event types..."> ... </span>`.
+
+`<<when>>` tags accept two special arguments which won't be processed as event types:
+- `init` makes it so the tag will runs its contents once when the macro is first processed
+- `silent` prevents the output element from being created making the callback silent
 
 ```html
-<<listen initial true>>
+<<listen >>
 
-  <<cycle '_class'>>
-	  <<option 'Warrior'>>
-	  <<option 'Mage'>>
-	  <<option 'Rogue'>>
-	  <<option 'Cleric'>>
-  <</cycle>>
-  
 <<when 'click'>>
-  <<removeclass 'body'>>
-  <<addclass 'body' _class>>
-
+<<when silent>>
 <</listen>>
+
+generates the following HTML
+
+<span class="macro-listen">
+   <span class="macro-listen-output" data-event="click"></span>
+</span>
 ```
 
-In the above situation, the `Warrior` class will be added to `body` as soon as the macro is processed, serving as a default.
+The default values for `init`, `silent` and default event type can be changed in the macro's `config` object.
 
 ### _event variable ###
 
@@ -90,18 +81,26 @@ The event object is passed as the `_event` temporary variable which can be used 
 Visually update values :
 
 ```html
-<<listen>>
+<<listen >>
+	You are...
+   <<textbox '$fname' 'John'>>
+   <<textbox '$name' 'Doe'>>
 
-  Starting number : <<numberbox '_num' `_num ?? 5`>>
-  Multiplier : <<numberbox '_multi' `_multi ?? 5`>>
-
-<<when>>
-
-  <<replace '#display'>><<= _num*_multi>><</replace>>
-
+<<when init>>
+   Welcome $fname $name, since we're friends I'll call you <<= ($fname[0] + '-' + $name[0]).toUpperCase()>>.
+	
 <</listen>>
 
-Result : <span id='display'></span>
+
+<<listen>>
+
+   Starting number : <<numberbox '_num' `_num ?? 5`>>
+   Multiplier : <<numberbox '_multi' `_multi ?? 5`>>
+
+<<when>>
+   <<= _num*_multi>>
+<</listen>>
+
 ```
 
 <hr>
@@ -111,15 +110,15 @@ Color the relevant input field when enter is pressed :
 ```html
 <<listen>>
 
-  <<textbox '$fname' 'John'>>
-  <<textbox '$name' 'Doe'>>
-  <<textbox '$age' '?'>>
+   <<textbox '$fname' 'John'>>
+   <<textbox '$name' 'Doe'>>
+   <<textbox '$age' '?'>>
 
-<<when 'keypress'>>
+<<when 'keypress' silent>>
 
-  <<if _event.code === 'Enter'>>
-    <<run $(_event.target).css('background-color','red')>>
-  <</if>>
+   <<if _event.code === 'Enter'>>
+      <<run $(_event.target).css('background-color','red')>>
+   <</if>>
 
 <</listen>>
 ```
@@ -133,16 +132,13 @@ Make an element which cannot be right-clicked (and taunts you if you do) :
 
   You cannot right click meeee!
 
-<<when 'contextmenu'>>
+<<when 'contextmenu' silent>>
 
-  <<run _event.preventDefault(),
-	Dialog.setup(),
-    	Dialog.wiki("Don't even try it!").open()>>
+   <<run _event.preventDefault(), UI.alert("Don't even try it!")>>
 
-<<when 'click'>>
+<<when 'click' silent>>
 
-  <<run Dialog.setup(),
-	Dialog.wiki("That's the good click!").open()>>
+   <<run UI.alert("That's the good click!")>>
     
 <</listen>>
 ```
@@ -161,7 +157,7 @@ The world's worst numpad :
 		<button>_i</button>
 	<</for>>
 
-<<when 'click'>>
+<<when 'click' silent>>
 	<<append '#display'>><<= _event.target.innerHTML>><</append>>
 <</listen>>
 <</nobr>>
