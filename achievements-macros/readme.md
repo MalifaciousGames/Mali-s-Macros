@@ -23,8 +23,10 @@ The `<<achievement>>` macro lets you interact with a given achievement instance 
 Valid commands are:
 - `dialog` : Displays the achievement in a `Dialog` element.
 - `display` (default) : Prints an element representing the achievement's current state.
-- `unlock` : Unlocks the achievement, causing a notification to pop up.
+- `unlock` : Unlocks the achievement, the third argument decides whether a notification is displayed or not, `true` by default. 
 - `lock` : Locks the achievement, only useful to revert a previous unlock.
+
+Unlock an achievement silently with `<<achievement id unlock false>>`.
 
 The display element generates the following `html` structure:
 ```html

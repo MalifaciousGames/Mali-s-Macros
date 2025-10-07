@@ -48,6 +48,14 @@ A macro wrapper for the `<details>` HTML element which acts as a drop-down displ
 
 ***
 
+## The 'exclusive' macro ##
+
+A macro wrapper which disables or deletes clickable elements.
+
+[The 'exclusive' macro](exclusive-macro)
+
+***
+
 ## The 'hover' macro ##
 
 Displays a tooltip, run code and/or replace content on hover.

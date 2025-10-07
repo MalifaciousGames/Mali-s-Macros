@@ -1,4 +1,4 @@
-/* Mali's achievements API and macros for Sugarcube */
+/* Mali's achievements API and macros for SugarCube */
 
 (() => {
    let toSlug;
@@ -175,7 +175,7 @@
    Macro.add(['achievement', 'achiev'], {
       handler() {
 
-         let [id, command = 'display'] = this.args, def = Achievement.get(toSlug(id));
+         let [id, command = 'display', withNotif = true] = this.args, def = Achievement.get(toSlug(id));
 
          if (!def) return this.error(`No achievement found for id "${id}", make sure it is defined in StoryInit.`);
 
@@ -183,7 +183,7 @@
          switch (command) {
             case 'display': return def.display().appendTo(this.output);
             case 'dialog': return def.toDialog();
-            case 'unlock': case 'lock': return def[command]();
+            case 'unlock': case 'lock': return def[command](withNotif);
             default: return this.error(`"${command}" is not a valid command.`);
          }
 
