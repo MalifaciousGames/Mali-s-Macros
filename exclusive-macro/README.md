@@ -39,7 +39,7 @@ The second optional argument is a CSS selector used to decide which element type
 
 ### `onclick` tag ###
 
-The optional `<<onclick>>` tag is used to execute code when any of clickable elements is clicked.
+The optional `<<onclick>>` tag is used to execute code when any of the clickable elements is clicked.
 
 ```html
 Choose a pet:
@@ -76,12 +76,12 @@ Only the elements present inside the `<<exclusive>>` payload when the click happ
 <<exclusive 'disable'>>
 
    <<linkreplace "I'd rather go right.">>
-	   The woman sights with disappointment.
+      The woman sighs with disappointment.
       [[Go right.|right]]
    <</linkreplace>>
 
    <<linkreplace "I will go left.">>
-	   "Wise choice."
+      "Wise choice."
       [[Go left.|left]]
    <</linkreplace>>
 
