@@ -23,7 +23,8 @@
             view: {
                locked: `Achievement locked.`,
                unlocked: `Achievement unlocked.`
-            }
+            },
+            payload: null
          }, def);
 
          // set default message
@@ -42,6 +43,11 @@
 
          Achievement.state[this.id] = true;
          Achievement.commit();
+
+         switch (typeof this.payload) {
+            case 'function': this.payload.call(this); break;
+            case 'string': $.wiki(this.payload);
+         }
 
          if (showPopUp) this.notify();
       }
@@ -143,7 +149,7 @@
    };
 
    Macro.add(['new-achievement', 'new-achiev'], {
-      tags: ['locked', 'message'],
+      tags: ['locked', 'message', 'onUnlock'],
       handler() {
 
          // handy payload object
@@ -167,6 +173,10 @@
             },
             message: payload.message?.contents
          };
+
+         if (payload.onUnlock) {
+            def.payload = this.shadowHandler(() => $.wiki(payload.onUnlock?.contents ?? ''))
+         }
 
          new Achievement(this.args[0], def);
       }

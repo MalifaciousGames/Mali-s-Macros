@@ -13,6 +13,8 @@ Achievements should be defined in `StoryInit` or in an `init`-tagged passage usi
    ...contents displayed when locked...]
 [<<message>>
    ...notification message shown on unlock...]
+[<<onUnlock>>
+   ...SugarCube code to run when the achievement is unlocked...]
 <</new-achievement>>
 ```
 
@@ -82,6 +84,10 @@ new Achievement(id, {
    view : {
       locked : 'Achievement locked.',
       unlocked : 'Achievement unlocked.' 
+   },
+   payload() {
+      // function to run when unlocked
+      // this : achievement's instances
    }
 });
 ```
