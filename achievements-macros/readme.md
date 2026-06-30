@@ -13,7 +13,7 @@ Achievements should be defined in `StoryInit` or in an `init`-tagged passage usi
    ...contents displayed when locked...]
 [<<message>>
    ...notification message shown on unlock...]
-[<<onUnlock>>
+[<<on-unlock>>
    ...SugarCube code to run when the achievement is unlocked...]
 <</new-achievement>>
 ```
@@ -53,8 +53,11 @@ Defining the achievement in `StoryInit` :
 
 <<new-achievement steps '10k steps'>>
    You have walked 10 000 total steps!
+   Have $10 as a reward.
 <<locked '10k steps'>>
    <<= 10000-$steps>> steps left.
+<<on-unlock>>
+   <<set $money += 10>>
 <</new-achievement>>
 ```
 

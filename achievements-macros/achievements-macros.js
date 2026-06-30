@@ -149,7 +149,7 @@
    };
 
    Macro.add(['new-achievement', 'new-achiev'], {
-      tags: ['locked', 'message', 'onUnlock'],
+      tags: ['locked', 'message', 'on-unlock'],
       handler() {
 
          // handy payload object
@@ -174,8 +174,9 @@
             message: payload.message?.contents
          };
 
-         if (payload.onUnlock) {
-            def.payload = this.shadowHandler(() => $.wiki(payload.onUnlock?.contents ?? ''))
+         const unl = payload['on-unlock']?.contents;
+         if (unl) {
+            def.payload = this.shadowHandler(() => $.wiki(unl));
          }
 
          new Achievement(this.args[0], def);
